@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const LOADER_DURATION_MS = 1900;
+
 export default function PageLoader() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 900);
+    const t = setTimeout(() => setLoading(false), LOADER_DURATION_MS);
     return () => clearTimeout(t);
   }, []);
 
