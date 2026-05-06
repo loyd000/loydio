@@ -12,16 +12,12 @@ export default function ThemeToggle() {
   const toggle = () => {
     const next = !dark;
     setDark(next);
-
-    // Add transitioning class so CSS transitions fire only during the switch
-    document.documentElement.classList.add("theme-transitioning");
-    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
     localStorage.setItem("theme", next ? "dark" : "light");
 
-    // Remove after transition completes (matches 0.18s in CSS)
-    setTimeout(() => {
-      document.documentElement.classList.remove("theme-transitioning");
-    }, 200);
+    const apply = () => document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+
+    if (!document.startViewTransition) { apply(); return; }
+    document.startViewTransition(apply);
   };
 
   return (

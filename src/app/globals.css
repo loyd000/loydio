@@ -49,17 +49,10 @@ body {
   line-height: 1.6;
 }
 
-/* Only transition colors during the theme toggle, not always
-   (prevents interference with framer-motion animations)       */
-.theme-transitioning,
-.theme-transitioning *,
-.theme-transitioning *::before,
-.theme-transitioning *::after {
-  transition:
-    background-color 0.18s ease,
-    border-color     0.18s ease,
-    color            0.18s ease,
-    fill             0.18s ease !important;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: ease;
 }
 
 ::selection {
