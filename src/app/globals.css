@@ -1,26 +1,410 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'Space Grotesk', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: 'IBM Plex Mono', monospace;
+  cursor: none;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+::selection {
+  background: #000;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000;
+}
+
+/* ── Buttons ─────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+              transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
+  cursor: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: #000;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.btn-outline {
+  background: transparent;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.btn-outline:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.btn-outline-white {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-outline-white:hover {
+  border-color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+}
+
+/* ── Section layout ──────────────────────── */
+.section-container {
+  width: 100%;
+  padding-left: 16rem;
+  padding-right: 16rem;
+}
+
+@media (max-width: 900px) {
+  .section-container {
+    padding-left: 7rem;
+    padding-right: 7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .section-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ── Vertical grid strips ────────────────────────────────
+   [white 8rem] | outer-line | [diagonal 8rem] | inner-line | content
+   Total gutter = 16rem = section-container padding.          */
+.grid-strip,
+.grid-line {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.grid-strip {
+  width: 4rem;
+  /* fills from outer-line to inner-line: 8rem→16rem */
+  background-image: url('/diagonal-grid.svg');
+  background-repeat: repeat;
+}
+
+.grid-strip-left {
+  left: 12rem;
+}
+
+/* starts after 4rem white */
+.grid-strip-right {
+  right: 12rem;
+}
+
+.grid-line {
+  width: 1px;
+  background: rgba(0, 0, 0, 0.075);
+}
+
+/* inner lines — at content boundary (matches section-container padding) */
+.grid-line-left {
+  left: 16rem;
+}
+
+.grid-line-right {
+  right: 16rem;
+}
+
+/* outer lines — between white space and diagonal strip */
+.grid-line-outer-left {
+  left: 12rem;
+}
+
+.grid-line-outer-right {
+  right: 12rem;
+}
+
+@media (max-width: 900px) {
+  .grid-strip {
+    width: 5rem;
+  }
+
+  .grid-strip-left {
+    left: 2rem;
+  }
+
+  .grid-strip-right {
+    right: 2rem;
+  }
+
+  .grid-line-left {
+    left: 7rem;
+  }
+
+  .grid-line-right {
+    right: 7rem;
+  }
+
+  .grid-line-outer-left {
+    left: 2rem;
+  }
+
+  .grid-line-outer-right {
+    right: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .grid-strip {
+    width: 2rem;
+  }
+
+  .grid-strip-left {
+    left: 0rem;
+  }
+
+  .grid-strip-right {
+    right: 0rem;
+  }
+
+  .grid-line-left {
+    left: 2rem;
+  }
+
+  .grid-line-right {
+    right: 2rem;
+  }
+
+  .grid-line-outer-left {
+    left: 0rem;
+  }
+
+  .grid-line-outer-right {
+    right: 0rem;
+  }
+
+}
+
+/* ── Full-bleed horizontal rule ─────────────────────────
+   Negative margins mirror section-container padding so the
+   line bleeds from one inner-edge grid-line to the other.  */
+.rule {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.075);
+  margin-left: -16rem;
+  margin-right: -16rem;
+}
+
+@media (max-width: 900px) {
+  .rule {
+    margin-left: -7rem;
+    margin-right: -7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .rule {
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+}
+
+/* ── Eyebrow / tag labels ────────────────── */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 0;
+  /* no gap — rule sits flush below eyebrow */
+}
+
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+}
+
+/* ── Pill tag ────────────────────────────── */
+.tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.tag-white {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ── Animations ──────────────────────────── */
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-2%, -3%);
+  }
+
+  20% {
+    transform: translate(3%, 2%);
+  }
+
+  30% {
+    transform: translate(-1%, 4%);
+  }
+
+  40% {
+    transform: translate(2%, -1%);
+  }
+
+  50% {
+    transform: translate(-3%, 3%);
+  }
+
+  60% {
+    transform: translate(1%, -2%);
+  }
+
+  70% {
+    transform: translate(-2%, 1%);
+  }
+
+  80% {
+    transform: translate(3%, -3%);
+  }
+
+  90% {
+    transform: translate(-1%, 2%);
+  }
+}
+
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grain 0.5s steps(1) infinite;
+}
+
+/* ── Decorative ──────────────────────────── */
+.section-watermark {
+  font-size: clamp(100px, 18vw, 220px);
+  font-weight: 700;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.06);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.vertical-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.3;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+@media (max-width: 600px) {
+  .vertical-label {
+    display: none;
+  }
+}
+
+.plus-marker {
+  position: absolute;
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
 }
