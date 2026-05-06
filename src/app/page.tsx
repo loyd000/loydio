@@ -10,13 +10,17 @@ import Footer from "@/components/Footer";
 import CursorFollower from "@/components/CursorFollower";
 import ScrollProgress from "@/components/ScrollProgress";
 import GridLines from "@/components/GridLines";
+import PageLoader from "@/components/PageLoader";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
   return (
     <>
+      <PageLoader />
       <GridLines />
       <CursorFollower />
       <ScrollProgress />
+      <ScrollToTop />
       <Navbar />
       <main>
         <Hero />

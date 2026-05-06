@@ -1,10 +1,32 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
 );
+
+const stats = [
+  { value: 3, suffix: "+", label: "Years Exp." },
+  { value: 20, suffix: "+", label: "Projects" },
+  { value: 10, suffix: "+", label: "Clients" },
+];
+
+function CountUp({ end, suffix, inView }: { end: number; suffix: string; inView: boolean }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    let frame = 0;
+    const total = 60;
+    const timer = setInterval(() => {
+      frame++;
+      setCount(Math.round((frame / total) * end));
+      if (frame >= total) clearInterval(timer);
+    }, 1200 / total);
+    return () => clearInterval(timer);
+  }, [inView, end]);
+  return <>{count}{suffix}</>;
+}
 
 export default function About() {
   const ref = useRef(null);
@@ -59,6 +81,23 @@ export default function About() {
 
             <div className="rule" />
             <a href="#contact" className="btn btn-primary">Get in Touch</a>
+            <div className="rule" />
+
+            <Spacer />
+
+            <div className="rule" />
+            <div style={{ display: "flex", gap: "2.5rem" }}>
+              {stats.map((s) => (
+                <div key={s.label}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, lineHeight: 1 }}>
+                    <CountUp end={s.value} suffix={s.suffix} inView={inView} />
+                  </div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", opacity: 0.4, marginTop: 6 }}>
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
             <div className="rule" />
           </motion.div>
 

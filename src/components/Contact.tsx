@@ -1,6 +1,8 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+
+const EMAIL = "deguzman.johnlloyd12@gmail.com";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
@@ -9,6 +11,13 @@ const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
 export default function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText(EMAIL);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <section
@@ -96,7 +105,7 @@ export default function Contact() {
           <div className="rule" />
           <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
             <a
-              href="mailto:deguzman.johnlloyd12@gmail.com"
+              href={`mailto:${EMAIL}`}
               className="btn btn-primary"
               style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
             >
@@ -112,6 +121,13 @@ export default function Contact() {
               />
               Send an Email
             </a>
+            <button
+              onClick={copyEmail}
+              className="btn btn-outline"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "none" }}
+            >
+              {copied ? "✓ Copied!" : "Copy Email"}
+            </button>
             <a
               href="/RESUME_DE GUZMAN.pdf"
               download
