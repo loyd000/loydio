@@ -91,7 +91,7 @@ const socials = [
 
 export default function Social() {
   const ref = useRef(null);
-  const inView = useInView(ref, { margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section

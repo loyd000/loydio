@@ -11,7 +11,7 @@ const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
 
 export default function Hero() {
   const ref = useRef(null);
-  const inView = useInView(ref, { margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
@@ -53,7 +53,7 @@ export default function Hero() {
         >
           {/* ── Eyebrow ── rule touches element top & bottom */}
           <div className="rule" />
-          <div className="eyebrow">Full-Stack Developer &amp; UI Designer</div>
+          <div className="eyebrow">Full-Stack Developer &amp; Graphic Designer</div>
           <div className="rule" />
 
           <Spacer />

@@ -10,6 +10,17 @@ const links = [
   { label: "Contact", href: "#contact" },
 ];
 
+const mobileMenuLinkStyle: React.CSSProperties = {
+  borderBottom: "1px solid var(--border)",
+  color: "var(--fg)",
+  display: "block",
+  fontSize: 14,
+  letterSpacing: "0.28em",
+  padding: "0.85rem 0",
+  textDecoration: "none",
+  textTransform: "uppercase",
+};
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -130,18 +141,34 @@ export default function Navbar() {
             className="md:hidden overflow-hidden"
             style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}
           >
-            <div className="px-6 py-4 flex flex-col gap-4">
+            <div
+              className="section-container"
+              style={{ paddingTop: "0.75rem", paddingBottom: "1rem" }}
+            >
               {links.map((l) => (
                 <a
                   key={l.href}
                   href={l.href}
                   onClick={() => setMenuOpen(false)}
-                  className="text-sm tracking-widest uppercase py-2 border-b border-black/5"
+                  style={mobileMenuLinkStyle}
                 >
                   {l.label}
                 </a>
               ))}
-              <LocalTime />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                  paddingTop: "1rem",
+                }}
+              >
+                <LocalTime />
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                  <ThemeToggle />
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

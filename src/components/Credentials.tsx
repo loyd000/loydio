@@ -33,7 +33,7 @@ function CredentialItem({ item, index, inView, groupIndex }: { item: Credential;
 
 export default function Credentials() {
   const ref = useRef(null);
-  const inView = useInView(ref, { margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
   const [loading, setLoading] = useState(true);

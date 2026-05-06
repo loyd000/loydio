@@ -10,13 +10,12 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ScrollProgress from "@/components/ScrollProgress";
 import GridLines from "@/components/GridLines";
-import PageLoader from "@/components/PageLoader";
 import ScrollToTop from "@/components/ScrollToTop";
+import SiteIntro from "@/components/SiteIntro";
 
 export default function Home() {
   return (
-    <>
-      <PageLoader />
+    <SiteIntro>
       <GridLines />
       <ScrollProgress />
       <ScrollToTop />
@@ -32,6 +31,6 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-    </>
+    </SiteIntro>
   );
 }

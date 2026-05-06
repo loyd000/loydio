@@ -4,11 +4,77 @@ import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 
 const stack = [
-  { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"] },
-  { category: "Backend", items: ["Node.js", "Express", "PostgreSQL", "Supabase", "Prisma", "REST APIs"] },
-  { category: "Design", items: ["Figma", "Adobe Photoshop", "Canva", "Illustrator", "Framer", "Spline"] },
-  { category: "DevOps & Tools", items: ["Git", "GitHub", "Vercel", "Docker", "VS Code", "Linux"] },
+  {
+    category: "Frontend",
+    items: [
+      { name: "React", note: "Interactive UI systems" },
+      { name: "Next.js", note: "Full-stack web apps" },
+      { name: "TypeScript", note: "Safer application code" },
+      { name: "Tailwind CSS", note: "Fast responsive styling" },
+      { name: "Framer Motion", note: "Polished micro-interactions" },
+      { name: "Vite", note: "Fast prototypes and tooling" },
+    ],
+  },
+  {
+    category: "Backend",
+    items: [
+      { name: "Node.js", note: "Server-side app logic" },
+      { name: "Express", note: "REST services and APIs" },
+      { name: "PostgreSQL", note: "Relational data design" },
+      { name: "Supabase", note: "Auth, database, storage" },
+      { name: "Prisma", note: "Typed database access" },
+      { name: "REST APIs", note: "Clean client-server contracts" },
+    ],
+  },
+  {
+    category: "Design",
+    items: [
+      { name: "Figma", note: "Interfaces and prototypes" },
+      { name: "Adobe Photoshop", note: "Image and visual assets" },
+      { name: "Canva", note: "Fast social graphics" },
+      { name: "Illustrator", note: "Vector and brand work" },
+      { name: "Framer", note: "Interactive design builds" },
+      { name: "Spline", note: "Lightweight 3D visuals" },
+    ],
+  },
+  {
+    category: "DevOps & Tools",
+    items: [
+      { name: "Git", note: "Versioned workflows" },
+      { name: "GitHub", note: "Repos, issues, releases" },
+      { name: "Vercel", note: "Production deployments" },
+      { name: "Docker", note: "Portable app environments" },
+      { name: "VS Code", note: "Daily development setup" },
+      { name: "Linux", note: "Server and CLI workflows" },
+    ],
+  },
 ];
+
+const techIcons = [
+  { name: "React", slug: "react" },
+  { name: "Next.js", slug: "nextdotjs" },
+  { name: "TypeScript", slug: "typescript" },
+  { name: "Tailwind CSS", slug: "tailwindcss" },
+  { name: "Framer Motion", slug: "framer" },
+  { name: "Vite", slug: "vite" },
+  { name: "Node.js", slug: "nodedotjs" },
+  { name: "Express", slug: "express" },
+  { name: "PostgreSQL", slug: "postgresql" },
+  { name: "Supabase", slug: "supabase" },
+  { name: "Prisma", slug: "prisma" },
+  { name: "Figma", slug: "figma" },
+  { name: "Photoshop", slug: "adobephotoshop" },
+  { name: "Canva", slug: "canva" },
+  { name: "Illustrator", slug: "adobeillustrator" },
+  { name: "Git", slug: "git" },
+  { name: "GitHub", slug: "github" },
+  { name: "Vercel", slug: "vercel" },
+  { name: "Docker", slug: "docker" },
+  { name: "VS Code", slug: "visualstudiocode" },
+  { name: "Linux", slug: "linux" },
+];
+
+const simpleIconUrl = (slug: string) => `https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/${slug}.svg`;
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
@@ -64,9 +130,9 @@ export default function TechStack() {
 
         {/* Stack grid */}
         <div
+          className="stack-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
             border: "1px solid var(--border)",
           }}
         >
@@ -96,28 +162,49 @@ export default function TechStack() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {group.items.map((item, ii) => (
                   <motion.div
-                    key={item}
+                    key={item.name}
+                    className="tech-chip"
                     initial={{ opacity: 0, y: 16 }}
                     animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-                    transition={{ duration: 0.4, delay: gi * 0.1 + ii * 0.05 }}
-                    whileHover={{ scale: 1.06 }}
-                    style={{
-                      display: "inline-block",
-                      fontFamily: "'IBM Plex Mono', monospace",
-                      fontSize: 11,
-                      padding: "6px 12px",
-                      border: "1px solid var(--border)",
-                      cursor: "default",
-                      transition: "background 0.2s, color 0.2s",
-                    }}
+                    transition={{ type: "spring", stiffness: 260, damping: 22, delay: gi * 0.1 + ii * 0.045 }}
+                    whileHover={{ y: -3, scale: 1.04 }}
                   >
-                    {item}
+                    <span>{item.name}</span>
+                    <span className="tech-chip-note">{item.note}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
+
+        <Spacer h="2rem" />
+
+        <div className="rule tech-marquee-rule" />
+        <motion.div
+          className="tech-icon-marquee"
+          initial={{ opacity: 0, y: 18 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+          aria-label="Technology icon gallery"
+        >
+          <div className="tech-icon-track">
+            {[...techIcons, ...techIcons].map((icon, index) => (
+              <div className="tech-icon-item" key={`${icon.slug}-${index}`} title={icon.name}>
+                <span
+                  className="tech-icon-mask"
+                  style={{
+                    WebkitMaskImage: `url(${simpleIconUrl(icon.slug)})`,
+                    maskImage: `url(${simpleIconUrl(icon.slug)})`,
+                  }}
+                  aria-hidden
+                />
+                <span>{icon.name}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+        <div className="rule tech-marquee-rule" />
 
       </div>
     </section>

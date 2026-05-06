@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const LOADER_DURATION_MS = 1900;
 
-export default function PageLoader() {
+export default function PageLoader({ onComplete }: { onComplete?: () => void }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,12 +13,16 @@ export default function PageLoader() {
   }, []);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={onComplete}>
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          exit={{ opacity: [1, 0.15, 1, 0, 0.65, 0] }}
+          transition={{
+            duration: 0.42,
+            ease: "linear",
+            times: [0, 0.12, 0.26, 0.42, 0.62, 1],
+          }}
           style={{
             position: "fixed",
             inset: 0,
