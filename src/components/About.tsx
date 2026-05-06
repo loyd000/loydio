@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
@@ -45,11 +46,10 @@ export default function About() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "start" }}>
 
           {/* ── Left: Bio ── */}
-          <motion.div initial={{ opacity: 0, x: -40 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7 }}>
+          <motion.div initial={{ opacity: 0, x: -40 }} animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }} transition={{ duration: 0.7 }}>
             <div className="rule" />
             <h2 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(22px, 3vw, 36px)", fontWeight: 700, lineHeight: 1.2 }}>
-              Engineered with Precision,<br />
-              <span style={{ opacity: 0.25 }}>Designed with Purpose.</span>
+              <TypewriterText text1="Engineered with Precision," text2="Designed with Purpose." inView={inView} />
             </h2>
             <div className="rule" />
 
@@ -101,8 +101,8 @@ export default function About() {
             <div className="rule" />
           </motion.div>
 
-          {/* ── Right: Photo placeholder ── */}
-          <motion.div initial={{ opacity: 0, x: 40 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
+          {/* ── Right: Tech Highlights ── */}
+          <motion.div initial={{ opacity: 0, x: 40 }} animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }} transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="rule" />
             {/* Photo placeholder — replace src with your image later */}
             <motion.div initial="rest" whileHover="hover" style={{ overflow: "hidden", position: "relative" }}>

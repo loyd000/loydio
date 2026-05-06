@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const stack = [
   { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"] },
@@ -34,7 +35,7 @@ export default function TechStack() {
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6 }}
         >
           <div className="rule" />
@@ -46,9 +47,7 @@ export default function TechStack() {
               lineHeight: 1.1,
             }}
           >
-            Balanced Between Logic
-            <br />
-            <span style={{ opacity: 0.25 }}>and Creativity.</span>
+            <TypewriterText text1="Balanced Between Logic" text2="and Creativity." inView={inView} />
           </h2>
           <div className="rule" />
 
@@ -96,11 +95,11 @@ export default function TechStack() {
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {group.items.map((item, ii) => (
-                  <motion.span
+                  <motion.div
                     key={item}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.3, delay: gi * 0.1 + ii * 0.05 }}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+                    transition={{ duration: 0.4, delay: gi * 0.1 + ii * 0.05 }}
                     whileHover={{ scale: 1.06 }}
                     style={{
                       display: "inline-block",
@@ -113,7 +112,7 @@ export default function TechStack() {
                     }}
                   >
                     {item}
-                  </motion.span>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>

@@ -3,6 +3,9 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
+import TypewriterText from "./TypewriterText";
+
+const MONO = "'IBM Plex Mono', monospace";
 
 const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"];
 
@@ -15,7 +18,7 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", transition: "background 0.2s, color 0.2s" }}
+        style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", transition: "background 0.2s, color 0.2s" }}
         onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--fg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--bg)"; }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--bg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--fg)"; }}
       >
@@ -26,7 +29,7 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onModal(project); }}
-      style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+      style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--fg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--bg)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--fg)"; }}
     >
@@ -41,7 +44,7 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.96 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
@@ -59,13 +62,13 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
               <span key={c.trim()} className="tag">{c.trim()}</span>
             ))}
           </div>
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
         </div>
-        <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
+        <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
         <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
           {p.tags.map((tag) => (
-            <span key={tag} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.35 }}>#{tag}</span>
+            <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>
           ))}
         </div>
         <ViewBtn project={p} onModal={onModal} />
@@ -80,7 +83,7 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
     <motion.div
       layout
       initial={{ opacity: 0, scale: 0.96 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
+      animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
@@ -97,7 +100,7 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
               <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
               <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
             </svg>
-            <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
+            <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: MONO, fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
           </>
         )}
       </div>
@@ -110,9 +113,9 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
                 <span key={c.trim()} className="tag">{c.trim()}</span>
               ))}
             </div>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+            <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
           </div>
-          <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{p.title}</h3>
+          <h3 style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{p.title}</h3>
         </div>
         <ViewBtn project={p} onModal={onModal} />
       </div>
@@ -156,10 +159,10 @@ export default function Projects() {
 
       <div className="section-container">
 
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
           <div className="rule" />
-          <h2 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            Work I&apos;ve Built,<br /><span style={{ opacity: 0.25 }}>and Designed.</span>
+          <h2 style={{ fontFamily: MONO, fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
+            <TypewriterText text1="Code that scales," text2="interfaces that inspire." inView={inView} />
           </h2>
           <div className="rule" />
           <div style={{ height: "1.5rem" }} />

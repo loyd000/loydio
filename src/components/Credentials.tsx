@@ -3,38 +3,15 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const MONO = "'IBM Plex Mono', monospace";
+import { useState, useEffect } from "react";
+import { supabase, type Credential, type CredentialPhoto } from "@/lib/supabase";
+import TypewriterText from "./TypewriterText";
 
-type Item = { title: string; org: string; year: string; link?: string };
-
-const certifications: Item[] = [
-  { title: "CS50x: Introduction to Computer Science", org: "Harvard University / edX", year: "2023" },
-  { title: "Google UX Design Certificate", org: "Google / Coursera", year: "2023" },
-  { title: "Responsive Web Design", org: "freeCodeCamp", year: "2022" },
-];
-
-const seminars: Item[] = [
-  { title: "DevCon Philippines", org: "DevCon PH", year: "2024" },
-  { title: "Google I/O Extended Manila", org: "Google Developers", year: "2023" },
-  { title: "UI/UX Design Thinking Workshop", org: "Local Tech Community", year: "2023" },
-];
-
-const achievements: Item[] = [
-  { title: "Best Capstone Project", org: "University", year: "2024" },
-  { title: "Dean's Lister", org: "University", year: "2022 — 2024" },
-  { title: "1st Place — UI Design Competition", org: "Campus Tech Fest", year: "2023" },
-];
-
-const categories = [
-  { label: "Certifications", items: certifications },
-  { label: "Seminars & Events", items: seminars },
-  { label: "Achievements", items: achievements },
-];
-
-function CredentialItem({ item, index, inView, groupIndex }: { item: Item; index: number; inView: boolean; groupIndex: number }) {
+function CredentialItem({ item, index, inView, groupIndex }: { item: Credential; index: number; inView: boolean; groupIndex: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.5, delay: groupIndex * 0.1 + index * 0.08 }}
     >
       <div className="rule" />
@@ -56,7 +33,28 @@ function CredentialItem({ item, index, inView, groupIndex }: { item: Item; index
 
 export default function Credentials() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { margin: "-80px" });
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      supabase.from("credentials").select("*").order("sort_order", { ascending: true }),
+      supabase.from("credential_photos").select("*").order("created_at", { ascending: false })
+    ]).then(([credRes, photoRes]) => {
+      setCredentials(credRes.data ?? []);
+      setPhotos(photoRes.data ?? []);
+      setLoading(false);
+    });
+  }, []);
+
+  const displayPhotos = photos.length > 0 
+    ? [...photos, ...photos] 
+    : [
+        { id: "1", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto,
+        { id: "2", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto
+      ];
 
   return (
     <section id="credentials" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
@@ -70,11 +68,10 @@ export default function Credentials() {
       <div className="section-container">
 
         {/* Heading */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
           <div className="rule" />
           <h2 style={{ fontFamily: MONO, fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            Learned, Certified,<br />
-            <span style={{ opacity: 0.25 }}>Recognized.</span>
+            <TypewriterText text1="Learned, Certified," text2="Recognized." inView={inView} />
           </h2>
           <div className="rule" />
           <div style={{ height: "1.5rem" }} />
@@ -87,31 +84,50 @@ export default function Credentials() {
 
         <div style={{ height: "4rem" }} />
 
-        {/* Three-column grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 0, border: "1px solid var(--border)" }}>
-          {categories.map((cat, gi) => (
-            <motion.div
-              key={cat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: gi * 0.1 }}
-              style={{ borderRight: "1px solid var(--border)", padding: "2rem 2rem 1.5rem" }}
-            >
-              {/* Column header */}
-              <div style={{ marginBottom: "0.5rem" }}>
-                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.4 }}>
-                  — {cat.label}
-                </span>
-              </div>
-
-              {/* Items */}
-              {cat.items.map((item, ii) => (
-                <CredentialItem key={item.title} item={item} index={ii} inView={inView} groupIndex={gi} />
+        {/* Unified Layout with Vertical Slider */}
+        {loading ? (
+          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+        ) : credentials.length === 0 ? (
+          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>— NO CREDENTIALS UPLOADED</div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "4rem" }}>
+            
+            {/* Left: Text List */}
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {credentials.map((item, ii) => (
+                <CredentialItem key={item.id} item={item} index={ii} inView={inView} groupIndex={0} />
               ))}
               <div className="rule" />
-            </motion.div>
-          ))}
-        </div>
+            </div>
+
+            {/* Right: Vertical Image Slider */}
+            <div style={{ position: "relative", height: "100%", minHeight: "400px" }}>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={inView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                style={{ position: "absolute", inset: 0, overflow: "hidden", border: "1px solid var(--border)" }}
+              >
+                <motion.div 
+                  initial={{ y: "0%" }}
+                  animate={inView ? { y: ["0%", "-50%"] } : { y: "0%" }}
+                  transition={{ ease: "linear", duration: 15, repeat: Infinity }}
+                  style={{ display: "flex", flexDirection: "column" }}
+                >
+                  {displayPhotos.map((p, i) => (
+                    <img 
+                      key={i}
+                      src={p.image_url} 
+                      alt="" 
+                      style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
+                    />
+                  ))}
+                </motion.div>
+              </motion.div>
+            </div>
+
+          </div>
+        )}
 
       </div>
     </section>

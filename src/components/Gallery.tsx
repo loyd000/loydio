@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const items = [
   { id: 1, label: "Dashboard UI", type: "UI Design", cols: 2, rows: 1, color: "#f0f0f0" },
@@ -33,7 +34,7 @@ export default function Gallery() {
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6 }}
           style={{ marginBottom: "3rem" }}
         >
@@ -46,9 +47,7 @@ export default function Gallery() {
               marginBottom: "1rem",
             }}
           >
-            Visual Archive.
-            <br />
-            <span style={{ opacity: 0.25 }}>Work &amp; Experiments.</span>
+            <TypewriterText text1="Visual Archive." text2="Work & Experiments." inView={inView} />
           </h2>
           <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 420, lineHeight: 1.8 }}>
             Screenshots, mockups, and visual explorations from past projects and side experiments.
@@ -68,7 +67,7 @@ export default function Gallery() {
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.4, delay: i * 0.07 }}
               onClick={() => setSelected(item)}
               style={{

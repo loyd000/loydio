@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const EMAIL = "deguzman.johnlloyd12@gmail.com";
 
@@ -33,7 +34,7 @@ export default function Contact() {
       <div className="section-container" style={{ textAlign: "center" }}>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.7 }}
         >
           {/* Eyebrow */}
@@ -74,9 +75,7 @@ export default function Contact() {
               lineHeight: 1.05,
             }}
           >
-            Built something<br />
-            in mind?<br />
-            <span style={{ opacity: 0.25 }}>Let&apos;s make it real.</span>
+            <TypewriterText text1="Built something in mind?" text2="Let's make it real." inView={inView} />
           </h2>
           <div className="rule" />
 

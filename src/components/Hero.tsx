@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const roles = ["Developer.", "Designer.", "Builder.", "Problem Solver."];
 
@@ -9,6 +10,8 @@ const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
 );
 
 export default function Hero() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { margin: "-80px" });
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
@@ -40,8 +43,9 @@ export default function Hero() {
 
       <div className="section-container" style={{ paddingTop: "7rem", paddingBottom: "5rem" }}>
         <motion.div
+          ref={ref}
           initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
           {/* ── Eyebrow ── rule touches element top & bottom */}
@@ -54,7 +58,7 @@ export default function Hero() {
           {/* ── Main heading ── */}
           <div className="rule" />
           <h1 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(72px, 13vw, 160px)", fontWeight: 700, lineHeight: 0.92, letterSpacing: "-0.03em" }}>
-            Loyd.
+            <TypewriterText text1="Loyd." inView={inView} />
           </h1>
           <div className="rule" />
 
@@ -93,7 +97,7 @@ export default function Hero() {
         {/* Scroll cue */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={inView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ delay: 1.5 }}
           style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}
         >

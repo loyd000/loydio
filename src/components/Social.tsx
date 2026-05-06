@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import TypewriterText from "./TypewriterText";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
@@ -89,7 +90,7 @@ const socials = [
 
 export default function Social() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { margin: "-80px" });
 
   return (
     <section
@@ -107,11 +108,10 @@ export default function Social() {
       <div className="section-container">
 
         {/* Heading */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
           <div className="rule" />
           <h2 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            Find Me<br />
-            <span style={{ opacity: 0.25 }}>Across the Internet.</span>
+            <TypewriterText text1="Find Me" text2="Across the Internet." inView={inView} />
           </h2>
           <div className="rule" />
           <Spacer h="1.5rem" />
@@ -134,7 +134,7 @@ export default function Social() {
             const card = (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.4, delay: i * 0.07 }}
                 style={{
                   display: "flex",
