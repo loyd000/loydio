@@ -143,7 +143,7 @@ export default function Projects() {
         <span className="vertical-label">Projects</span>
       </div>
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">04</span>
+        <span className="section-watermark">05</span>
       </div>
 
       <div className="section-container">

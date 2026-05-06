@@ -105,17 +105,41 @@ export default function About() {
           <motion.div initial={{ opacity: 0, x: 40 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="rule" />
             {/* Photo placeholder — replace src with your image later */}
-            <img
-              src="/me.jpg"
-              alt="John Lloyd De Guzman"
-              style={{
-                width: "100%",
-                aspectRatio: "3 / 4",
-                objectFit: "cover",
-                objectPosition: "center top",
-                display: "block",
-              }}
-            />
+            <motion.div initial="rest" whileHover="hover" style={{ overflow: "hidden", position: "relative" }}>
+              <motion.img
+                src="/me.jpg"
+                alt="John Lloyd De Guzman"
+                style={{
+                  width: "100%",
+                  aspectRatio: "3 / 4",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  display: "block",
+                }}
+                variants={{
+                  rest: { scale: 1, filter: "grayscale(100%) opacity(0.9)" },
+                  hover: { scale: 1.05, filter: "grayscale(0%) opacity(1)" }
+                }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+              {/* Shine Overlay */}
+              <motion.div
+                variants={{
+                  rest: { left: "-150%" },
+                  hover: { left: "150%" }
+                }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  width: "35%",
+                  background: "#fff",
+                  transform: "skewX(-25deg)",
+                  pointerEvents: "none",
+                }}
+              />
+            </motion.div>
 
             <div className="rule" />
           </motion.div>

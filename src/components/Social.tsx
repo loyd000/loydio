@@ -101,7 +101,7 @@ export default function Social() {
         <span className="vertical-label">Social</span>
       </div>
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">05</span>
+        <span className="section-watermark">06</span>
       </div>
 
       <div className="section-container">

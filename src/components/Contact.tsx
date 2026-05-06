@@ -27,7 +27,7 @@ export default function Contact() {
     >
 
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">06</span>
+        <span className="section-watermark">07</span>
       </div>
 
       <div className="section-container" style={{ textAlign: "center" }}>

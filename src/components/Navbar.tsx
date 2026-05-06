@@ -6,10 +6,7 @@ import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Stack", href: "#stack" },
   { label: "Projects", href: "#projects" },
-  { label: "Social", href: "#social" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -19,25 +16,34 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const allSections = ["about", "experience", "stack", "credentials", "projects", "social", "contact"];
+    
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
 
-  useEffect(() => {
-    const ids = links.map((l) => l.href.slice(1));
-    const observers: IntersectionObserver[] = [];
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { threshold: 0.3, rootMargin: "-64px 0px -40% 0px" }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((obs) => obs.disconnect());
+      // Find the active section based on what's in the top half of the viewport
+      let current = "";
+      allSections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // If the section overlaps the top 200px of the screen, it's active
+          if (rect.top <= 250 && rect.bottom >= 250) {
+            current = id;
+          }
+        }
+      });
+
+      if (current) {
+        if (["about", "experience", "stack", "credentials"].includes(current)) setActiveSection("about");
+        else if (["projects", "social"].includes(current)) setActiveSection("projects");
+        else if (current === "contact") setActiveSection("contact");
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // Run once on mount
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
