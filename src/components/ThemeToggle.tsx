@@ -33,7 +33,7 @@ export default function ThemeToggle() {
         background: "none",
         border: "1px solid var(--border-strong)",
         color: "var(--fg)",
-        cursor: "none",
+        cursor: "pointer",
         width: 32,
         height: 32,
         display: "flex",

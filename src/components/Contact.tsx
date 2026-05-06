@@ -124,7 +124,7 @@ export default function Contact() {
             <button
               onClick={copyEmail}
               className="btn btn-outline"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "none" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
             >
               {copied ? "✓ Copied!" : "Copy Email"}
             </button>

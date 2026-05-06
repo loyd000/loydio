@@ -81,7 +81,7 @@ export default function Gallery() {
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
-                cursor: "none",
+                cursor: "pointer",
                 overflow: "hidden",
               }}
             >
@@ -183,7 +183,7 @@ export default function Gallery() {
                   style={{
                     fontSize: 20,
                     opacity: 0.35,
-                    cursor: "none",
+                    cursor: "pointer",
                     background: "none",
                     border: "none",
                     fontFamily: "'IBM Plex Mono', monospace",

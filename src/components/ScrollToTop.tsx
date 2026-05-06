@@ -35,7 +35,7 @@ export default function ScrollToTop() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "none",
+            cursor: "pointer",
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 18,
             transition: "border-color 0.2s",

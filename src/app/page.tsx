@@ -7,7 +7,6 @@ import Projects from "@/components/Projects";
 import Social from "@/components/Social";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import CursorFollower from "@/components/CursorFollower";
 import ScrollProgress from "@/components/ScrollProgress";
 import GridLines from "@/components/GridLines";
 import PageLoader from "@/components/PageLoader";
@@ -18,7 +17,6 @@ export default function Home() {
     <>
       <PageLoader />
       <GridLines />
-      <CursorFollower />
       <ScrollProgress />
       <ScrollToTop />
       <Navbar />

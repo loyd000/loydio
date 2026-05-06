@@ -147,7 +147,7 @@ export default function Social() {
                   background: "var(--bg)",
                   transition: s.external ? "background 0.2s" : undefined,
                   position: "relative",
-                  cursor: s.external ? "none" : "default",
+                  cursor: s.external ? "pointer" : "default",
                 }}
                 onMouseEnter={s.external ? (e) => (e.currentTarget.style.background = "var(--hover-bg)") : undefined}
                 onMouseLeave={s.external ? (e) => (e.currentTarget.style.background = "var(--bg)") : undefined}
