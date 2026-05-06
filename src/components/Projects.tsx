@@ -54,7 +54,11 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
 
       <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
-          <span className="tag">{p.category}</span>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {(p.category || "").split(",").map(c => (
+              <span key={c.trim()} className="tag">{c.trim()}</span>
+            ))}
+          </div>
           <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.3 }}>{p.year}</span>
         </div>
         <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
@@ -101,7 +105,11 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
       <div style={{ padding: "1.25rem 1.5rem", display: "flex", flexDirection: "column", flex: 1, gap: "1rem" }}>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-            <span className="tag">{p.category}</span>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {(p.category || "").split(",").map(c => (
+                <span key={c.trim()} className="tag">{c.trim()}</span>
+              ))}
+            </div>
             <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.3 }}>{p.year}</span>
           </div>
           <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{p.title}</h3>
@@ -135,7 +143,7 @@ export default function Projects() {
       });
   }, []);
 
-  const filtered = active === "All" ? devProjects : devProjects.filter((p) => p.category === active);
+  const filtered = active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map(c => c.trim()).includes(active));
 
   return (
     <section id="projects" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>

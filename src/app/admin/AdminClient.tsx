@@ -6,11 +6,14 @@ import { logout } from "./actions";
 const MONO = "'IBM Plex Mono', monospace";
 const BUCKET = "project-images";
 
+const DEV_CATEGORIES = ["Web Dev", "Full-Stack", "Mobile", "IoT", "Tools", "Other"];
+const DESIGN_CATEGORIES = ["UI/UX", "Branding", "Graphic Design", "Web Design", "Other"];
+
 type FormState = {
   id?: string;
   title: string;
   description: string;
-  category: string;
+  category: string[];
   tagsInput: string;
   year: string;
   link: string;
@@ -20,11 +23,11 @@ type FormState = {
 };
 
 function emptyForm(type: "dev" | "design"): FormState {
-  return { title: "", description: "", category: "", tagsInput: "", year: String(new Date().getFullYear()), link: "", image_url: "", images: [], type };
+  return { title: "", description: "", category: [], tagsInput: "", year: String(new Date().getFullYear()), link: "", image_url: "", images: [], type };
 }
 
 function projectToForm(p: Project): FormState {
-  return { id: p.id, title: p.title, description: p.description, category: p.category, tagsInput: p.tags.join(", "), year: p.year, link: p.link ?? "", image_url: p.image_url ?? "", images: p.images ?? [], type: p.type };
+  return { id: p.id, title: p.title, description: p.description, category: p.category ? p.category.split(",").map(c => c.trim()) : [], tagsInput: p.tags.join(", "), year: p.year, link: p.link ?? "", image_url: p.image_url ?? "", images: p.images ?? [], type: p.type };
 }
 
 async function uploadFile(file: File): Promise<string> {
@@ -93,7 +96,7 @@ export default function AdminClient() {
     const payload = {
       title: form.title.trim(),
       description: form.description.trim(),
-      category: form.category.trim(),
+      category: form.category.join(", "),
       tags,
       year: form.year.trim(),
       link: form.link.trim() || null,
@@ -101,7 +104,7 @@ export default function AdminClient() {
       images: form.images,
       type: form.type,
     };
-    if (!payload.title || !payload.category || !payload.year) {
+    if (!payload.title || form.category.length === 0 || !payload.year) {
       setError("Title, category, and year are required.");
       setSaving(false);
       return;
@@ -166,7 +169,6 @@ export default function AdminClient() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem 2rem" }}>
               {([
                 ["title", "Title *"],
-                ["category", "Category *"],
                 ["year", "Year *"],
                 ["link", "Link (optional — leave blank if none)"],
                 ["tagsInput", "Tags (comma-separated)"],
@@ -178,6 +180,28 @@ export default function AdminClient() {
                     style={inputStyle} />
                 </div>
               ))}
+
+              {/* Categories */}
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 10 }}>Category *</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+                  {(form.type === "dev" ? DEV_CATEGORIES : DESIGN_CATEGORIES).map(cat => (
+                    <label key={cat} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, cursor: "pointer" }}>
+                      <input 
+                        type="checkbox" 
+                        checked={form.category.includes(cat)} 
+                        onChange={(e) => {
+                          const newCat = e.target.checked 
+                            ? [...form.category, cat] 
+                            : form.category.filter(c => c !== cat);
+                          setForm(f => f ? { ...f, category: newCat } : f);
+                        }} 
+                      />
+                      {cat}
+                    </label>
+                  ))}
+                </div>
+              </div>
               <div style={{ gridColumn: "1 / -1" }}>
                 <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 6 }}>Description</label>
                 <textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", borderBottom: "1px solid #ccc" }} />
