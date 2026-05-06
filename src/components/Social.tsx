@@ -38,7 +38,7 @@ const DiscordIcon = () => (
 );
 
 const RiotIcon = () => (
-  <img src="/riot-logo.png" alt="Riot Games" width={28} height={28} style={{ objectFit: "contain", filter: "brightness(0)" }} />
+  <img src="/riot-logo.png" alt="Riot Games" width={28} height={28} className="riot-icon" style={{ objectFit: "contain" }} />
 );
 
 /* ── Social data ──────────────────────── */
@@ -95,7 +95,7 @@ export default function Social() {
     <section
       id="social"
       ref={ref}
-      style={{ position: "relative", padding: "8rem 0", background: "#fff", overflow: "hidden" }}
+      style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Social</span>
@@ -128,7 +128,7 @@ export default function Social() {
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          border: "1px solid rgba(0,0,0,0.075)",
+          border: "1px solid var(--border)",
         }}>
           {socials.map((s, i) => {
             const card = (
@@ -141,16 +141,16 @@ export default function Social() {
                   flexDirection: "column",
                   justifyContent: "space-between",
                   padding: "2rem",
-                  borderRight: "1px solid rgba(0,0,0,0.075)",
-                  borderBottom: "1px solid rgba(0,0,0,0.075)",
+                  borderRight: "1px solid var(--border)",
+                  borderBottom: "1px solid var(--border)",
                   minHeight: 180,
-                  background: "#fff",
+                  background: "var(--bg)",
                   transition: s.external ? "background 0.2s" : undefined,
                   position: "relative",
                   cursor: s.external ? "none" : "default",
                 }}
-                onMouseEnter={s.external ? (e) => (e.currentTarget.style.background = "rgba(0,0,0,0.02)") : undefined}
-                onMouseLeave={s.external ? (e) => (e.currentTarget.style.background = "#fff") : undefined}
+                onMouseEnter={s.external ? (e) => (e.currentTarget.style.background = "var(--hover-bg)") : undefined}
+                onMouseLeave={s.external ? (e) => (e.currentTarget.style.background = "var(--bg)") : undefined}
               >
                 {/* Top row: icon + arrow */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>

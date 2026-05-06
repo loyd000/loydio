@@ -21,7 +21,7 @@ export default function TechStack() {
     <section
       id="stack"
       ref={ref}
-      style={{ position: "relative", padding: "8rem 0", background: "#fff", overflow: "hidden" }}
+      style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Tech Stack</span>
@@ -68,7 +68,7 @@ export default function TechStack() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            border: "1px solid rgba(0,0,0,0.075)",
+            border: "1px solid var(--border)",
           }}
         >
           {stack.map((group, gi) => (
@@ -79,8 +79,8 @@ export default function TechStack() {
               transition={{ duration: 0.5, delay: gi * 0.1 }}
               style={{
                 padding: "2rem",
-                borderRight: "1px solid rgba(0,0,0,0.075)",
-                borderBottom: "1px solid rgba(0,0,0,0.075)",
+                borderRight: "1px solid var(--border)",
+                borderBottom: "1px solid var(--border)",
               }}
             >
               <p
@@ -107,7 +107,7 @@ export default function TechStack() {
                       fontFamily: "'IBM Plex Mono', monospace",
                       fontSize: 11,
                       padding: "6px 12px",
-                      border: "1px solid rgba(0,0,0,0.075)",
+                      border: "1px solid var(--border)",
                       cursor: "default",
                       transition: "background 0.2s, color 0.2s",
                     }}

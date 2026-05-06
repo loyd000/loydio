@@ -35,7 +35,7 @@ export default function Experience() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="experience" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "#fff", overflow: "hidden" }}>
+    <section id="experience" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Experience</span>
       </div>
@@ -56,13 +56,13 @@ export default function Experience() {
 
         <div style={{ position: "relative" }}>
           {/* Timeline vertical line */}
-          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 1, background: "rgba(0,0,0,0.075)" }} />
+          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 1, background: "var(--border)" }} />
 
           {experiences.map((exp, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -24 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.15 }}>
               <div className="rule" />
               <div style={{ position: "relative", paddingLeft: "3rem", paddingTop: "2.5rem", paddingBottom: "2.5rem" }}>
-                <div style={{ position: "absolute", left: -5, top: "2.75rem", width: 11, height: 11, borderRadius: "50%", border: "1.5px solid rgba(0,0,0,0.3)", background: "#fff" }} />
+                <div style={{ position: "absolute", left: -5, top: "2.75rem", width: 11, height: 11, borderRadius: "50%", border: "1.5px solid var(--border-strong)", background: "var(--bg)" }} />
                 <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "1rem" }}>
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 18, fontWeight: 700, marginBottom: "0.25rem" }}>{exp.role}</h3>

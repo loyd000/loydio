@@ -14,7 +14,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={ref}
-      style={{ position: "relative", padding: "10rem 0", background: "#fff", overflow: "hidden" }}
+      style={{ position: "relative", padding: "10rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
       {/* Corner plus markers */}
       <span className="plus-marker" style={{ top: 32, left: 32 }}>+</span>
@@ -42,7 +42,7 @@ export default function Contact() {
               gap: 16,
             }}
           >
-            <div style={{ width: 32, height: 1, background: "#000", opacity: 0.3 }} />
+            <div style={{ width: 32, height: 1, background: "var(--fg)", opacity: 0.3 }} />
             <span
               style={{
                 fontFamily: "'IBM Plex Mono', monospace",

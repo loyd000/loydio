@@ -6,6 +6,29 @@
   --foreground: #000000;
   --font-mono: 'IBM Plex Mono', monospace;
   --font-sans: 'Space Grotesk', sans-serif;
+
+  /* ── Theme tokens ── */
+  --bg:            #ffffff;
+  --fg:            #000000;
+  --border:        rgba(0, 0, 0, 0.075);
+  --border-strong: rgba(0, 0, 0, 0.2);
+  --border-mid:    rgba(0, 0, 0, 0.12);
+  --border-heavy:  rgba(0, 0, 0, 0.25);
+  --hover-bg:      rgba(0, 0, 0, 0.02);
+  --subtle-bg:     rgba(0, 0, 0, 0.04);
+  --nav-bg:        rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="dark"] {
+  --bg:            #181818;
+  --fg:            #ffffff;
+  --border:        rgba(255, 255, 255, 0.075);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --border-mid:    rgba(255, 255, 255, 0.12);
+  --border-heavy:  rgba(255, 255, 255, 0.25);
+  --hover-bg:      rgba(255, 255, 255, 0.03);
+  --subtle-bg:     rgba(255, 255, 255, 0.05);
+  --nav-bg:        rgba(24, 24, 24, 0.95);
 }
 
 * {
@@ -19,17 +42,30 @@ html {
 }
 
 body {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: var(--bg);
+  color: var(--fg);
   font-family: 'IBM Plex Mono', monospace;
   cursor: none;
   overflow-x: hidden;
   line-height: 1.6;
 }
 
+/* Only transition colors during the theme toggle, not always
+   (prevents interference with framer-motion animations)       */
+.theme-transitioning,
+.theme-transitioning *,
+.theme-transitioning *::before,
+.theme-transitioning *::after {
+  transition:
+    background-color 0.18s ease,
+    border-color     0.18s ease,
+    color            0.18s ease,
+    fill             0.18s ease !important;
+}
+
 ::selection {
-  background: #000;
-  color: #fff;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 ::-webkit-scrollbar {
@@ -37,11 +73,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #fff;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #000;
+  background: var(--fg);
 }
 
 /* ── Buttons ─────────────────────────────── */
@@ -64,29 +100,29 @@ body {
 }
 
 .btn-primary {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
+  background: var(--fg);
+  color: var(--bg);
+  border: 1px solid var(--fg);
 }
 
 .btn-primary:hover {
   background: transparent;
-  color: #000;
+  color: var(--fg);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px var(--border-mid);
 }
 
 .btn-outline {
   background: transparent;
-  color: #000;
-  border: 1px solid #000;
+  color: var(--fg);
+  border: 1px solid var(--fg);
 }
 
 .btn-outline:hover {
-  background: #000;
-  color: #fff;
+  background: var(--fg);
+  color: var(--bg);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px var(--border-mid);
 }
 
 .btn-outline-white {
@@ -152,7 +188,11 @@ body {
 
 .grid-line {
   width: 1px;
-  background: rgba(0, 0, 0, 0.075);
+  background: var(--border);
+}
+
+[data-theme="dark"] .grid-strip {
+  filter: invert(1);
 }
 
 /* inner lines — at content boundary (matches section-container padding) */
@@ -240,7 +280,7 @@ body {
    line bleeds from one inner-edge grid-line to the other.  */
 .rule {
   height: 1px;
-  background: rgba(0, 0, 0, 0.075);
+  background: var(--border);
   margin-left: -16rem;
   margin-right: -16rem;
 }
@@ -288,7 +328,7 @@ body {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   padding: 5px 12px;
-  border: 1px solid rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--border-strong);
 }
 
 .tag-white {
@@ -381,6 +421,10 @@ body {
   pointer-events: none;
 }
 
+[data-theme="dark"] .section-watermark {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.06);
+}
+
 .vertical-label {
   writing-mode: vertical-rl;
   text-orientation: mixed;
@@ -408,3 +452,11 @@ body {
   user-select: none;
   line-height: 1;
 }
+
+[data-theme="dark"] .plus-marker {
+  color: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Theme-aware image filter ── */
+.riot-icon { filter: brightness(0); }
+[data-theme="dark"] .riot-icon { filter: brightness(0) invert(1); }

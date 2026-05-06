@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LocalTime from "./LocalTime";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "About", href: "#about" },
@@ -27,9 +28,12 @@ export default function Navbar() {
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/95 backdrop-blur-sm border-b border-black/10" : ""
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={scrolled ? {
+        background: "var(--nav-bg)",
+        backdropFilter: "blur(8px)",
+        borderBottom: "1px solid var(--border)",
+      } : {}}
     >
       <div className="section-container flex items-center justify-between h-16">
         {/* Logo */}
@@ -55,6 +59,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-6">
           <LocalTime />
+          <ThemeToggle />
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500 blink" />
             <span className="text-[10px] uppercase tracking-widest opacity-60">Available</span>
@@ -90,7 +95,8 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white border-t border-black/10 overflow-hidden"
+            className="md:hidden overflow-hidden"
+            style={{ background: "var(--bg)", borderTop: "1px solid var(--border))" }}
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (

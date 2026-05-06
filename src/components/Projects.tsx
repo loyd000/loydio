@@ -81,16 +81,16 @@ function ProjectCard({
       style={{
         display: "block",
         padding: "2rem",
-        borderRight: "1px solid rgba(0,0,0,0.075)",
-        borderBottom: "1px solid rgba(0,0,0,0.075)",
+        borderRight: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
         textDecoration: "none",
-        color: "#000",
+        color: "var(--fg)",
         position: "relative",
-        background: "#fff",
+        background: "var(--bg)",
         transition: "background 0.2s",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.02)")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--border)")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg)")}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
         <span className="tag">{category}</span>
@@ -117,30 +117,30 @@ function DesignCard({ title, category, year, inView, i }: { title: string; categ
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
       style={{
-        borderRight: "1px solid rgba(0,0,0,0.075)",
-        borderBottom: "1px solid rgba(0,0,0,0.075)",
-        background: "#fff",
+        borderRight: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
+        background: "var(--bg)",
         transition: "background 0.2s",
         cursor: "default",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.02)")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--border)")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "var(--bg)")}
     >
       {/* Image placeholder */}
       <div style={{
         width: "100%",
         aspectRatio: "4 / 3",
-        background: "rgba(0,0,0,0.03)",
-        borderBottom: "1px solid rgba(0,0,0,0.075)",
+        background: "var(--border)",
+        borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
       }}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
-          <rect x="3" y="3" width="18" height="18" stroke="#000" strokeWidth="1" />
-          <circle cx="8.5" cy="8.5" r="2" stroke="#000" strokeWidth="1" />
-          <path d="M3 16l5-5 4 4 3-3 6 6" stroke="#000" strokeWidth="1" strokeLinejoin="round" />
+          <rect x="3" y="3" width="18" height="18" stroke="var(--fg)" strokeWidth="1" />
+          <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
+          <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
         </svg>
         <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
       </div>
@@ -166,7 +166,7 @@ export default function Projects() {
     <section
       id="projects"
       ref={ref}
-      style={{ position: "relative", padding: "8rem 0", background: "#fff", overflow: "hidden" }}
+      style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Projects</span>
@@ -221,9 +221,9 @@ export default function Projects() {
                   textTransform: "uppercase",
                   padding: "8px 16px",
                   border: "1px solid",
-                  borderColor: active === cat ? "#000" : "rgba(0,0,0,0.2)",
-                  background: active === cat ? "#000" : "transparent",
-                  color: active === cat ? "#fff" : "#000",
+                  borderColor: active === cat ? "var(--fg)" : "var(--border-strong)",
+                  background: active === cat ? "var(--fg)" : "transparent",
+                  color: active === cat ? "var(--bg)" : "var(--fg)",
                   cursor: "none",
                   transition: "all 0.2s",
                 }}

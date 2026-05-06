@@ -41,8 +41,8 @@ export default function CursorFollower() {
         style={{ x: springX, y: springY }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-black rounded-full pointer-events-none z-[9999]"
-        style={{ x: dotX, y: dotY }}
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[9999]"
+        style={{ x: dotX, y: dotY, background: "var(--fg)" }}
       />
     </>
   );

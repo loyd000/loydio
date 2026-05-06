@@ -11,7 +11,7 @@ export default function About() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "#fff", overflow: "hidden" }}>
+    <section id="about" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">About Me</span>
       </div>

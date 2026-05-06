@@ -36,7 +36,7 @@ export default function Hero() {
   }, [displayed, typing, roleIndex]);
 
   return (
-    <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", background: "#fff" }}>
+    <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", background: "var(--bg)" }}>
       <span className="plus-marker" style={{ top: 96, left: 32 }}>+</span>
       <span className="plus-marker" style={{ top: 96, right: 32 }}>+</span>
       <span className="plus-marker" style={{ bottom: 96, left: 32 }}>+</span>
@@ -105,7 +105,7 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            style={{ width: 1, height: 40, background: "rgba(0,0,0,0.25)" }}
+            style={{ width: 1, height: 40, background: "var(--border-heavy)" }}
           />
         </motion.div>
       </div>
