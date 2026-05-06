@@ -37,10 +37,6 @@ export default function Hero() {
 
   return (
     <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", background: "var(--bg)" }}>
-      <span className="plus-marker" style={{ top: 96, left: 32 }}>+</span>
-      <span className="plus-marker" style={{ top: 96, right: 32 }}>+</span>
-      <span className="plus-marker" style={{ bottom: 96, left: 32 }}>+</span>
-      <span className="plus-marker" style={{ bottom: 96, right: 32 }}>+</span>
 
       <div className="section-container" style={{ paddingTop: "7rem", paddingBottom: "5rem" }}>
         <motion.div

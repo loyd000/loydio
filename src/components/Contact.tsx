@@ -16,11 +16,6 @@ export default function Contact() {
       ref={ref}
       style={{ position: "relative", padding: "10rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      {/* Corner plus markers */}
-      <span className="plus-marker" style={{ top: 32, left: 32 }}>+</span>
-      <span className="plus-marker" style={{ top: 32, right: 32 }}>+</span>
-      <span className="plus-marker" style={{ bottom: 32, left: 32 }}>+</span>
-      <span className="plus-marker" style={{ bottom: 32, right: 32 }}>+</span>
 
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
         <span className="section-watermark">06</span>
