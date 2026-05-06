@@ -1,11 +1,11 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-
-const MONO = "'IBM Plex Mono', monospace";
-import { useState, useEffect } from "react";
 import { supabase, type Credential, type CredentialPhoto } from "@/lib/supabase";
 import TypewriterText from "./TypewriterText";
+
+const MONO = "'IBM Plex Mono', monospace";
 
 function CredentialItem({ item, index, inView, groupIndex }: { item: Credential; index: number; inView: boolean; groupIndex: number }) {
   return (
@@ -37,12 +37,18 @@ export default function Credentials() {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     Promise.all([
       supabase.from("credentials").select("*").order("sort_order", { ascending: true }),
       supabase.from("credential_photos").select("*").order("created_at", { ascending: false })
     ]).then(([credRes, photoRes]) => {
+      if (credRes.error || photoRes.error) {
+        setLoadError(credRes.error?.message ?? photoRes.error?.message ?? "Credentials failed to load.");
+        setLoading(false);
+        return;
+      }
       setCredentials(credRes.data ?? []);
       setPhotos(photoRes.data ?? []);
       setLoading(false);
@@ -87,6 +93,8 @@ export default function Credentials() {
         {/* Unified Layout with Vertical Slider */}
         {loading ? (
           <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+        ) : loadError ? (
+          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>CREDENTIALS FAILED TO LOAD</div>
         ) : credentials.length === 0 ? (
           <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>— NO CREDENTIALS UPLOADED</div>
         ) : (
@@ -115,10 +123,13 @@ export default function Credentials() {
                   style={{ display: "flex", flexDirection: "column" }}
                 >
                   {displayPhotos.map((p, i) => (
-                    <img 
-                      key={i}
-                      src={p.image_url} 
-                      alt="" 
+                    <Image
+                      key={`${p.id}-${i}`}
+                      src={p.image_url}
+                      alt=""
+                      width={800}
+                      height={600}
+                      sizes="(max-width: 900px) 100vw, 50vw"
                       style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
                     />
                   ))}

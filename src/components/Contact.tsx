@@ -14,10 +14,14 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [copied, setCopied] = useState(false);
 
-  const copyEmail = () => {
-    navigator.clipboard.writeText(EMAIL);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${EMAIL}`;
+    }
   };
 
   return (
@@ -59,7 +63,7 @@ export default function Contact() {
             >
               Let&apos;s Work Together
             </span>
-            <div style={{ width: 32, height: 1, background: "#000", opacity: 0.3 }} />
+            <div style={{ width: 32, height: 1, background: "var(--fg)", opacity: 0.3 }} />
           </div>
           <div className="rule" />
 
@@ -70,9 +74,12 @@ export default function Contact() {
           <h2
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: "clamp(36px, 7vw, 88px)",
+              fontSize: "clamp(28px, 4vw, 58px)",
               fontWeight: 700,
               lineHeight: 1.05,
+              maxWidth: 1120,
+              margin: "0 auto",
+              overflowWrap: "break-word",
             }}
           >
             <TypewriterText text1="Built something in mind?" text2="Let's make it real." inView={inView} />

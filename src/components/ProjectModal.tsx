@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
 
@@ -8,7 +9,6 @@ const MONO = "'IBM Plex Mono', monospace";
 
 export default function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [idx, setIdx] = useState(0);
-  const [mounted, setMounted] = useState(false);
 
   // Collect all images: screenshots first, then cover as fallback
   const images = project.images?.length
@@ -17,16 +17,20 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
     ? [project.image_url]
     : [];
 
-  useEffect(() => { setMounted(true); }, []);
-
   // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  const prev = useCallback(() => setIdx((i) => (i - 1 + images.length) % images.length), [images.length]);
-  const next = useCallback(() => setIdx((i) => (i + 1) % images.length), [images.length]);
+  const prev = useCallback(() => {
+    if (images.length < 2) return;
+    setIdx((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+  const next = useCallback(() => {
+    if (images.length < 2) return;
+    setIdx((i) => (i + 1) % images.length);
+  }, [images.length]);
 
   // Keyboard nav
   useEffect(() => {
@@ -39,7 +43,8 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
     return () => window.removeEventListener("keydown", handler);
   }, [onClose, prev, next]);
 
-  if (!mounted) return null;
+  const portalRoot = typeof document === "undefined" ? null : document.body;
+  if (!portalRoot) return null;
 
   return createPortal(
     <AnimatePresence>
@@ -85,16 +90,22 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
               {/* Main image */}
               <div style={{ flex: 1, position: "relative", overflow: "hidden", minHeight: 0 }}>
                 <AnimatePresence mode="wait">
-                  <motion.img
+                  <motion.div
                     key={idx}
-                    src={images[idx]}
-                    alt={`${project.title} screenshot ${idx + 1}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.2 }}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    <Image
+                      src={images[idx]}
+                      alt={`${project.title} screenshot ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 50vw"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
                 {/* Arrows */}
@@ -115,8 +126,7 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
                       onClick={() => setIdx(i)}
                       style={{ flexShrink: 0, width: 48, height: 36, border: i === idx ? "2px solid var(--fg)" : "2px solid transparent", padding: 0, cursor: "pointer", overflow: "hidden", background: "none" }}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                      <Image src={url} alt="" width={48} height={36} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                     </button>
                   ))}
                   <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35, alignSelf: "center", marginLeft: 4, whiteSpace: "nowrap" }}>{idx + 1} / {images.length}</span>
@@ -161,6 +171,6 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
         </motion.div>
       </motion.div>
     </AnimatePresence>,
-    document.body
+    portalRoot
   );
 }

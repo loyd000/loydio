@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
@@ -51,8 +52,9 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
     >
       {/* Cover image */}
       {p.image_url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={p.image_url} alt={p.title} style={{ width: "100%", aspectRatio: "16 / 9", objectFit: "cover", display: "block", borderBottom: "1px solid var(--border)" }} />
+        <div style={{ width: "100%", aspectRatio: "16 / 9", position: "relative", borderBottom: "1px solid var(--border)" }}>
+          <Image src={p.image_url} alt={p.title} fill sizes="(max-width: 900px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+        </div>
       )}
 
       <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
@@ -91,8 +93,7 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
       {/* Image / placeholder */}
       <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
         {p.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.image_url} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          <Image src={p.image_url} alt={p.title} fill sizes="(max-width: 900px) 100vw, 33vw" style={{ objectFit: "cover" }} />
         ) : (
           <>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
@@ -131,6 +132,7 @@ export default function Projects() {
   const [devProjects, setDevProjects] = useState<Project[]>([]);
   const [designProjects, setDesignProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [modal, setModal] = useState<Project | null>(null);
 
   useEffect(() => {
@@ -138,7 +140,12 @@ export default function Projects() {
       .from("projects")
       .select("*")
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          setLoadError(error.message);
+          setLoading(false);
+          return;
+        }
         const all = data ?? [];
         setDevProjects(all.filter((p) => p.type === "dev"));
         setDesignProjects(all.filter((p) => p.type === "design"));
@@ -200,6 +207,8 @@ export default function Projects() {
 
         {loading ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+        ) : loadError ? (
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>PROJECTS FAILED TO LOAD</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
             <AnimatePresence mode="popLayout">
@@ -223,6 +232,8 @@ export default function Projects() {
 
         {loading ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+        ) : loadError ? (
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>DESIGN WORK FAILED TO LOAD</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
             <AnimatePresence mode="popLayout">

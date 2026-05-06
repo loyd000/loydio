@@ -32,8 +32,11 @@ export default function Hero() {
         const t = setTimeout(() => setDisplayed(current.slice(0, i - 1)), 40);
         return () => clearTimeout(t);
       } else {
-        setRoleIndex((prev) => (prev + 1) % roles.length);
-        setTyping(true);
+        const t = setTimeout(() => {
+          setRoleIndex((prev) => (prev + 1) % roles.length);
+          setTyping(true);
+        }, 0);
+        return () => clearTimeout(t);
       }
     }
   }, [displayed, typing, roleIndex]);

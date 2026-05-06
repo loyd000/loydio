@@ -1,5 +1,6 @@
 "use client";
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 
@@ -39,7 +40,7 @@ const DiscordIcon = () => (
 );
 
 const RiotIcon = () => (
-  <img src="/riot-logo.png" alt="Riot Games" width={28} height={28} className="riot-icon" style={{ objectFit: "contain" }} />
+  <Image src="/riot-logo.png" alt="Riot Games" width={28} height={28} className="riot-icon" style={{ objectFit: "contain" }} />
 );
 
 /* ── Social data ──────────────────────── */

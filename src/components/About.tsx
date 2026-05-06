@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 
@@ -106,22 +107,27 @@ export default function About() {
             <div className="rule" />
             {/* Photo placeholder — replace src with your image later */}
             <motion.div initial="rest" whileHover="hover" style={{ overflow: "hidden", position: "relative" }}>
-              <motion.img
-                src="/me.jpg"
-                alt="John Lloyd De Guzman"
+              <motion.div
                 style={{
                   width: "100%",
                   aspectRatio: "3 / 4",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  display: "block",
+                  position: "relative",
                 }}
                 variants={{
                   rest: { scale: 1, filter: "grayscale(100%) opacity(0.9)" },
                   hover: { scale: 1.05, filter: "grayscale(0%) opacity(1)" }
                 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
-              />
+              >
+                <Image
+                  src="/me.jpg"
+                  alt="John Lloyd De Guzman"
+                  fill
+                  priority
+                  sizes="(max-width: 900px) 100vw, 50vw"
+                  style={{ objectFit: "cover", objectPosition: "center top" }}
+                />
+              </motion.div>
               {/* Shine Overlay */}
               <motion.div
                 variants={{

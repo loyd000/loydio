@@ -1,24 +1,295 @@
 "use server";
+
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import type { Credential, CredentialPhoto, Project } from "@/lib/supabase";
+
+const AUTH_COOKIE = "admin_auth";
+const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+const BUCKET = "project-images";
+
+type ProjectPayload = {
+  id?: string;
+  title: string;
+  description: string;
+  category: string;
+  tags: string[];
+  year: string;
+  link: string | null;
+  image_url: string | null;
+  images: string[];
+  type: "dev" | "design";
+};
+
+type CredentialPayload = {
+  id?: string;
+  title: string;
+  org: string;
+  year: string;
+  link: string | null;
+  type: "certification" | "seminar" | "achievement";
+};
+
+function requireEnv(name: string) {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing ${name}`);
+  return value;
+}
+
+function sessionSecret() {
+  return process.env.ADMIN_SESSION_SECRET ?? requireEnv("ADMIN_PASSWORD");
+}
+
+function sign(value: string) {
+  return createHmac("sha256", sessionSecret()).update(value).digest("base64url");
+}
+
+function safeEqual(a: string, b: string) {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  return left.length === right.length && timingSafeEqual(left, right);
+}
+
+function createSessionToken() {
+  const expires = Date.now() + SESSION_TTL_MS;
+  const nonce = randomBytes(16).toString("base64url");
+  const payload = `${nonce}.${expires}`;
+  return `${payload}.${sign(payload)}`;
+}
+
+function verifySessionToken(token: string | undefined) {
+  if (!token) return false;
+
+  const [nonce, expiresRaw, signature] = token.split(".");
+  if (!nonce || !expiresRaw || !signature) return false;
+
+  const expires = Number(expiresRaw);
+  if (!Number.isFinite(expires) || expires < Date.now()) return false;
+
+  return safeEqual(signature, sign(`${nonce}.${expiresRaw}`));
+}
+
+function adminSupabase() {
+  return createClient(
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  );
+}
+
+async function requireAdmin() {
+  const jar = await cookies();
+  if (!verifySessionToken(jar.get(AUTH_COOKIE)?.value)) {
+    throw new Error("Unauthorized");
+  }
+}
+
+function cleanText(value: string, field: string) {
+  const cleaned = value.trim();
+  if (!cleaned) throw new Error(`${field} is required.`);
+  return cleaned;
+}
+
+function cleanOptionalUrl(value: string | null) {
+  const cleaned = value?.trim();
+  if (!cleaned) return null;
+
+  const url = new URL(cleaned);
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Links must start with http:// or https://.");
+  }
+  return url.toString();
+}
+
+function imageExtension(file: File) {
+  const byType: Record<string, string> = {
+    "image/gif": "gif",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+  };
+
+  if (byType[file.type]) return byType[file.type];
+  return file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
+}
+
+export async function isAdminAuthenticated() {
+  const jar = await cookies();
+  return verifySessionToken(jar.get(AUTH_COOKIE)?.value);
+}
 
 export async function login(_prev: unknown, formData: FormData) {
-  const password = formData.get("password") as string;
-  if (password === process.env.ADMIN_PASSWORD) {
+  const expected = process.env.ADMIN_PASSWORD;
+  const password = String(formData.get("password") ?? "");
+
+  if (!expected) return { error: "Admin password is not configured" };
+
+  if (safeEqual(password, expected)) {
     const jar = await cookies();
-    jar.set("admin_auth", "true", {
+    jar.set(AUTH_COOKIE, createSessionToken(), {
       httpOnly: true,
       sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 7,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: SESSION_TTL_MS / 1000,
       path: "/",
     });
     redirect("/admin");
   }
+
   return { error: "Invalid password" };
 }
 
 export async function logout() {
   const jar = await cookies();
-  jar.delete("admin_auth");
+  jar.delete(AUTH_COOKIE);
   redirect("/admin");
+}
+
+export async function fetchAdminData(): Promise<{
+  projects: Project[];
+  credentials: Credential[];
+  photos: CredentialPhoto[];
+}> {
+  await requireAdmin();
+  const db = adminSupabase();
+  const [projectRes, credentialRes, photoRes] = await Promise.all([
+    db.from("projects").select("*").order("created_at", { ascending: false }),
+    db.from("credentials").select("*").order("sort_order", { ascending: true }),
+    db.from("credential_photos").select("*").order("created_at", { ascending: false }),
+  ]);
+
+  if (projectRes.error) throw new Error(projectRes.error.message);
+  if (credentialRes.error) throw new Error(credentialRes.error.message);
+  if (photoRes.error) throw new Error(photoRes.error.message);
+
+  return {
+    projects: projectRes.data ?? [],
+    credentials: credentialRes.data ?? [],
+    photos: photoRes.data ?? [],
+  };
+}
+
+export async function saveProject(payload: ProjectPayload) {
+  await requireAdmin();
+
+  const db = adminSupabase();
+  const data = {
+    title: cleanText(payload.title, "Title"),
+    description: payload.description.trim(),
+    category: cleanText(payload.category, "Category"),
+    tags: payload.tags.map((tag) => tag.trim()).filter(Boolean),
+    year: cleanText(payload.year, "Year"),
+    link: cleanOptionalUrl(payload.link),
+    image_url: payload.image_url?.trim() || null,
+    images: payload.images,
+    type: payload.type,
+  };
+
+  const result = payload.id
+    ? await db.from("projects").update(data).eq("id", payload.id)
+    : await db.from("projects").insert(data);
+
+  if (result.error) throw new Error(result.error.message);
+}
+
+export async function deleteProject(id: string) {
+  await requireAdmin();
+  const { error } = await adminSupabase().from("projects").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function saveCredential(payload: CredentialPayload) {
+  await requireAdmin();
+
+  const db = adminSupabase();
+  const data = {
+    title: cleanText(payload.title, "Title"),
+    org: cleanText(payload.org, "Organization"),
+    year: cleanText(payload.year, "Year"),
+    link: cleanOptionalUrl(payload.link),
+    type: payload.type,
+  };
+
+  const result = payload.id
+    ? await db.from("credentials").update(data).eq("id", payload.id)
+    : await db.from("credentials").insert(data);
+
+  if (result.error) throw new Error(result.error.message);
+}
+
+export async function deleteCredential(id: string) {
+  await requireAdmin();
+  const { error } = await adminSupabase().from("credentials").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function saveCredentialOrder(updates: { id: string; sort_order: number }[]) {
+  await requireAdmin();
+  const db = adminSupabase();
+
+  const results = await Promise.all(
+    updates.map((item) =>
+      db.from("credentials").update({ sort_order: item.sort_order }).eq("id", item.id)
+    )
+  );
+
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
+}
+
+export async function uploadImage(formData: FormData) {
+  await requireAdmin();
+
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    throw new Error("Choose an image to upload.");
+  }
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed.");
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Images must be 5 MB or smaller.");
+  }
+
+  const path = `${Date.now()}-${randomBytes(8).toString("hex")}.${imageExtension(file)}`;
+  const { error } = await adminSupabase()
+    .storage
+    .from(BUCKET)
+    .upload(path, Buffer.from(await file.arrayBuffer()), {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) throw new Error(error.message);
+
+  return adminSupabase().storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+export async function uploadCredentialPhoto(formData: FormData) {
+  await requireAdmin();
+  const imageUrl = await uploadImage(formData);
+  const { error } = await adminSupabase().from("credential_photos").insert({ image_url: imageUrl });
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteCredentialPhoto(id: string) {
+  await requireAdmin();
+  const { error } = await adminSupabase().from("credential_photos").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+export async function removeStoredImage(url: string) {
+  await requireAdmin();
+  const path = url.split(`/${BUCKET}/`)[1];
+  if (!path) return;
+
+  const { error } = await adminSupabase().storage.from(BUCKET).remove([path]);
+  if (error) throw new Error(error.message);
 }

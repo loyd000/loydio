@@ -11,8 +11,8 @@ export default function TypewriterText({ text1, text2, inView }: { text1: string
   };
 
   const child = {
-    visible: { opacity: 1, display: "inline-block" },
-    hidden: { opacity: 0, display: "none" }
+    visible: { opacity: 1 },
+    hidden: { opacity: 0 }
   };
 
   return (

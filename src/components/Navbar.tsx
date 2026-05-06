@@ -61,7 +61,7 @@ export default function Navbar() {
       <div className="section-container flex items-center justify-between h-16">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2 group">
-          <div className="w-7 h-7 border-2 border-black flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-300">
+          <div className="w-7 h-7 border-2 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-300" style={{ borderColor: "var(--fg)" }}>
             <span className="text-xs font-bold -rotate-12 group-hover:rotate-0 transition-transform duration-300">L</span>
           </div>
           <span className="font-bold text-sm tracking-widest uppercase">Loyd</span>
@@ -103,15 +103,18 @@ export default function Navbar() {
         >
           <motion.span
             animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-            className="block w-6 h-px bg-black origin-center transition-all"
+            className="block w-6 h-px origin-center transition-all"
+            style={{ background: "var(--fg)" }}
           />
           <motion.span
             animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-            className="block w-6 h-px bg-black"
+            className="block w-6 h-px"
+            style={{ background: "var(--fg)" }}
           />
           <motion.span
             animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-            className="block w-6 h-px bg-black origin-center transition-all"
+            className="block w-6 h-px origin-center transition-all"
+            style={{ background: "var(--fg)" }}
           />
         </button>
       </div>
@@ -125,7 +128,7 @@ export default function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="md:hidden overflow-hidden"
-            style={{ background: "var(--bg)", borderTop: "1px solid var(--border))" }}
+            style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               {links.map((l) => (

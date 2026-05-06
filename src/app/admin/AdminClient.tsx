@@ -1,10 +1,23 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { supabase, type Project, type Credential } from "@/lib/supabase";
-import { logout } from "./actions";
+import { useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import type { Credential, CredentialPhoto, Project } from "@/lib/supabase";
+import {
+  deleteCredential,
+  deleteCredentialPhoto,
+  deleteProject,
+  fetchAdminData,
+  logout,
+  removeStoredImage,
+  saveCredential,
+  saveCredentialOrder,
+  saveProject,
+  uploadCredentialPhoto,
+  uploadImage,
+} from "./actions";
 
 const MONO = "'IBM Plex Mono', monospace";
-const BUCKET = "project-images";
 
 const DEV_CATEGORIES = ["Web Dev", "Full-Stack", "Mobile", "IoT", "Tools", "Other"];
 const DESIGN_CATEGORIES = ["UI/UX", "Branding", "Graphic Design", "Web Design", "Other"];
@@ -31,6 +44,12 @@ type CredentialFormState = {
   type: "certification" | "seminar" | "achievement";
 };
 
+type AdminData = {
+  projects: Project[];
+  credentials: Credential[];
+  photos: CredentialPhoto[];
+};
+
 function emptyForm(type: "dev" | "design"): FormState {
   return { title: "", description: "", category: [], tagsInput: "", year: String(new Date().getFullYear()), link: "", image_url: "", images: [], type };
 }
@@ -47,30 +66,32 @@ function credentialToForm(c: Credential): CredentialFormState {
   return { id: c.id, title: c.title, org: c.org, year: c.year, link: c.link ?? "", type: c.type };
 }
 
-async function uploadFile(file: File): Promise<string> {
-  const ext = file.name.split(".").pop();
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await supabase.storage.from(BUCKET).upload(path, file);
-  if (error) throw error;
-  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-}
-
 const inputStyle: React.CSSProperties = {
   fontFamily: MONO, fontSize: 12, border: "none", borderBottom: "1px solid #ccc",
   padding: "7px 0", width: "100%", background: "none", outline: "none",
 };
 
-export default function AdminClient() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [credentials, setCredentials] = useState<Credential[]>([]);
-  const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function uploadFormData(file: File) {
+  const formData = new FormData();
+  formData.set("file", file);
+  return formData;
+}
+
+export default function AdminClient({ initialData, initialError = "" }: { initialData: AdminData; initialError?: string }) {
+  const [projects, setProjects] = useState<Project[]>(initialData.projects);
+  const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials);
+  const [photos, setPhotos] = useState<CredentialPhoto[]>(initialData.photos);
   const [tab, setTab] = useState<"dev" | "design" | "credentials" | "photos">("dev");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormState | null>(null);
   const [credForm, setCredForm] = useState<CredentialFormState | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"cover" | "screenshot" | "credImg" | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(initialError);
   const coverRef = useRef<HTMLInputElement>(null);
   const screenshotRef = useRef<HTMLInputElement>(null);
   const credImgRef = useRef<HTMLInputElement>(null);
@@ -81,19 +102,19 @@ export default function AdminClient() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [projRes, credRes, photoRes] = await Promise.all([
-      supabase.from("projects").select("*").order("created_at", { ascending: false }),
-      supabase.from("credentials").select("*").order("sort_order", { ascending: true }),
-      supabase.from("credential_photos").select("*").order("created_at", { ascending: false })
-    ]);
-    setProjects(projRes.data ?? []);
-    setCredentials(credRes.data ?? []);
-    setPhotos(photoRes.data ?? []);
-    setHasOrderChanged(false);
-    setLoading(false);
+    setError("");
+    try {
+      const data = await fetchAdminData();
+      setProjects(data.projects);
+      setCredentials(data.credentials);
+      setPhotos(data.photos);
+      setHasOrderChanged(false);
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setLoading(false);
+    }
   };
-
-  useEffect(() => { fetchData(); }, []);
 
   const filtered = projects.filter((p) => p.type === tab);
   const set = (k: keyof FormState, v: string) => setForm((f) => f ? { ...f, [k]: v } : f);
@@ -101,35 +122,41 @@ export default function AdminClient() {
 
   const handleCoverUpload = async (file: File) => {
     setUploading("cover");
-    try { set("image_url", await uploadFile(file)); }
-    catch (e) { setError(String(e)); }
+    setError("");
+    try { set("image_url", await uploadImage(uploadFormData(file))); }
+    catch (e) { setError(errorMessage(e)); }
     setUploading(null);
   };
 
   const handlePhotoUpload = async (file: File) => {
     setUploading("credImg");
+    setError("");
     try { 
-      const url = await uploadFile(file); 
-      await supabase.from("credential_photos").insert({ image_url: url });
+      await uploadCredentialPhoto(uploadFormData(file));
       await fetchData();
     }
-    catch (e) { setError(String(e)); }
+    catch (e) { setError(errorMessage(e)); }
     setUploading(null);
   };
 
   const handleScreenshotUpload = async (file: File) => {
     setUploading("screenshot");
+    setError("");
     try {
-      const url = await uploadFile(file);
+      const url = await uploadImage(uploadFormData(file));
       setForm((f) => f ? { ...f, images: [...f.images, url] } : f);
-    } catch (e) { setError(String(e)); }
+    } catch (e) { setError(errorMessage(e)); }
     setUploading(null);
   };
 
   const removeScreenshot = async (url: string) => {
-    const path = url.split(`/${BUCKET}/`)[1];
-    if (path) await supabase.storage.from(BUCKET).remove([path]);
-    setForm((f) => f ? { ...f, images: f.images.filter((u) => u !== url) } : f);
+    setError("");
+    try {
+      await removeStoredImage(url);
+      setForm((f) => f ? { ...f, images: f.images.filter((u) => u !== url) } : f);
+    } catch (e) {
+      setError(errorMessage(e));
+    }
   };
 
   const handleSave = async () => {
@@ -153,13 +180,15 @@ export default function AdminClient() {
       setSaving(false);
       return;
     }
-    const { error: err } = form.id
-      ? await supabase.from("projects").update(payload).eq("id", form.id)
-      : await supabase.from("projects").insert(payload);
-    if (err) { setError(err.message); setSaving(false); return; }
-    setForm(null);
-    await fetchData();
-    setSaving(false);
+    try {
+      await saveProject({ id: form.id, ...payload });
+      setForm(null);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSaveCredential = async () => {
@@ -178,31 +207,48 @@ export default function AdminClient() {
       setSaving(false);
       return;
     }
-    const { error: err } = credForm.id
-      ? await supabase.from("credentials").update(payload).eq("id", credForm.id)
-      : await supabase.from("credentials").insert(payload);
-    if (err) { setError(err.message); setSaving(false); return; }
-    setCredForm(null);
-    await fetchData();
-    setSaving(false);
+    try {
+      await saveCredential({ id: credForm.id, ...payload });
+      setCredForm(null);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this project?")) return;
-    await supabase.from("projects").delete().eq("id", id);
-    await fetchData();
+    setError("");
+    try {
+      await deleteProject(id);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    }
   };
 
   const handleDeleteCredential = async (id: string) => {
     if (!confirm("Delete this credential?")) return;
-    await supabase.from("credentials").delete().eq("id", id);
-    await fetchData();
+    setError("");
+    try {
+      await deleteCredential(id);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    }
   };
 
   const handleDeletePhoto = async (id: string) => {
     if (!confirm("Delete this photo?")) return;
-    await supabase.from("credential_photos").delete().eq("id", id);
-    await fetchData();
+    setError("");
+    try {
+      await deleteCredentialPhoto(id);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    }
   };
 
   const handleSaveOrder = async () => {
@@ -210,21 +256,18 @@ export default function AdminClient() {
     // Prepare batch update payload mapping each id to its new sort_order
     const updates = credentials.map((c, idx) => ({
       id: c.id,
-      title: c.title,
-      org: c.org,
-      year: c.year,
-      type: c.type,
       sort_order: idx
     }));
     
-    const { error } = await supabase.from("credentials").upsert(updates);
-    if (error) {
-      alert("Failed to save order: " + error.message);
-    } else {
+    try {
+      await saveCredentialOrder(updates);
       setHasOrderChanged(false);
       await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (
@@ -237,7 +280,7 @@ export default function AdminClient() {
           <span style={{ fontSize: 12, opacity: 0.35, marginLeft: 12, letterSpacing: "0.1em" }}>LOYD.DEV</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <a href="/" style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", opacity: 0.4, textDecoration: "none" }}>← Site</a>
+          <Link href="/" style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", opacity: 0.4, textDecoration: "none" }}>← Site</Link>
           <form action={logout}>
             <button type="submit" style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "6px 14px", background: "none", cursor: "pointer" }}>LOGOUT</button>
           </form>
@@ -254,6 +297,12 @@ export default function AdminClient() {
             </button>
           ))}
         </div>
+
+        {error && (
+          <div style={{ border: "1px solid #f2b8b5", color: "#8a1f17", background: "#fff8f7", padding: "0.85rem 1rem", fontSize: 11, letterSpacing: "0.05em", marginBottom: "1.5rem" }}>
+            {error}
+          </div>
+        )}
 
         {tab === "credentials" ? (
           <>
@@ -378,7 +427,7 @@ export default function AdminClient() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "1rem" }}>
                 {photos.map((p) => (
                   <div key={p.id} style={{ position: "relative", border: "1px solid #ccc", aspectRatio: "1/1" }}>
-                    <img src={p.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <Image src={p.image_url} alt="" fill sizes="150px" style={{ objectFit: "cover" }} />
                     <button onClick={() => handleDeletePhoto(p.id)} style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
                   </div>
                 ))}
@@ -447,8 +496,9 @@ export default function AdminClient() {
                 <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 10 }}>Cover Image (shown on card)</label>
                 {form.image_url ? (
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={form.image_url} alt="cover" style={{ width: 160, height: 96, objectFit: "cover", border: "1px solid #ddd" }} />
+                    <span style={{ position: "relative", width: 160, height: 96, border: "1px solid #ddd", display: "block" }}>
+                      <Image src={form.image_url} alt="cover" fill sizes="160px" style={{ objectFit: "cover" }} />
+                    </span>
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       <button onClick={() => coverRef.current?.click()} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", border: "1px solid #000", padding: "6px 14px", background: "none", cursor: "pointer" }}>REPLACE</button>
                       <button onClick={() => set("image_url", "")} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", border: "1px solid #ddd", padding: "6px 14px", background: "none", cursor: "pointer", opacity: 0.5 }}>REMOVE</button>
@@ -470,8 +520,9 @@ export default function AdminClient() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 12 }}>
                   {form.images.map((url, idx) => (
                     <div key={url} style={{ position: "relative" }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`screenshot ${idx + 1}`} style={{ width: 120, height: 80, objectFit: "cover", border: "1px solid #ddd", display: "block" }} />
+                      <span style={{ position: "relative", width: 120, height: 80, border: "1px solid #ddd", display: "block" }}>
+                        <Image src={url} alt={`screenshot ${idx + 1}`} fill sizes="120px" style={{ objectFit: "cover" }} />
+                      </span>
                       <button
                         onClick={() => removeScreenshot(url)}
                         style={{ position: "absolute", top: 4, right: 4, width: 20, height: 20, border: "none", background: "rgba(0,0,0,0.6)", color: "#fff", fontSize: 12, lineHeight: "20px", textAlign: "center", cursor: "pointer", padding: 0 }}
@@ -508,10 +559,9 @@ export default function AdminClient() {
           <div style={{ border: "1px solid #000" }}>
             {filtered.map((p, i) => (
               <div key={p.id} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < filtered.length - 1 ? "1px solid #ebebeb" : "none" }}>
-                <div style={{ width: 56, height: 40, background: "#f5f5f5", border: "1px solid #eee", flexShrink: 0, overflow: "hidden" }}>
+                <div style={{ width: 56, height: 40, background: "#f5f5f5", border: "1px solid #eee", flexShrink: 0, overflow: "hidden", position: "relative" }}>
                   {p.image_url
-                    // eslint-disable-next-line @next/next/no-img-element
-                    ? <img src={p.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ? <Image src={p.image_url} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />
                     : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, opacity: 0.15 }}>▨</div>
                   }
                 </div>
