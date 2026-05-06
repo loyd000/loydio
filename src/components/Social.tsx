@@ -38,9 +38,7 @@ const DiscordIcon = () => (
 );
 
 const RiotIcon = () => (
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-    <path d="M12.534 21.77l-.068.03H2.32l1.256-2.85L1 18.718V2.233l8.349 1.489L21 2l-1.24 16.18-7.226 3.59zM3.12 17.5l1.256.222-1.04 2.357h7.51l.058-.026 6.83-3.395L18.8 3.45l-9.803 1.71L3.12 4.03V17.5z"/>
-  </svg>
+  <img src="/riot-logo.png" alt="Riot Games" width={28} height={28} style={{ objectFit: "contain", filter: "brightness(0)" }} />
 );
 
 /* ── Social data ──────────────────────── */
