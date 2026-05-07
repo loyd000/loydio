@@ -9,13 +9,14 @@ const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
 );
 
-function ScrambleText({ text, startDelay = 400 }: { text: string; startDelay?: number }) {
+function ScrambleText({ text, startDelay = 400, trigger = 0 }: { text: string; startDelay?: number; trigger?: number }) {
   const rand = () => SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
   const [output, setOutput] = useState(() => text.split("").map(rand).join(""));
   const locked = useRef<boolean[]>(text.split("").map(() => false));
 
   useEffect(() => {
-    const start = performance.now() + startDelay;
+    locked.current = text.split("").map(() => false);
+    const start = performance.now() + (trigger === 0 ? startDelay : 0);
 
     const id = setInterval(() => {
       const elapsed = performance.now() - start;
@@ -33,7 +34,7 @@ function ScrambleText({ text, startDelay = 400 }: { text: string; startDelay?: n
     }, 30);
 
     return () => clearInterval(id);
-  }, [text, startDelay]);
+  }, [text, startDelay, trigger]);
 
   return <>{output}</>;
 }
@@ -94,6 +95,7 @@ function GrainOverlay() {
 export default function Hero() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [scrambleTrigger, setScrambleTrigger] = useState(0);
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState("");
   const [typing, setTyping] = useState(true);
@@ -144,8 +146,11 @@ export default function Hero() {
 
           {/* ── Main heading with scramble ── */}
           <div className="rule" />
-          <h1 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(72px, 13vw, 160px)", fontWeight: 700, lineHeight: 0.92, letterSpacing: "-0.03em" }}>
-            <ScrambleText text="Loyd." startDelay={600} />
+          <h1
+            onMouseEnter={() => setScrambleTrigger(n => n + 1)}
+            style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(72px, 13vw, 160px)", fontWeight: 700, lineHeight: 0.92, letterSpacing: "-0.03em", cursor: "default" }}
+          >
+            <ScrambleText text="Loyd." startDelay={600} trigger={scrambleTrigger} />
           </h1>
           <div className="rule" />
 
