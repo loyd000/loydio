@@ -248,22 +248,21 @@ export default function Projects() {
           <div className="rule" />
         </motion.div>
 
-        <div style={{ height: "2rem" }} />
-
         {loading ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>PROJECTS FAILED TO LOAD</div>
         ) : (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
+            <div className="rule" />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
               <AnimatePresence mode="popLayout">
                 {displayedDev.map((p, i) => (
                   <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
                 ))}
               </AnimatePresence>
             </div>
-            {filtered.length > INITIAL_SHOW && (
+            {filtered.length > INITIAL_SHOW ? (
               <>
                 <div className="rule" />
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -278,6 +277,8 @@ export default function Projects() {
                 </div>
                 <div className="rule" />
               </>
+            ) : (
+              <div className="rule" />
             )}
           </>
         )}
@@ -291,22 +292,21 @@ export default function Projects() {
           <div className="rule" />
         </motion.div>
 
-        <div style={{ height: "2rem" }} />
-
         {loading ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>DESIGN WORK FAILED TO LOAD</div>
         ) : (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
+            <div className="rule" />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
               <AnimatePresence mode="popLayout">
                 {displayedDesign.map((p, i) => (
                   <DesignCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
                 ))}
               </AnimatePresence>
             </div>
-            {designProjects.length > INITIAL_SHOW && (
+            {designProjects.length > INITIAL_SHOW ? (
               <>
                 <div className="rule" />
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -321,6 +321,8 @@ export default function Projects() {
                 </div>
                 <div className="rule" />
               </>
+            ) : (
+              <div className="rule" />
             )}
           </>
         )}
