@@ -117,11 +117,12 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
-// Randomly scattered dots in SVG coordinate space (0–900 × 0–510)
-const DOTS: { x: number; y: number }[] = Array.from({ length: 420 }, () => ({
-  x: Math.random() * 880 + 10,
-  y: Math.random() * 490 + 10,
-}));
+// Pre-computed dot grid positions in SVG coordinate space (0–900 × 0–510)
+const DOT_SPACING = 20;
+const DOTS: { x: number; y: number }[] = [];
+for (let r = 0; r * DOT_SPACING <= 510; r++)
+  for (let c = 0; c * DOT_SPACING <= 900; c++)
+    DOTS.push({ x: c * DOT_SPACING + 10, y: r * DOT_SPACING + 10 });
 
 // Grouped data for mobile view
 const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
@@ -293,7 +294,7 @@ export default function TechNodeGraph() {
         intensity  = Math.min(intensity, 1);
 
         const opacity = baseOpac + intensity * (isDark ? 0.56 : 0.38);
-        const radius  = (1.2 + intensity * 2.6) * dpr;
+        const radius  = (1.2 + intensity * 1.4) * dpr;
 
         ctx.beginPath();
         ctx.arc(dot.x * scaleX, dot.y * scaleY, radius, 0, Math.PI * 2);
