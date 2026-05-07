@@ -117,15 +117,15 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
-// Jittered grid — regular spacing with random per-dot offset for an organic look
-const DOT_SPACING = 24;
-const DOT_JITTER  = 7;
+// Hex grid — every odd row offset by half column width for a honeycomb layout
+const HEX_COL = 24;
+const HEX_ROW = 21;
 const DOTS: { x: number; y: number }[] = [];
-for (let r = 0; r * DOT_SPACING <= 510; r++)
-  for (let c = 0; c * DOT_SPACING <= 900; c++)
+for (let r = 0; r * HEX_ROW <= 510; r++)
+  for (let c = 0; c * HEX_COL <= 900; c++)
     DOTS.push({
-      x: c * DOT_SPACING + 12 + (Math.random() - 0.5) * DOT_JITTER * 2,
-      y: r * DOT_SPACING + 12 + (Math.random() - 0.5) * DOT_JITTER * 2,
+      x: c * HEX_COL + (r % 2 === 1 ? HEX_COL / 2 : 0) + 12,
+      y: r * HEX_ROW + 12,
     });
 
 // Grouped data for mobile view
