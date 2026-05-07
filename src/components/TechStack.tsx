@@ -2,6 +2,13 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
+import {
+  SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiFramer, SiVite,
+  SiNodedotjs, SiExpress, SiPostgresql, SiSupabase, SiPrisma,
+  SiFigma, SiCanva,
+  SiGit, SiGithub, SiVercel, SiDocker, SiLinux,
+} from "react-icons/si";
+import type { IconType } from "react-icons";
 
 const MONO = "'IBM Plex Mono', monospace";
 
@@ -12,13 +19,31 @@ const SENTENCES = [
   { prefix: "I ship with",             phrase: "Git, GitHub, Vercel, Docker, VS Code & Linux." },
 ];
 
-const ROW1 = [
-  "React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Vite",
-  "Node.js", "Express", "PostgreSQL", "Supabase", "Prisma", "REST APIs",
-];
-const ROW2 = [
-  "Figma", "Photoshop", "Canva", "Illustrator", "Framer", "Spline",
-  "Git", "GitHub", "Vercel", "Docker", "VS Code", "Linux",
+const ALL_TECH: { name: string; Icon: IconType | null }[] = [
+  { name: "React",         Icon: SiReact },
+  { name: "Next.js",       Icon: SiNextdotjs },
+  { name: "TypeScript",    Icon: SiTypescript },
+  { name: "Tailwind",      Icon: SiTailwindcss },
+  { name: "Framer Motion", Icon: SiFramer },
+  { name: "Vite",          Icon: SiVite },
+  { name: "Node.js",       Icon: SiNodedotjs },
+  { name: "Express",       Icon: SiExpress },
+  { name: "PostgreSQL",    Icon: SiPostgresql },
+  { name: "Supabase",      Icon: SiSupabase },
+  { name: "Prisma",        Icon: SiPrisma },
+  { name: "REST APIs",     Icon: null },
+  { name: "Figma",         Icon: SiFigma },
+  { name: "Photoshop",     Icon: null },
+  { name: "Canva",         Icon: SiCanva },
+  { name: "Illustrator",   Icon: null },
+  { name: "Framer",        Icon: SiFramer },
+  { name: "Spline",        Icon: null },
+  { name: "Git",           Icon: SiGit },
+  { name: "GitHub",        Icon: SiGithub },
+  { name: "Vercel",        Icon: SiVercel },
+  { name: "Docker",        Icon: SiDocker },
+  { name: "VS Code",       Icon: null },
+  { name: "Linux",         Icon: SiLinux },
 ];
 
 function StackTypewriter({ inView }: { inView: boolean }) {
@@ -41,12 +66,10 @@ function StackTypewriter({ inView }: { inView: boolean }) {
       const t = setTimeout(() => setPhase("pausing"), 2400);
       return () => clearTimeout(t);
     }
-
     if (phase === "pausing") {
       const t = setTimeout(() => setPhase("deleting"), 0);
       return () => clearTimeout(t);
     }
-
     if (phase === "deleting") {
       if (displayed.length > 0) {
         const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 14);
@@ -61,17 +84,19 @@ function StackTypewriter({ inView }: { inView: boolean }) {
   }, [phase, displayed, idx]);
 
   return (
-    <div style={{ padding: "2.5rem 0", minHeight: 130 }}>
+    <div style={{ minHeight: 130 }}>
+      <div className="rule" />
       <p style={{
         fontFamily: MONO,
         fontSize: "clamp(10px, 1.1vw, 12px)",
         opacity: 0.3,
         letterSpacing: "0.18em",
         textTransform: "uppercase",
-        marginBottom: "0.75rem",
+        padding: "0.75rem 0",
       }}>
         {SENTENCES[idx].prefix}
       </p>
+      <div className="rule" />
       <p style={{
         fontFamily: MONO,
         fontSize: "clamp(16px, 2.2vw, 26px)",
@@ -79,6 +104,7 @@ function StackTypewriter({ inView }: { inView: boolean }) {
         lineHeight: 1.4,
         minHeight: "1.5em",
         color: "var(--fg)",
+        padding: "1rem 0",
       }}>
         {displayed}
         <motion.span
@@ -94,40 +120,46 @@ function StackTypewriter({ inView }: { inView: boolean }) {
           }}
         />
       </p>
+      <div className="rule" />
     </div>
   );
 }
 
-function Marquee({ items, reverse = false, speed = 44 }: { items: string[]; reverse?: boolean; speed?: number }) {
-  const doubled = [...items, ...items];
+function Marquee() {
+  const doubled = [...ALL_TECH, ...ALL_TECH];
   return (
     <div style={{
+      width: "100vw",
       overflow: "hidden",
-      maskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
-      WebkitMaskImage: "linear-gradient(to right, transparent, black 12%, black 88%, transparent)",
+      maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+      WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+      padding: "14px 0",
     }}>
       <motion.div
-        animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
-        transition={{ duration: speed, repeat: Infinity, ease: "linear" }}
-        style={{ display: "flex", width: "max-content" }}
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
+        style={{ display: "flex", alignItems: "center", width: "max-content" }}
       >
-        {doubled.map((name, i) => (
+        {doubled.map((tech, i) => (
           <span
             key={i}
             style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 9,
               fontFamily: MONO,
-              fontSize: 11,
-              padding: "6px 16px",
-              border: "1px solid var(--border)",
-              marginRight: 8,
+              fontSize: 12,
+              padding: "0 28px",
               whiteSpace: "nowrap",
               opacity: 0.45,
-              letterSpacing: "0.1em",
-              flexShrink: 0,
+              letterSpacing: "0.08em",
               color: "var(--fg)",
+              flexShrink: 0,
+              borderRight: "1px solid var(--border)",
             }}
           >
-            {name}
+            {tech.Icon && <tech.Icon size={14} style={{ flexShrink: 0 }} />}
+            {tech.name}
           </span>
         ))}
       </motion.div>
@@ -183,25 +215,24 @@ export default function TechStack() {
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="rule" />
           <StackTypewriter inView={inView} />
-          <div className="rule" />
         </motion.div>
 
         <Spacer />
 
-        {/* Marquee strips */}
+        {/* Full-bleed marquee */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          style={{ display: "flex", flexDirection: "column", gap: 10 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <Marquee items={ROW1} speed={48} />
-          <Marquee items={ROW2} reverse speed={40} />
+          <div className="rule" />
+          <Marquee />
+          <div className="rule" />
         </motion.div>
 
       </div>
+
     </section>
   );
 }
