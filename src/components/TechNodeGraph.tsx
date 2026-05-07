@@ -68,18 +68,25 @@ const EDGES: Edge[] = [
   { a: "ts",       b: "prisma"   }, { a: "vscode",   b: "react"     },
 ];
 
-const CATEGORY_COLOR: Record<NodeCategory, string> = {
+const COLORS_DARK: Record<NodeCategory, string> = {
   Frontend: "#60a5fa",
   Backend:  "#34d399",
   Design:   "#f472b6",
   DevOps:   "#facc15",
 };
 
+const COLORS_LIGHT: Record<NodeCategory, string> = {
+  Frontend: "#1d4ed8",
+  Backend:  "#047857",
+  Design:   "#be185d",
+  DevOps:   "#92400e",
+};
+
 const LABEL_OFFSET: Record<NodeCategory, { dx: number; dy: number }> = {
-  Frontend: { dx: 0, dy: -14 },
-  Backend:  { dx: 0, dy: -14 },
-  Design:   { dx: 0, dy:  18 },
-  DevOps:   { dx: 0, dy:  18 },
+  Frontend: { dx: 0, dy: -17 },
+  Backend:  { dx: 0, dy: -17 },
+  Design:   { dx: 0, dy:  22 },
+  DevOps:   { dx: 0, dy:  22 },
 };
 
 // viewBox to zoom into each cluster [minX, minY, width, height]
@@ -118,14 +125,14 @@ const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
   { category: "DevOps",   items: ["Git", "GitHub", "Vercel", "Docker", "VS Code", "Linux"] },
 ];
 
-function MobileStackView() {
+function MobileStackView({ colors }: { colors: Record<NodeCategory, string> }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
       {MOBILE_GROUPS.map((group) => (
         <div key={group.category}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: CATEGORY_COLOR[group.category], flexShrink: 0 }} />
-            <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.28em", textTransform: "uppercase", color: CATEGORY_COLOR[group.category], opacity: 0.8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: colors[group.category], flexShrink: 0 }} />
+            <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.28em", textTransform: "uppercase", color: colors[group.category], opacity: 0.8 }}>
               {group.category}
             </span>
           </div>
@@ -137,8 +144,8 @@ function MobileStackView() {
                   fontFamily: MONO,
                   fontSize: 11,
                   padding: "6px 12px",
-                  border: `1px solid ${CATEGORY_COLOR[group.category]}40`,
-                  color: CATEGORY_COLOR[group.category],
+                  border: `1px solid ${colors[group.category]}40`,
+                  color: colors[group.category],
                   letterSpacing: "0.08em",
                   whiteSpace: "nowrap",
                 }}
@@ -165,6 +172,17 @@ export default function TechNodeGraph() {
   const [hovered,        setHovered]        = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<NodeCategory | null>(null);
   const [revealed,       setRevealed]       = useState(false);
+  const [isDark,         setIsDark]         = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.getAttribute("data-theme") === "dark");
+    check();
+    const obs = new MutationObserver(check);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+
+  const CATEGORY_COLOR = isDark ? COLORS_DARK : COLORS_LIGHT;
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -280,7 +298,7 @@ export default function TechNodeGraph() {
           ref={wrapperRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          style={{ rotateX, rotateY }}
+          style={activeCategory ? {} : { rotateX, rotateY }}
         >
           <svg
             ref={svgRef}
@@ -297,7 +315,7 @@ export default function TechNodeGraph() {
               { label: "DevOps",   x: 640, y: 466, cat: "DevOps"   as NodeCategory },
             ]).map((g) => (
               <text key={g.label} x={g.x} y={g.y} textAnchor="middle" style={{
-                fontFamily: MONO, fontSize: 9, fill: CATEGORY_COLOR[g.cat],
+                fontFamily: MONO, fontSize: 10, fill: CATEGORY_COLOR[g.cat],
                 letterSpacing: "0.25em",
                 opacity: revealed ? (activeCategory == null || activeCategory === g.cat ? 0.55 : 0.1) : 0,
                 transition: "opacity 0.3s ease",
@@ -342,11 +360,11 @@ export default function TechNodeGraph() {
                   onMouseEnter={() => setHovered(node.id)}
                   onMouseLeave={() => setHovered(null)}
                 >
-                  {isHov && <circle cx={node.x} cy={node.y} r={16} fill={color} fillOpacity={0.15} />}
+                  {isHov && <circle cx={node.x} cy={node.y} r={20} fill={color} fillOpacity={0.15} />}
 
                   <motion.circle
                     cx={node.x} cy={node.y}
-                    r={isHov ? 7 : 5}
+                    r={isHov ? 9 : 6}
                     fill={color}
                     initial={{ opacity: 0 }}
                     animate={revealed ? { opacity } : { opacity: 0 }}
@@ -361,7 +379,7 @@ export default function TechNodeGraph() {
                     transition={{ duration: 0.35, delay: i * 0.025 + 0.12 }}
                     style={{
                       fontFamily: MONO,
-                      fontSize: isHov ? 10 : 9,
+                      fontSize: isHov ? 13 : 11,
                       fill: color,
                       userSelect: "none",
                       pointerEvents: "none",
@@ -390,7 +408,7 @@ export default function TechNodeGraph() {
 
       {/* Mobile: grouped chip list */}
       <div className="techgraph-mobile">
-        <MobileStackView />
+        <MobileStackView colors={CATEGORY_COLOR} />
       </div>
     </div>
   );
