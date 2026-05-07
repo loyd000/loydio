@@ -336,6 +336,34 @@ body {
   text-transform: uppercase;
   padding: 5px 12px;
   border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+
+/* ── Tech graph responsive ───────────────── */
+.techgraph-desktop { display: block; }
+.techgraph-mobile  { display: none;  }
+
+@media (max-width: 700px) {
+  .techgraph-desktop { display: none;  }
+  .techgraph-mobile  { display: block; }
+}
+
+/* ── Project grid ────────────────────────── */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .project-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .tag-white {

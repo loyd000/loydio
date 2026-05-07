@@ -263,7 +263,7 @@ export default function Projects() {
         ) : (
           <>
             <div className="rule" />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
+            <div className="project-grid">
               <AnimatePresence mode="popLayout">
                 {displayedDev.map((p, i) => (
                   <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
@@ -309,7 +309,7 @@ export default function Projects() {
         ) : (
           <>
             <div className="rule" />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
+            <div className="project-grid">
               <AnimatePresence mode="popLayout">
                 {displayedDesign.map((p, i) => (
                   <DesignCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />

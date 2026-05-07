@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { motion, useInView, useMotionValue, useTransform } from "framer-motion";
+import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 const MONO = "'IBM Plex Mono', monospace";
 
@@ -110,6 +110,49 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
+// Grouped data for mobile view
+const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
+  { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Vite"] },
+  { category: "Backend",  items: ["Node.js", "Express", "PostgreSQL", "Supabase", "Prisma", "REST APIs"] },
+  { category: "Design",   items: ["Figma", "Photoshop", "Canva", "Illustrator", "Framer", "Spline"] },
+  { category: "DevOps",   items: ["Git", "GitHub", "Vercel", "Docker", "VS Code", "Linux"] },
+];
+
+function MobileStackView() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+      {MOBILE_GROUPS.map((group) => (
+        <div key={group.category}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.75rem" }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: CATEGORY_COLOR[group.category], flexShrink: 0 }} />
+            <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.28em", textTransform: "uppercase", color: CATEGORY_COLOR[group.category], opacity: 0.8 }}>
+              {group.category}
+            </span>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {group.items.map((name) => (
+              <span
+                key={name}
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 11,
+                  padding: "6px 12px",
+                  border: `1px solid ${CATEGORY_COLOR[group.category]}40`,
+                  color: CATEGORY_COLOR[group.category],
+                  letterSpacing: "0.08em",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TechNodeGraph() {
   const wrapperRef   = useRef<HTMLDivElement>(null);
   const svgRef       = useRef<SVGSVGElement>(null);
@@ -125,8 +168,11 @@ export default function TechNodeGraph() {
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-5, 5]);
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], [3, -3]);
+  const springCfg = { stiffness: 55, damping: 18, mass: 0.6 };
+  const smoothX = useSpring(mouseX, springCfg);
+  const smoothY = useSpring(mouseY, springCfg);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-5, 5]);
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], [3, -3]);
 
   useEffect(() => { if (inView) setRevealed(true); }, [inView]);
 
@@ -185,7 +231,8 @@ export default function TechNodeGraph() {
   return (
     <div ref={sectionRef} style={{ width: "100%" }}>
 
-      {/* Filter buttons */}
+      {/* Filter buttons — desktop only */}
+      <div className="techgraph-desktop">
       <div style={{ display: "flex", gap: 8, marginBottom: "1.75rem", flexWrap: "wrap" }}>
         {CATEGORIES.map((cat) => {
           const on = activeCategory === cat;
@@ -224,13 +271,16 @@ export default function TechNodeGraph() {
         )}
       </div>
 
-      {/* Graph */}
+      </div>{/* /filter buttons desktop wrapper */}
+
+      {/* Desktop: SVG node graph */}
+      <div className="techgraph-desktop">
       <div style={{ perspective: "900px", overflow: "hidden" }}>
         <motion.div
           ref={wrapperRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d", willChange: "transform" }}
+          style={{ rotateX, rotateY }}
         >
           <svg
             ref={svgRef}
@@ -335,6 +385,12 @@ export default function TechNodeGraph() {
             <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.45, letterSpacing: "0.15em" }}>{cat}</span>
           </div>
         ))}
+      </div>
+      </div>{/* /techgraph-desktop */}
+
+      {/* Mobile: grouped chip list */}
+      <div className="techgraph-mobile">
+        <MobileStackView />
       </div>
     </div>
   );
