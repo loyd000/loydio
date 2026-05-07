@@ -264,6 +264,7 @@ export default function Projects() {
                 ))}
               </AnimatePresence>
             </div>
+            <div style={{ height: "1.5rem" }} />
             {filtered.length > INITIAL_SHOW ? (
               <>
                 <div className="rule" />
@@ -308,6 +309,7 @@ export default function Projects() {
                 ))}
               </AnimatePresence>
             </div>
+            <div style={{ height: "1.5rem" }} />
             {designProjects.length > INITIAL_SHOW ? (
               <>
                 <div className="rule" />
