@@ -42,22 +42,15 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
 
 /* ── Dev project card ─────────────────── */
 function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
-  const [hovered, setHovered] = useState(false);
+  const [descHovered, setDescHovered] = useState(false);
+  const [scrollDist, setScrollDist] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
-  const meta = (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {(p.category || "").split(",").map(c => <span key={c.trim()} className="tag">{c.trim()}</span>)}
-      </div>
-      <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
-    </div>
-  );
-
-  const tags = p.tags.length > 0 && (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
-      {p.tags.map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
-    </div>
-  );
+  useEffect(() => {
+    if (wrapRef.current) {
+      setScrollDist(Math.max(0, wrapRef.current.scrollHeight - wrapRef.current.clientHeight));
+    }
+  }, [p.description]);
 
   return (
     <motion.div
@@ -66,9 +59,7 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
     >
       {p.image_url && (
         <MagnifyImage
@@ -79,37 +70,37 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         />
       )}
 
-      {/* Static layer: always visible underneath */}
       <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
-        {meta}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {(p.category || "").split(",").map(c => <span key={c.trim()} className="tag">{c.trim()}</span>)}
+          </div>
+          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+        </div>
+
         <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
-        <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-          {p.description}
-        </p>
-        {tags}
+
+        {/* Description window — text rises up on hover */}
+        <div
+          ref={wrapRef}
+          style={{ height: 63, overflow: "hidden", marginBottom: "1.5rem", cursor: scrollDist > 0 ? "default" : "default" }}
+          onMouseEnter={() => setDescHovered(true)}
+          onMouseLeave={() => setDescHovered(false)}
+        >
+          <motion.p
+            style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, margin: 0 }}
+            animate={{ y: descHovered && scrollDist > 0 ? -scrollDist : 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
+            {p.description}
+          </motion.p>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
+          {p.tags.map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
+        </div>
         <ViewBtn project={p} onModal={onModal} />
       </div>
-
-      {/* Overlay: slides up over the entire card including the photo */}
-      <motion.div
-        style={{
-          position: "absolute", inset: 0,
-          background: "var(--bg)",
-          padding: "1.75rem 2rem",
-          display: "flex", flexDirection: "column",
-          justifyContent: "flex-end",
-          overflowY: "auto",
-          pointerEvents: hovered ? "auto" : "none",
-        }}
-        animate={{ y: hovered ? 0 : "100%" }}
-        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-      >
-        {meta}
-        <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
-        <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem" }}>{p.description}</p>
-        {tags}
-        <ViewBtn project={p} onModal={onModal} />
-      </motion.div>
     </motion.div>
   );
 }
