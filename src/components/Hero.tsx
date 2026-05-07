@@ -83,7 +83,7 @@ function GrainOverlay() {
         width: "100%",
         height: "100%",
         pointerEvents: "none",
-        opacity: 0.4,
+        opacity: 0.6,
         mixBlendMode: "overlay",
         zIndex: 2,
       }}
