@@ -254,8 +254,8 @@ export async function uploadImage(formData: FormData) {
   if (!file.type.startsWith("image/")) {
     throw new Error("Only image files are allowed.");
   }
-  if (file.size > 5 * 1024 * 1024) {
-    throw new Error("Images must be 5 MB or smaller.");
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error("Images must be 10 MB or smaller.");
   }
 
   const path = `${Date.now()}-${randomBytes(8).toString("hex")}.${imageExtension(file)}`;
