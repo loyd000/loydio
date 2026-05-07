@@ -1,9 +1,9 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
+import MagnifyImage from "./MagnifyImage";
 import TypewriterText from "./TypewriterText";
 
 const MONO = "'IBM Plex Mono', monospace";
@@ -52,9 +52,12 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
     >
       {/* Cover image */}
       {p.image_url && (
-        <div style={{ width: "100%", aspectRatio: "16 / 9", position: "relative", borderBottom: "1px solid var(--border)" }}>
-          <Image src={p.image_url} alt={p.title} fill sizes="(max-width: 900px) 100vw, 33vw" style={{ objectFit: "cover" }} />
-        </div>
+        <MagnifyImage
+          src={p.image_url}
+          alt={p.title}
+          sizes="(max-width: 900px) 100vw, 33vw"
+          style={{ width: "100%", aspectRatio: "16 / 9", borderBottom: "1px solid var(--border)" }}
+        />
       )}
 
       <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
@@ -91,20 +94,23 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
     >
       {/* Image / placeholder */}
-      <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-        {p.image_url ? (
-          <Image src={p.image_url} alt={p.title} fill sizes="(max-width: 900px) 100vw, 33vw" style={{ objectFit: "cover" }} />
-        ) : (
-          <>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
-              <rect x="3" y="3" width="18" height="18" stroke="var(--fg)" strokeWidth="1" />
-              <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
-              <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
-            </svg>
-            <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: MONO, fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
-          </>
-        )}
-      </div>
+      {p.image_url ? (
+        <MagnifyImage
+          src={p.image_url}
+          alt={p.title}
+          sizes="(max-width: 900px) 100vw, 33vw"
+          style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)" }}
+        />
+      ) : (
+        <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
+            <rect x="3" y="3" width="18" height="18" stroke="var(--fg)" strokeWidth="1" />
+            <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
+            <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
+          </svg>
+          <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: MONO, fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
+        </div>
+      )}
 
       <div style={{ padding: "1.25rem 1.5rem", display: "flex", flexDirection: "column", flex: 1, gap: "1rem" }}>
         <div>

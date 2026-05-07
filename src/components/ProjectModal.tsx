@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +9,10 @@ const MONO = "'IBM Plex Mono', monospace";
 
 export default function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [idx, setIdx] = useState(0);
+  const imgContainerRef = useRef<HTMLDivElement>(null);
+  const [lens, setLens] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const LENS_R = 90;
+  const ZOOM = 2.5;
 
   // Collect all images: screenshots first, then cover as fallback
   const images = project.images?.length
@@ -88,7 +92,15 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
           {images.length > 0 && (
             <div style={{ position: "relative", background: "var(--border)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
               {/* Main image */}
-              <div style={{ flex: 1, position: "relative", overflow: "hidden", minHeight: 0 }}>
+              <div
+                ref={imgContainerRef}
+                style={{ flex: 1, position: "relative", overflow: "hidden", minHeight: 0, cursor: lens ? "none" : undefined }}
+                onMouseMove={(e) => {
+                  const rect = imgContainerRef.current!.getBoundingClientRect();
+                  setLens({ x: e.clientX - rect.left, y: e.clientY - rect.top, w: rect.width, h: rect.height });
+                }}
+                onMouseLeave={() => setLens(null)}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={idx}
@@ -108,12 +120,45 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Arrows */}
+                {/* Arrows — above lens */}
                 {images.length > 1 && (
                   <>
-                    <button onClick={prev} aria-label="Previous" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontFamily: MONO, width: 36, height: 36, border: "1px solid var(--border-heavy)", background: "var(--bg)", color: "var(--fg)", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>←</button>
-                    <button onClick={next} aria-label="Next" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", fontFamily: MONO, width: 36, height: 36, border: "1px solid var(--border-heavy)", background: "var(--bg)", color: "var(--fg)", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>→</button>
+                    <button onClick={prev} aria-label="Previous" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontFamily: MONO, width: 36, height: 36, border: "1px solid var(--border-heavy)", background: "var(--bg)", color: "var(--fg)", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 20 }}>←</button>
+                    <button onClick={next} aria-label="Next" style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", fontFamily: MONO, width: 36, height: 36, border: "1px solid var(--border-heavy)", background: "var(--bg)", color: "var(--fg)", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 20 }}>→</button>
                   </>
+                )}
+
+                {/* Magnifying lens */}
+                {lens && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: lens.x - LENS_R,
+                      top: lens.y - LENS_R,
+                      width: LENS_R * 2,
+                      height: LENS_R * 2,
+                      borderRadius: "50%",
+                      border: "2px solid rgba(255,255,255,0.65)",
+                      boxShadow: "0 4px 24px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.1)",
+                      overflow: "hidden",
+                      pointerEvents: "none",
+                      zIndex: 15,
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        width: lens.w,
+                        height: lens.h,
+                        left: LENS_R - lens.x * ZOOM,
+                        top: LENS_R - lens.y * ZOOM,
+                        transform: `scale(${ZOOM})`,
+                        transformOrigin: "0 0",
+                      }}
+                    >
+                      <Image src={images[idx]} alt="" fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+                    </div>
+                  </div>
                 )}
               </div>
 
