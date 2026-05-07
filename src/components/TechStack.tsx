@@ -128,13 +128,15 @@ function StackTypewriter({ inView }: { inView: boolean }) {
 function Marquee() {
   const doubled = [...ALL_TECH, ...ALL_TECH];
   return (
-    <div style={{
-      width: "100vw",
-      overflow: "hidden",
-      maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
-      WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
-      padding: "14px 0",
-    }}>
+    <div
+      className="full-bleed"
+      style={{
+        overflow: "hidden",
+        maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+        padding: "20px 0",
+      }}
+    >
       <motion.div
         animate={{ x: ["0%", "-50%"] }}
         transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
@@ -146,10 +148,10 @@ function Marquee() {
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 9,
+              gap: 12,
               fontFamily: MONO,
-              fontSize: 12,
-              padding: "0 28px",
+              fontSize: 15,
+              padding: "0 36px",
               whiteSpace: "nowrap",
               opacity: 0.45,
               letterSpacing: "0.08em",
@@ -158,7 +160,7 @@ function Marquee() {
               borderRight: "1px solid var(--border)",
             }}
           >
-            {tech.Icon && <tech.Icon size={14} style={{ flexShrink: 0 }} />}
+            {tech.Icon && <tech.Icon size={18} style={{ flexShrink: 0 }} />}
             {tech.name}
           </span>
         ))}

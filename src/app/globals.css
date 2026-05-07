@@ -306,6 +306,26 @@ body {
   }
 }
 
+/* ── Full-bleed block (same negative margins as .rule, for non-rule elements) */
+.full-bleed {
+  margin-left: -16rem;
+  margin-right: -16rem;
+}
+
+@media (max-width: 900px) {
+  .full-bleed {
+    margin-left: -7rem;
+    margin-right: -7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .full-bleed {
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+}
+
 /* ── Eyebrow / tag labels ────────────────── */
 .eyebrow {
   display: flex;
