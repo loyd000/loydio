@@ -1,13 +1,95 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
 
 const roles = ["Developer.", "Designer.", "Builder.", "Problem Solver."];
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
 );
+
+function ScrambleText({ text, startDelay = 400 }: { text: string; startDelay?: number }) {
+  const rand = () => SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+  const [output, setOutput] = useState(() => text.split("").map(rand).join(""));
+  const locked = useRef<boolean[]>(text.split("").map(() => false));
+
+  useEffect(() => {
+    const start = performance.now() + startDelay;
+
+    const id = setInterval(() => {
+      const elapsed = performance.now() - start;
+      if (elapsed < 0) return;
+
+      text.split("").forEach((_, i) => {
+        if (elapsed > i * 75) locked.current[i] = true;
+      });
+
+      setOutput(
+        text.split("").map((ch, i) => (locked.current[i] ? ch : rand())).join("")
+      );
+
+      if (locked.current.every(Boolean)) clearInterval(id);
+    }, 30);
+
+    return () => clearInterval(id);
+  }, [text, startDelay]);
+
+  return <>{output}</>;
+}
+
+function GrainOverlay() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef    = useRef<number>(0);
+  const lastT     = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // Small canvas scaled up via CSS — cheap film grain at ~15fps
+    const GW = 300, GH = 200;
+    canvas.width  = GW;
+    canvas.height = GH;
+
+    const draw = (now: number) => {
+      rafRef.current = requestAnimationFrame(draw);
+      if (now - lastT.current < 66) return; // ~15fps
+      lastT.current = now;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const img  = ctx.createImageData(GW, GH);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const v = Math.random() * 255;
+        data[i] = data[i + 1] = data[i + 2] = v;
+        data[i + 3] = Math.floor(Math.random() * 18 + 4);
+      }
+      ctx.putImageData(img, 0, 0);
+    };
+
+    rafRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+        opacity: 0.4,
+        mixBlendMode: "overlay",
+        zIndex: 2,
+      }}
+    />
+  );
+}
 
 export default function Hero() {
   const ref = useRef(null);
@@ -42,26 +124,28 @@ export default function Hero() {
   }, [displayed, typing, roleIndex]);
 
   return (
-    <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", background: "var(--bg)" }}>
+    <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", background: "var(--bg)", overflow: "hidden" }}>
 
-      <div className="section-container" style={{ paddingTop: "7rem", paddingBottom: "5rem" }}>
+      <GrainOverlay />
+
+      <div className="section-container" style={{ paddingTop: "7rem", paddingBottom: "5rem", position: "relative", zIndex: 3 }}>
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
-          {/* ── Eyebrow ── rule touches element top & bottom */}
+          {/* ── Eyebrow ── */}
           <div className="rule" />
           <div className="eyebrow">Full-Stack Developer &amp; Graphic Designer</div>
           <div className="rule" />
 
           <Spacer />
 
-          {/* ── Main heading ── */}
+          {/* ── Main heading with scramble ── */}
           <div className="rule" />
           <h1 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(72px, 13vw, 160px)", fontWeight: 700, lineHeight: 0.92, letterSpacing: "-0.03em" }}>
-            <TypewriterText text1="Loyd." inView={inView} />
+            <ScrambleText text="Loyd." startDelay={600} />
           </h1>
           <div className="rule" />
 
