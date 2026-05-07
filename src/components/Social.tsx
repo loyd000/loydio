@@ -50,9 +50,7 @@ const SteamIcon = () => (
 );
 
 const EpicGamesIcon = () => (
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-    <path d="M3.383 2.04v16.735l2.677 2.677h12.475l2.677-2.677V2.04zm15.617 1.71v13.64H4.997V3.75zm-8.527 1.763v2.18H7.54v1.455h2.688v2.007H7.54v1.589h2.933v2.18H5.69V5.513zm4.843 0l2.077 4.04 2.077-4.04h1.84L18.2 9.76l3.113 5.163h-1.993l-2.253-3.883-2.253 3.883h-1.993l3.113-5.163-3.113-5.207z"/>
-  </svg>
+  <Image src="/epic-games-logo.svg" alt="Epic Games" width={28} height={28} style={{ objectFit: "contain" }} />
 );
 
 /* ── Social data ──────────────────────── */

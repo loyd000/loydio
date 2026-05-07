@@ -248,6 +248,8 @@ export default function Projects() {
           <div className="rule" />
         </motion.div>
 
+        <div style={{ height: "1.5rem" }} />
+
         {loading ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
         ) : loadError ? (
