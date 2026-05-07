@@ -52,11 +52,17 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
     }
   }, [p.description]);
 
-  const handleWheel = (e: React.WheelEvent) => {
-    if (maxScroll === 0) return;
-    e.preventDefault();
-    setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + e.deltaY * 0.6)));
-  };
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (maxScroll === 0) return;
+      e.preventDefault();
+      setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + e.deltaY * 0.6)));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [maxScroll]);
 
   return (
     <motion.div
@@ -90,7 +96,6 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         <div
           ref={wrapRef}
           style={{ height: 63, overflow: "hidden", marginBottom: "1.5rem" }}
-          onWheel={handleWheel}
         >
           <motion.p
             style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, margin: 0 }}
@@ -261,7 +266,7 @@ export default function Projects() {
             {filtered.length > INITIAL_SHOW && (
               <>
                 <div className="rule" />
-                <div style={{ display: "flex", justifyContent: "center", padding: "1.25rem 0" }}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
                   <button
                     onClick={() => setDevShowAll((v) => !v)}
                     style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
@@ -304,7 +309,7 @@ export default function Projects() {
             {designProjects.length > INITIAL_SHOW && (
               <>
                 <div className="rule" />
-                <div style={{ display: "flex", justifyContent: "center", padding: "1.25rem 0" }}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
                   <button
                     onClick={() => setDesignShowAll((v) => !v)}
                     style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
