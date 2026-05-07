@@ -18,8 +18,8 @@ function ScrambleText({ text, startDelay = 400, trigger = 0 }: { text: string; s
     locked.current = text.split("").map(() => false);
     const isInitial  = trigger === 0;
     const start      = performance.now() + (isInitial ? startDelay : 0);
-    const lockOffset = isInitial ? 700 : 280; // how long ALL chars scramble before locking starts
-    const lockStep   = isInitial ? 130 : 110; // ms between each char locking
+    const lockOffset = isInitial ? 700 : 1050; // how long ALL chars scramble before locking starts
+    const lockStep   = isInitial ? 130 : 110;  // ms between each char locking
 
     const id = setInterval(() => {
       const elapsed = performance.now() - start;
