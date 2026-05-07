@@ -4,9 +4,9 @@ import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiFramer, SiVite,
-  SiNodedotjs, SiExpress, SiPostgresql, SiSupabase, SiPrisma,
-  SiFigma, SiCanva,
-  SiGit, SiGithub, SiVercel, SiDocker, SiLinux,
+  SiNodedotjs, SiExpress, SiPostgresql, SiSupabase, SiPrisma, SiOpenapiinitiative,
+  SiFigma, SiCanva, SiThreedotjs,
+  SiGit, SiGithub, SiVercel, SiDocker, SiVscodium, SiLinux,
 } from "react-icons/si";
 import type { IconType } from "react-icons";
 
@@ -31,18 +31,18 @@ const ALL_TECH: { name: string; Icon: IconType | null }[] = [
   { name: "PostgreSQL",    Icon: SiPostgresql },
   { name: "Supabase",      Icon: SiSupabase },
   { name: "Prisma",        Icon: SiPrisma },
-  { name: "REST APIs",     Icon: null },
+  { name: "REST APIs",     Icon: SiOpenapiinitiative },
   { name: "Figma",         Icon: SiFigma },
   { name: "Photoshop",     Icon: null },
   { name: "Canva",         Icon: SiCanva },
   { name: "Illustrator",   Icon: null },
   { name: "Framer",        Icon: SiFramer },
-  { name: "Spline",        Icon: null },
+  { name: "Spline",        Icon: SiThreedotjs },
   { name: "Git",           Icon: SiGit },
   { name: "GitHub",        Icon: SiGithub },
   { name: "Vercel",        Icon: SiVercel },
   { name: "Docker",        Icon: SiDocker },
-  { name: "VS Code",       Icon: null },
+  { name: "VS Code",       Icon: SiVscodium },
   { name: "Linux",         Icon: SiLinux },
 ];
 
