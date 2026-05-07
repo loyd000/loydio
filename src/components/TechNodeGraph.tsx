@@ -117,12 +117,16 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
-// Pre-computed dot grid positions in SVG coordinate space (0–900 × 0–510)
-const DOT_SPACING = 20;
+// Jittered grid — regular spacing with random per-dot offset for an organic look
+const DOT_SPACING = 24;
+const DOT_JITTER  = 7;
 const DOTS: { x: number; y: number }[] = [];
 for (let r = 0; r * DOT_SPACING <= 510; r++)
   for (let c = 0; c * DOT_SPACING <= 900; c++)
-    DOTS.push({ x: c * DOT_SPACING + 10, y: r * DOT_SPACING + 10 });
+    DOTS.push({
+      x: c * DOT_SPACING + 12 + (Math.random() - 0.5) * DOT_JITTER * 2,
+      y: r * DOT_SPACING + 12 + (Math.random() - 0.5) * DOT_JITTER * 2,
+    });
 
 // Grouped data for mobile view
 const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
