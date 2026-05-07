@@ -117,16 +117,22 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
-// Hex grid — every odd row offset by half column width for a honeycomb layout
+// Hex + density gradient — honeycomb layout, dots fade toward edges for a 3D dome look
 const HEX_COL = 24;
 const HEX_ROW = 21;
-const DOTS: { x: number; y: number }[] = [];
-for (let r = 0; r * HEX_ROW <= 510; r++)
-  for (let c = 0; c * HEX_COL <= 900; c++)
-    DOTS.push({
-      x: c * HEX_COL + (r % 2 === 1 ? HEX_COL / 2 : 0) + 12,
-      y: r * HEX_ROW + 12,
-    });
+const DOT_CX   = 450;
+const DOT_CY   = 255;
+const DOT_MAX  = Math.hypot(DOT_CX, DOT_CY); // ~518
+const DOTS: { x: number; y: number; w: number }[] = [];
+for (let r = 0; r * HEX_ROW <= 510; r++) {
+  for (let c = 0; c * HEX_COL <= 900; c++) {
+    const x = c * HEX_COL + (r % 2 === 1 ? HEX_COL / 2 : 0) + 12;
+    const y = r * HEX_ROW + 12;
+    const dist = Math.hypot(x - DOT_CX, y - DOT_CY);
+    const w    = Math.exp(-2.8 * (dist / DOT_MAX) ** 2); // Gaussian falloff: 1.0 center → ~0.06 edge
+    if (Math.random() < w + 0.08) DOTS.push({ x, y, w }); // skip sparse edge dots
+  }
+}
 
 // Grouped data for mobile view
 const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
@@ -252,7 +258,7 @@ export default function TechNodeGraph() {
     { const dpr = window.devicePixelRatio || 1; const r = canvas.getBoundingClientRect(); canvas.width = r.width * dpr; canvas.height = r.height * dpr; }
 
     const baseRGB  = isDark ? "255,255,255" : "0,0,0";
-    const baseOpac = isDark ? 0.09 : 0.06;
+    const baseOpac = isDark ? 0.055 : 0.038;
 
     const draw = () => {
       const ctx = canvas.getContext("2d");
@@ -297,8 +303,8 @@ export default function TechNodeGraph() {
         intensity += Math.max(0, 1 - cd / 80) * 0.5;
         intensity  = Math.min(intensity, 1);
 
-        const opacity = baseOpac + intensity * (isDark ? 0.56 : 0.38);
-        const radius  = (1.2 + intensity * 1.4) * dpr;
+        const opacity = baseOpac * dot.w + intensity * dot.w * (isDark ? 0.65 : 0.45);
+        const radius  = (dot.w * 1.3 + intensity * 1.4) * dpr;
 
         ctx.beginPath();
         ctx.arc(dot.x * scaleX, dot.y * scaleY, radius, 0, Math.PI * 2);
