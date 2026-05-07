@@ -29,6 +29,7 @@ type CredentialPayload = {
   org: string;
   year: string;
   link: string | null;
+  description: string;
   type: "certification" | "seminar" | "achievement";
 };
 
@@ -214,6 +215,7 @@ export async function saveCredential(payload: CredentialPayload) {
     org: cleanText(payload.org, "Organization"),
     year: cleanText(payload.year, "Year"),
     link: cleanOptionalUrl(payload.link),
+    description: payload.description.trim(),
     type: payload.type,
   };
 

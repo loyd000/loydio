@@ -6,6 +6,7 @@ import { supabase, type Credential, type CredentialPhoto } from "@/lib/supabase"
 import TypewriterText from "./TypewriterText";
 
 const MONO = "'IBM Plex Mono', monospace";
+const INITIAL_SHOW = 7;
 
 function CredentialItem({ item, index, inView, groupIndex }: { item: Credential; index: number; inView: boolean; groupIndex: number }) {
   return (
@@ -26,6 +27,9 @@ function CredentialItem({ item, index, inView, groupIndex }: { item: Credential;
           <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.45 }}>{item.org}</span>
           <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3, whiteSpace: "nowrap" }}>{item.year}</span>
         </div>
+        {item.description && (
+          <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.7, marginTop: "0.5rem" }}>{item.description}</p>
+        )}
       </div>
     </motion.div>
   );
@@ -38,6 +42,7 @@ export default function Credentials() {
   const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -103,10 +108,27 @@ export default function Credentials() {
             
             {/* Left: Text List */}
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {credentials.map((item, ii) => (
+              {(showAll ? credentials : credentials.slice(0, INITIAL_SHOW)).map((item, ii) => (
                 <CredentialItem key={item.id} item={item} index={ii} inView={inView} groupIndex={0} />
               ))}
-              <div className="rule" />
+              {credentials.length > INITIAL_SHOW ? (
+                <>
+                  <div className="rule" />
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={() => setShowAll((v) => !v)}
+                      style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                    >
+                      {showAll ? "Show Less ↑" : `Show More (${credentials.length - INITIAL_SHOW} more) ↓`}
+                    </button>
+                  </div>
+                  <div className="rule" />
+                </>
+              ) : (
+                <div className="rule" />
+              )}
             </div>
 
             {/* Right: Vertical Image Slider */}

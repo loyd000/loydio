@@ -22,6 +22,7 @@ export type Credential = {
   year: string;
   link: string | null;
   image_url: string | null;
+  description: string;
   type: "certification" | "seminar" | "achievement";
   sort_order: number;
   created_at: string;

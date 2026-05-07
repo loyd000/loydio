@@ -42,6 +42,7 @@ type CredentialFormState = {
   org: string;
   year: string;
   link: string;
+  description: string;
   type: "certification" | "seminar" | "achievement";
 };
 
@@ -60,11 +61,11 @@ function projectToForm(p: Project): FormState {
 }
 
 function emptyCredentialForm(): CredentialFormState {
-  return { title: "", org: "", year: String(new Date().getFullYear()), link: "", type: "achievement" };
+  return { title: "", org: "", year: String(new Date().getFullYear()), link: "", description: "", type: "achievement" };
 }
 
 function credentialToForm(c: Credential): CredentialFormState {
-  return { id: c.id, title: c.title, org: c.org, year: c.year, link: c.link ?? "", type: c.type };
+  return { id: c.id, title: c.title, org: c.org, year: c.year, link: c.link ?? "", description: c.description ?? "", type: c.type };
 }
 
 const inputStyle: React.CSSProperties = {
@@ -206,6 +207,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
       org: credForm.org.trim(),
       year: credForm.year.trim(),
       link: credForm.link.trim() || null,
+      description: credForm.description,
       type: credForm.type,
     };
     if (!payload.title || !payload.org || !payload.year) {
@@ -362,6 +364,10 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                         style={inputStyle} />
                     </div>
                   ))}
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 6 }}>Description (optional)</label>
+                    <textarea value={credForm.description} onChange={(e) => setCred("description", e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", borderBottom: "1px solid #ccc" }} />
+                  </div>
                 </div>
 
                 {error && <div style={{ fontSize: 11, color: "red", marginTop: "1rem" }}>{error}</div>}
