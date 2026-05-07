@@ -60,12 +60,13 @@ export default function Credentials() {
     });
   }, []);
 
-  const displayPhotos = photos.length > 0 
-    ? [...photos, ...photos] 
+  const displayPhotos = photos.length > 0
+    ? [...photos, ...photos]
     : [
         { id: "1", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto,
         { id: "2", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto
       ];
+  const slideDuration = photos.length > 0 ? Math.max(10, photos.length * 3) : 8;
 
   return (
     <section id="credentials" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
@@ -142,7 +143,7 @@ export default function Credentials() {
                 <motion.div 
                   initial={{ y: "0%" }}
                   animate={inView ? { y: ["0%", "-50%"] } : { y: "0%" }}
-                  transition={{ ease: "linear", duration: 15, repeat: Infinity }}
+                  transition={{ ease: "linear", duration: slideDuration, repeat: Infinity }}
                   style={{ display: "flex", flexDirection: "column" }}
                 >
                   {displayPhotos.map((p, i) => (

@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
@@ -95,7 +95,7 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         {/* Description window — scroll wheel scrolls the text */}
         <div
           ref={wrapRef}
-          style={{ height: 63, overflow: "hidden", marginBottom: "1.5rem" }}
+          style={{ position: "relative", height: 63, overflow: "hidden", marginBottom: "1.5rem" }}
         >
           <motion.p
             style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, margin: 0 }}
@@ -104,10 +104,13 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
           >
             {p.description}
           </motion.p>
+          {maxScroll > 0 && descScroll < maxScroll && (
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 20, background: "linear-gradient(to bottom, transparent, var(--bg))", pointerEvents: "none" }} />
+          )}
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
-          {p.tags.map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
+          {(p.tags ?? []).map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
         </div>
         <ViewBtn project={p} onModal={onModal} />
       </div>
@@ -194,7 +197,10 @@ export default function Projects() {
       });
   }, []);
 
-  const filtered = active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map(c => c.trim()).includes(active));
+  const filtered = useMemo(
+    () => active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map(c => c.trim()).includes(active)),
+    [active, devProjects]
+  );
   const displayedDev = devShowAll ? filtered : filtered.slice(0, INITIAL_SHOW);
   const displayedDesign = designShowAll ? designProjects : designProjects.slice(0, INITIAL_SHOW);
 
@@ -257,7 +263,7 @@ export default function Projects() {
         ) : (
           <>
             <div className="rule" />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
               <AnimatePresence mode="popLayout">
                 {displayedDev.map((p, i) => (
                   <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
@@ -271,6 +277,7 @@ export default function Projects() {
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <button
                     onClick={() => setDevShowAll((v) => !v)}
+                    aria-expanded={devShowAll}
                     style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
@@ -316,6 +323,7 @@ export default function Projects() {
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <button
                     onClick={() => setDesignShowAll((v) => !v)}
+                    aria-expanded={designShowAll}
                     style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}

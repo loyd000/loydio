@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 
@@ -16,6 +16,15 @@ export default function Gallery() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [selected, setSelected] = useState<(typeof items)[0] | null>(null);
+  const lightboxCloseBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!selected) return;
+    lightboxCloseBtnRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSelected(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selected]);
 
   return (
     <section
@@ -147,6 +156,9 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.92, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-label={selected?.label}
               style={{ background: "#fff", maxWidth: 640, width: "100%", border: "1px solid rgba(0,0,0,0.1)" }}
             >
               <div
@@ -178,7 +190,9 @@ export default function Gallery() {
                   </p>
                 </div>
                 <button
+                  ref={lightboxCloseBtnRef}
                   onClick={() => setSelected(null)}
+                  aria-label="Close"
                   style={{
                     fontSize: 20,
                     opacity: 0.35,

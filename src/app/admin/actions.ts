@@ -242,8 +242,8 @@ export async function saveProjectOrder(updates: { id: string; sort_order: number
     )
   );
 
-  const failed = results.find((result) => result.error);
-  if (failed?.error) throw new Error(failed.error.message);
+  const errors = results.filter((r) => r.error).map((r) => r.error!.message);
+  if (errors.length) throw new Error(errors.join("; "));
 }
 
 export async function saveCredentialOrder(updates: { id: string; sort_order: number }[]) {
@@ -256,8 +256,8 @@ export async function saveCredentialOrder(updates: { id: string; sort_order: num
     )
   );
 
-  const failed = results.find((result) => result.error);
-  if (failed?.error) throw new Error(failed.error.message);
+  const errors = results.filter((r) => r.error).map((r) => r.error!.message);
+  if (errors.length) throw new Error(errors.join("; "));
 }
 
 export async function uploadImage(formData: FormData) {

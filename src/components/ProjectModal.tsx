@@ -10,6 +10,7 @@ const MONO = "'IBM Plex Mono', monospace";
 export default function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
   const [idx, setIdx] = useState(0);
   const imgContainerRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const [lens, setLens] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const LENS_R = 90;
   const ZOOM = 2.5;
@@ -21,9 +22,10 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
     ? [project.image_url]
     : [];
 
-  // Lock body scroll
+  // Lock body scroll + focus close button on open
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    closeBtnRef.current?.focus();
     return () => { document.body.style.overflow = ""; };
   }, []);
 
@@ -68,6 +70,7 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
           exit={{ opacity: 0, y: 28, scale: 0.97 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           onClick={(e) => e.stopPropagation()}
+          className="project-modal"
           style={{
             background: "var(--bg)",
             border: "1px solid var(--border)",
@@ -83,6 +86,7 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
         >
           {/* Close button */}
           <button
+            ref={closeBtnRef}
             onClick={onClose}
             style={{ position: "absolute", top: 14, right: 16, zIndex: 10, fontFamily: MONO, fontSize: 22, border: "none", background: "none", cursor: "pointer", color: "var(--fg)", opacity: 0.4, lineHeight: 1, padding: "4px 8px" }}
             aria-label="Close"
@@ -198,9 +202,9 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
             </p>
 
             {/* Tags */}
-            {project.tags.length > 0 && (
+            {(project.tags ?? []).length > 0 && (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "2rem" }}>
-                {project.tags.map((t) => (
+                {(project.tags ?? []).map((t) => (
                   <span key={t} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.4, border: "1px solid var(--border)", padding: "3px 8px" }}>#{t}</span>
                 ))}
               </div>

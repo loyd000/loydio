@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
 
@@ -13,12 +13,16 @@ export default function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current); }, []);
 
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(EMAIL);
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       window.location.href = `mailto:${EMAIL}`;
     }
@@ -130,6 +134,7 @@ export default function Contact() {
             <button
               onClick={copyEmail}
               className="btn btn-outline"
+              aria-live="polite"
               style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
             >
               {copied ? "✓ Copied!" : "Copy Email"}

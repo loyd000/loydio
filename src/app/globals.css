@@ -460,6 +460,15 @@ body {
   color: rgba(255, 255, 255, 0.12);
 }
 
+/* ── Project modal — stack to single column on mobile ── */
+@media (max-width: 640px) {
+  .project-modal {
+    grid-template-columns: 1fr !important;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+}
+
 /* ── Theme-aware image filter ── */
 .riot-icon,
 .theme-icon { filter: brightness(0); }

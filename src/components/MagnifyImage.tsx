@@ -25,7 +25,9 @@ export default function MagnifyImage({
       style={{ position: "relative", overflow: "hidden", ...style, cursor: lens ? "none" : undefined }}
       onMouseMove={(e) => {
         const rect = ref.current!.getBoundingClientRect();
-        setLens({ x: e.clientX - rect.left, y: e.clientY - rect.top, w: rect.width, h: rect.height });
+        const x = Math.max(LENS_R, Math.min(rect.width - LENS_R, e.clientX - rect.left));
+        const y = Math.max(LENS_R, Math.min(rect.height - LENS_R, e.clientY - rect.top));
+        setLens({ x, y, w: rect.width, h: rect.height });
       }}
       onMouseLeave={() => setLens(null)}
     >
