@@ -117,6 +117,13 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
+// Pre-computed dot grid positions in SVG coordinate space (0–900 × 0–510)
+const DOT_SPACING = 30;
+const DOTS: { x: number; y: number }[] = [];
+for (let r = 0; r * DOT_SPACING <= 510; r++)
+  for (let c = 0; c * DOT_SPACING <= 900; c++)
+    DOTS.push({ x: c * DOT_SPACING + 15, y: r * DOT_SPACING + 15 });
+
 // Grouped data for mobile view
 const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
   { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind", "Framer Motion", "Vite"] },
@@ -163,10 +170,15 @@ function MobileStackView({ colors }: { colors: Record<NodeCategory, string> }) {
 export default function TechNodeGraph() {
   const wrapperRef   = useRef<HTMLDivElement>(null);
   const svgRef       = useRef<SVGSVGElement>(null);
+  const canvasRef    = useRef<HTMLCanvasElement>(null);
   const sectionRef   = useRef(null);
   const vbCurrent    = useRef<number[]>([0, 0, 900, 510]);
   const vbTarget     = useRef<number[]>([0, 0, 900, 510]);
   const rafId        = useRef<number>(0);
+  const dotRafId     = useRef<number>(0);
+  const dotMouse     = useRef({ x: -9999, y: -9999 });
+  const ripples      = useRef<{ x: number; y: number; t: number }[]>([]);
+  const lastRippleT  = useRef(0);
 
   const inView = useInView(sectionRef, { once: true, margin: "-60px" });
   const [hovered,        setHovered]        = useState<string | null>(null);
@@ -219,13 +231,94 @@ export default function TechNodeGraph() {
     return () => cancelAnimationFrame(rafId.current);
   }, [activeCategory]);
 
+  // Dot grid canvas animation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ro = new ResizeObserver(() => {
+      const dpr = window.devicePixelRatio || 1;
+      const r = canvas.getBoundingClientRect();
+      canvas.width  = r.width  * dpr;
+      canvas.height = r.height * dpr;
+    });
+    ro.observe(canvas);
+    { const dpr = window.devicePixelRatio || 1; const r = canvas.getBoundingClientRect(); canvas.width = r.width * dpr; canvas.height = r.height * dpr; }
+
+    const baseRGB  = isDark ? "255,255,255" : "0,0,0";
+    const baseOpac = isDark ? 0.09 : 0.06;
+
+    const draw = () => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { dotRafId.current = requestAnimationFrame(draw); return; }
+
+      const dpr   = window.devicePixelRatio || 1;
+      const cw    = canvas.width;
+      const ch    = canvas.height;
+      const scaleX = cw / 900;
+      const scaleY = ch / 510;
+
+      ctx.clearRect(0, 0, cw, ch);
+
+      const now   = performance.now();
+      const mouse = dotMouse.current;
+      ripples.current = ripples.current.filter(r => now - r.t < 1500);
+
+      for (const dot of DOTS) {
+        let intensity = 0;
+
+        for (const rp of ripples.current) {
+          const elapsed   = (now - rp.t) / 1000;
+          const dist      = Math.hypot(dot.x - rp.x, dot.y - rp.y);
+          const wavefront = elapsed * 160;
+          const delta     = (dist - wavefront) / 42;
+          const wave      = Math.exp(-delta * delta);
+          const decay     = Math.exp(-elapsed * 1.7);
+          intensity += wave * decay;
+        }
+
+        const cd = Math.hypot(dot.x - mouse.x, dot.y - mouse.y);
+        intensity += Math.max(0, 1 - cd / 80) * 0.5;
+        intensity  = Math.min(intensity, 1);
+
+        const opacity = baseOpac + intensity * (isDark ? 0.56 : 0.38);
+        const radius  = (1.2 + intensity * 2.6) * dpr;
+
+        ctx.beginPath();
+        ctx.arc(dot.x * scaleX, dot.y * scaleY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${baseRGB},${opacity})`;
+        ctx.fill();
+      }
+
+      dotRafId.current = requestAnimationFrame(draw);
+    };
+
+    dotRafId.current = requestAnimationFrame(draw);
+    return () => { ro.disconnect(); cancelAnimationFrame(dotRafId.current); };
+  }, [isDark]);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = wrapperRef.current?.getBoundingClientRect();
     if (!rect) return;
     mouseX.set((e.clientX - rect.left  - rect.width  / 2) / rect.width);
     mouseY.set((e.clientY - rect.top   - rect.height / 2) / rect.height);
+
+    // SVG-space coords for dot grid
+    const svgX = (e.clientX - rect.left) * (900 / rect.width);
+    const svgY = (e.clientY - rect.top)  * (510 / rect.height);
+    dotMouse.current = { x: svgX, y: svgY };
+
+    // Throttled ripple spawn
+    const now = performance.now();
+    if (now - lastRippleT.current > 65) {
+      lastRippleT.current = now;
+      ripples.current = [...ripples.current, { x: svgX, y: svgY, t: now }].slice(-8);
+    }
   };
-  const handleMouseLeave = () => { mouseX.set(0); mouseY.set(0); setHovered(null); };
+  const handleMouseLeave = () => {
+    mouseX.set(0); mouseY.set(0); setHovered(null);
+    dotMouse.current = { x: -9999, y: -9999 };
+  };
 
   const neighbors = hovered ? getNeighbors(hovered) : null;
 
@@ -298,12 +391,23 @@ export default function TechNodeGraph() {
           ref={wrapperRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          style={activeCategory ? {} : { rotateX, rotateY }}
+          style={activeCategory ? { position: "relative" } : { position: "relative", rotateX, rotateY }}
         >
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          />
           <svg
             ref={svgRef}
             viewBox="0 0 900 510"
-            style={{ width: "100%", height: "auto", display: "block", overflow: "hidden" }}
+            style={{ width: "100%", height: "auto", display: "block", overflow: "hidden", position: "relative", zIndex: 1 }}
             aria-label="Tech stack node graph"
             role="img"
           >
