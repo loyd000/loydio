@@ -91,6 +91,7 @@ export default function Credentials() {
         <div style={{ height: "4rem" }} />
 
         {/* Unified Layout with Vertical Slider */}
+        <div className="rule" />
         {loading ? (
           <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
         ) : loadError ? (
@@ -114,7 +115,7 @@ export default function Credentials() {
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : { opacity: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                style={{ position: "absolute", inset: 0, overflow: "hidden", border: "1px solid var(--border)" }}
+                style={{ position: "absolute", inset: 0, overflow: "hidden" }}
               >
                 <motion.div 
                   initial={{ y: "0%" }}
@@ -139,6 +140,7 @@ export default function Credentials() {
 
           </div>
         )}
+        <div className="rule" />
 
       </div>
     </section>

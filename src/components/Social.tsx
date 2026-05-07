@@ -126,10 +126,10 @@ export default function Social() {
         <Spacer />
 
         {/* Grid */}
+        <div className="rule" />
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          border: "1px solid var(--border)",
         }}>
           {socials.map((s, i) => {
             const card = (
@@ -210,6 +210,7 @@ export default function Social() {
             );
           })}
         </div>
+        <div className="rule" />
 
       </div>
     </section>
