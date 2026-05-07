@@ -117,12 +117,11 @@ function getNeighbors(id: string): Set<string> {
 
 const CATEGORIES: NodeCategory[] = ["Frontend", "Backend", "Design", "DevOps"];
 
-// Pre-computed dot grid positions in SVG coordinate space (0–900 × 0–510)
-const DOT_SPACING = 30;
-const DOTS: { x: number; y: number }[] = [];
-for (let r = 0; r * DOT_SPACING <= 510; r++)
-  for (let c = 0; c * DOT_SPACING <= 900; c++)
-    DOTS.push({ x: c * DOT_SPACING + 15, y: r * DOT_SPACING + 15 });
+// Randomly scattered dots in SVG coordinate space (0–900 × 0–510)
+const DOTS: { x: number; y: number }[] = Array.from({ length: 420 }, () => ({
+  x: Math.random() * 880 + 10,
+  y: Math.random() * 490 + 10,
+}));
 
 // Grouped data for mobile view
 const MOBILE_GROUPS: { category: NodeCategory; items: string[] }[] = [
@@ -176,9 +175,11 @@ export default function TechNodeGraph() {
   const vbTarget     = useRef<number[]>([0, 0, 900, 510]);
   const rafId        = useRef<number>(0);
   const dotRafId     = useRef<number>(0);
-  const dotMouse     = useRef({ x: -9999, y: -9999 });
-  const ripples      = useRef<{ x: number; y: number; t: number }[]>([]);
-  const lastRippleT  = useRef(0);
+  const dotMouse       = useRef({ x: -9999, y: -9999 });
+  const ripples        = useRef<{ x: number; y: number; t: number }[]>([]);
+  const lastRippleT    = useRef(0);
+  const isHoveringRef  = useRef(false);
+  const nextIdleRipple = useRef(performance.now() + 1500 + Math.random() * 1500);
 
   const inView = useInView(sectionRef, { once: true, margin: "-60px" });
   const [hovered,        setHovered]        = useState<string | null>(null);
@@ -262,7 +263,17 @@ export default function TechNodeGraph() {
 
       const now   = performance.now();
       const mouse = dotMouse.current;
-      ripples.current = ripples.current.filter(r => now - r.t < 1500);
+      ripples.current = ripples.current.filter(r => now - r.t < 2000);
+
+      // Idle auto-ripples when cursor is not over the component
+      if (!isHoveringRef.current && now > nextIdleRipple.current) {
+        nextIdleRipple.current = now + 1500 + Math.random() * 1500;
+        ripples.current = [...ripples.current, {
+          x: Math.random() * 880 + 10,
+          y: Math.random() * 490 + 10,
+          t: now,
+        }].slice(-6);
+      }
 
       for (const dot of DOTS) {
         let intensity = 0;
@@ -270,10 +281,10 @@ export default function TechNodeGraph() {
         for (const rp of ripples.current) {
           const elapsed   = (now - rp.t) / 1000;
           const dist      = Math.hypot(dot.x - rp.x, dot.y - rp.y);
-          const wavefront = elapsed * 160;
-          const delta     = (dist - wavefront) / 42;
+          const wavefront = elapsed * 130;
+          const delta     = (dist - wavefront) / 65;
           const wave      = Math.exp(-delta * delta);
-          const decay     = Math.exp(-elapsed * 1.7);
+          const decay     = Math.exp(-elapsed * 1.2);
           intensity += wave * decay;
         }
 
@@ -300,6 +311,7 @@ export default function TechNodeGraph() {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = wrapperRef.current?.getBoundingClientRect();
     if (!rect) return;
+    isHoveringRef.current = true;
     mouseX.set((e.clientX - rect.left  - rect.width  / 2) / rect.width);
     mouseY.set((e.clientY - rect.top   - rect.height / 2) / rect.height);
 
@@ -316,8 +328,10 @@ export default function TechNodeGraph() {
     }
   };
   const handleMouseLeave = () => {
+    isHoveringRef.current = false;
     mouseX.set(0); mouseY.set(0); setHovered(null);
     dotMouse.current = { x: -9999, y: -9999 };
+    nextIdleRipple.current = performance.now() + 1500 + Math.random() * 1000;
   };
 
   const neighbors = hovered ? getNeighbors(hovered) : null;
