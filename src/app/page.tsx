@@ -12,6 +12,9 @@ import ScrollProgress from "@/components/ScrollProgress";
 import GridLines from "@/components/GridLines";
 import ScrollToTop from "@/components/ScrollToTop";
 import SiteIntro from "@/components/SiteIntro";
+import Terminal from "@/components/Terminal";
+import CommandPalette from "@/components/CommandPalette";
+import SpotifyWidget from "@/components/SpotifyWidget";
 
 export default function Home() {
   return (
@@ -20,6 +23,9 @@ export default function Home() {
       <ScrollProgress />
       <ScrollToTop />
       <Navbar />
+      <Terminal />
+      <CommandPalette />
+      <SpotifyWidget />
       <main>
         <Hero />
         <About />
