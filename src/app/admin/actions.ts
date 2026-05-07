@@ -160,7 +160,7 @@ export async function fetchAdminData(): Promise<{
   await requireAdmin();
   const db = adminSupabase();
   const [projectRes, credentialRes, photoRes] = await Promise.all([
-    db.from("projects").select("*").order("created_at", { ascending: false }),
+    db.from("projects").select("*").order("sort_order", { ascending: true }),
     db.from("credentials").select("*").order("sort_order", { ascending: true }),
     db.from("credential_photos").select("*").order("created_at", { ascending: false }),
   ]);
@@ -228,6 +228,20 @@ export async function deleteCredential(id: string) {
   await requireAdmin();
   const { error } = await adminSupabase().from("credentials").delete().eq("id", id);
   if (error) throw new Error(error.message);
+}
+
+export async function saveProjectOrder(updates: { id: string; sort_order: number }[]) {
+  await requireAdmin();
+  const db = adminSupabase();
+
+  const results = await Promise.all(
+    updates.map((item) =>
+      db.from("projects").update({ sort_order: item.sort_order }).eq("id", item.id)
+    )
+  );
+
+  const failed = results.find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
 }
 
 export async function saveCredentialOrder(updates: { id: string; sort_order: number }[]) {

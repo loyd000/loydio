@@ -13,6 +13,7 @@ import {
   saveCredential,
   saveCredentialOrder,
   saveProject,
+  saveProjectOrder,
   uploadCredentialPhoto,
   uploadImage,
 } from "./actions";
@@ -100,6 +101,10 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [hasOrderChanged, setHasOrderChanged] = useState(false);
 
+  // Drag and drop state for projects
+  const [draggedProjectIdx, setDraggedProjectIdx] = useState<number | null>(null);
+  const [hasProjectOrderChanged, setHasProjectOrderChanged] = useState(false);
+
   const fetchData = async () => {
     setLoading(true);
     setError("");
@@ -109,6 +114,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
       setCredentials(data.credentials);
       setPhotos(data.photos);
       setHasOrderChanged(false);
+      setHasProjectOrderChanged(false);
     } catch (e) {
       setError(errorMessage(e));
     } finally {
@@ -248,6 +254,20 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
       await fetchData();
     } catch (e) {
       setError(errorMessage(e));
+    }
+  };
+
+  const handleSaveProjectOrder = async () => {
+    setSaving(true);
+    const updates = filtered.map((p, idx) => ({ id: p.id, sort_order: idx }));
+    try {
+      await saveProjectOrder(updates);
+      setHasProjectOrderChanged(false);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -436,8 +456,15 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
           </>
         ) : (
           <>
-            {/* Add button */}
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
+            {/* Action bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          {hasProjectOrderChanged ? (
+            <button onClick={handleSaveProjectOrder} disabled={saving} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#f0f0f0", color: "#000", cursor: "pointer", fontWeight: 700 }}>
+              {saving ? "SAVING..." : "SAVE NEW ORDER"}
+            </button>
+          ) : (
+            <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Drag items to reorder</div>
+          )}
           <button onClick={() => setForm(emptyForm(tab))} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#000", color: "#fff", cursor: "pointer" }}>
             + ADD PROJECT
           </button>
@@ -558,7 +585,27 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
         ) : (
           <div style={{ border: "1px solid #000" }}>
             {filtered.map((p, i) => (
-              <div key={p.id} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < filtered.length - 1 ? "1px solid #ebebeb" : "none" }}>
+              <div
+                key={p.id}
+                draggable
+                onDragStart={(e) => {
+                  setDraggedProjectIdx(i);
+                  e.dataTransfer.effectAllowed = "move";
+                }}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  if (draggedProjectIdx === null || draggedProjectIdx === i) return;
+                  const reordered = [...filtered];
+                  const [moved] = reordered.splice(draggedProjectIdx, 1);
+                  reordered.splice(i, 0, moved);
+                  setProjects((prev) => [...prev.filter((p) => p.type !== tab), ...reordered]);
+                  setDraggedProjectIdx(null);
+                  setHasProjectOrderChanged(true);
+                }}
+                style={{ display: "grid", gridTemplateColumns: "auto auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < filtered.length - 1 ? "1px solid #ebebeb" : "none", background: draggedProjectIdx === i ? "#f9f9f9" : "transparent", cursor: "grab" }}
+              >
+                <div style={{ opacity: 0.3, cursor: "grab", paddingRight: "0.25rem" }}>⣿</div>
                 <div style={{ width: 56, height: 40, background: "#f5f5f5", border: "1px solid #eee", flexShrink: 0, overflow: "hidden", position: "relative" }}>
                   {p.image_url
                     ? <Image src={p.image_url} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />

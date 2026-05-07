@@ -7,6 +7,7 @@ import MagnifyImage from "./MagnifyImage";
 import TypewriterText from "./TypewriterText";
 
 const MONO = "'IBM Plex Mono', monospace";
+const INITIAL_SHOW = 3;
 
 const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"];
 
@@ -41,6 +42,23 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
 
 /* ── Dev project card ─────────────────── */
 function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
+  const [hovered, setHovered] = useState(false);
+
+  const meta = (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {(p.category || "").split(",").map(c => <span key={c.trim()} className="tag">{c.trim()}</span>)}
+      </div>
+      <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+    </div>
+  );
+
+  const tags = p.tags.length > 0 && (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
+      {p.tags.map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
+    </div>
+  );
+
   return (
     <motion.div
       layout
@@ -50,7 +68,6 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
       transition={{ duration: 0.3, delay: i * 0.05 }}
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
     >
-      {/* Cover image */}
       {p.image_url && (
         <MagnifyImage
           src={p.image_url}
@@ -60,23 +77,40 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         />
       )}
 
-      <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {(p.category || "").split(",").map(c => (
-              <span key={c.trim()} className="tag">{c.trim()}</span>
-            ))}
-          </div>
-          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
-        </div>
+      {/* Card body — hover here triggers description reveal */}
+      <div
+        style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", flex: 1 }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {/* Static layer: clamped description */}
+        {meta}
         <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
-        <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
-          {p.tags.map((tag) => (
-            <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>
-          ))}
-        </div>
+        <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+          {p.description}
+        </p>
+        {tags}
         <ViewBtn project={p} onModal={onModal} />
+
+        {/* Hover overlay: full description slides up */}
+        <motion.div
+          style={{
+            position: "absolute", inset: 0,
+            background: "var(--bg)",
+            padding: "1.75rem 2rem",
+            display: "flex", flexDirection: "column",
+            overflowY: "auto",
+            pointerEvents: hovered ? "auto" : "none",
+          }}
+          animate={{ y: hovered ? 0 : "100%" }}
+          transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+        >
+          {meta}
+          <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
+          <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
+          {tags}
+          <ViewBtn project={p} onModal={onModal} />
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -140,12 +174,14 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [modal, setModal] = useState<Project | null>(null);
+  const [devShowAll, setDevShowAll] = useState(false);
+  const [designShowAll, setDesignShowAll] = useState(false);
 
   useEffect(() => {
     supabase
       .from("projects")
       .select("*")
-      .order("created_at", { ascending: false })
+      .order("sort_order", { ascending: true })
       .then(({ data, error }) => {
         if (error) {
           setLoadError(error.message);
@@ -160,6 +196,10 @@ export default function Projects() {
   }, []);
 
   const filtered = active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map(c => c.trim()).includes(active));
+  const displayedDev = devShowAll ? filtered : filtered.slice(0, INITIAL_SHOW);
+  const displayedDesign = designShowAll ? designProjects : designProjects.slice(0, INITIAL_SHOW);
+
+  useEffect(() => { setDevShowAll(false); }, [active]);
 
   return (
     <section id="projects" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
@@ -216,13 +256,27 @@ export default function Projects() {
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>PROJECTS FAILED TO LOAD</div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
-            <AnimatePresence mode="popLayout">
-              {filtered.map((p, i) => (
-                <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
-              ))}
-            </AnimatePresence>
-          </div>
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
+              <AnimatePresence mode="popLayout">
+                {displayedDev.map((p, i) => (
+                  <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
+                ))}
+              </AnimatePresence>
+            </div>
+            {filtered.length > INITIAL_SHOW && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "1.5rem" }}>
+                <button
+                  onClick={() => setDevShowAll((v) => !v)}
+                  style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                >
+                  {devShowAll ? "Show Less ↑" : `Show More (${filtered.length - INITIAL_SHOW} more) ↓`}
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         <div style={{ height: "5rem" }} />
@@ -241,13 +295,27 @@ export default function Projects() {
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>DESIGN WORK FAILED TO LOAD</div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
-            <AnimatePresence mode="popLayout">
-              {designProjects.map((p, i) => (
-                <DesignCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
-              ))}
-            </AnimatePresence>
-          </div>
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", border: "1px solid rgba(0,0,0,0.075)" }}>
+              <AnimatePresence mode="popLayout">
+                {displayedDesign.map((p, i) => (
+                  <DesignCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
+                ))}
+              </AnimatePresence>
+            </div>
+            {designProjects.length > INITIAL_SHOW && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "1.5rem" }}>
+                <button
+                  onClick={() => setDesignShowAll((v) => !v)}
+                  style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                >
+                  {designShowAll ? "Show Less ↑" : `Show More (${designProjects.length - INITIAL_SHOW} more) ↓`}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

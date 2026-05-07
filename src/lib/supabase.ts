@@ -11,6 +11,7 @@ export type Project = {
   image_url: string | null;
   images: string[];
   type: "dev" | "design";
+  sort_order: number;
   created_at: string;
 };
 
