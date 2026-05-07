@@ -66,7 +66,9 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
+      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {p.image_url && (
         <MagnifyImage
@@ -77,13 +79,8 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         />
       )}
 
-      {/* Card body — hover here triggers description reveal */}
-      <div
-        style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden", flex: 1 }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        {/* Static layer: clamped description */}
+      {/* Static layer: always visible underneath */}
+      <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
         {meta}
         <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
         <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
@@ -91,27 +88,28 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         </p>
         {tags}
         <ViewBtn project={p} onModal={onModal} />
-
-        {/* Hover overlay: full description slides up */}
-        <motion.div
-          style={{
-            position: "absolute", inset: 0,
-            background: "var(--bg)",
-            padding: "1.75rem 2rem",
-            display: "flex", flexDirection: "column",
-            overflowY: "auto",
-            pointerEvents: hovered ? "auto" : "none",
-          }}
-          animate={{ y: hovered ? 0 : "100%" }}
-          transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-        >
-          {meta}
-          <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
-          <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem", flex: 1 }}>{p.description}</p>
-          {tags}
-          <ViewBtn project={p} onModal={onModal} />
-        </motion.div>
       </div>
+
+      {/* Overlay: slides up over the entire card including the photo */}
+      <motion.div
+        style={{
+          position: "absolute", inset: 0,
+          background: "var(--bg)",
+          padding: "1.75rem 2rem",
+          display: "flex", flexDirection: "column",
+          justifyContent: "flex-end",
+          overflowY: "auto",
+          pointerEvents: hovered ? "auto" : "none",
+        }}
+        animate={{ y: hovered ? 0 : "100%" }}
+        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+      >
+        {meta}
+        <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
+        <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, marginBottom: "1.5rem" }}>{p.description}</p>
+        {tags}
+        <ViewBtn project={p} onModal={onModal} />
+      </motion.div>
     </motion.div>
   );
 }

@@ -407,7 +407,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                     }}
                     style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < credentials.length - 1 ? "1px solid #ebebeb" : "none", background: draggedIdx === i ? "#f9f9f9" : "transparent", cursor: "grab" }}
                   >
-                    <div style={{ opacity: 0.3, cursor: "grab", paddingRight: "0.5rem" }}>⣿</div>
+                    <div style={{ opacity: 0.5, cursor: "grab", WebkitTextStroke: "0.5px currentColor", paddingRight: "0.5rem" }}>⣿</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{c.title}</div>
@@ -605,7 +605,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                 }}
                 style={{ display: "grid", gridTemplateColumns: "auto auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < filtered.length - 1 ? "1px solid #ebebeb" : "none", background: draggedProjectIdx === i ? "#f9f9f9" : "transparent", cursor: "grab" }}
               >
-                <div style={{ opacity: 0.3, cursor: "grab", paddingRight: "0.25rem" }}>⣿</div>
+                <div style={{ opacity: 0.5, cursor: "grab", WebkitTextStroke: "0.5px currentColor", paddingRight: "0.25rem" }}>⣿</div>
                 <div style={{ width: 56, height: 40, background: "#f5f5f5", border: "1px solid #eee", flexShrink: 0, overflow: "hidden", position: "relative" }}>
                   {p.image_url
                     ? <Image src={p.image_url} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />
