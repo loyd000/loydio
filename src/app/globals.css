@@ -461,8 +461,10 @@ body {
 }
 
 /* ── Theme-aware image filter ── */
-.riot-icon { filter: brightness(0); }
-[data-theme="dark"] .riot-icon { filter: brightness(0) invert(1); }
+.riot-icon,
+.theme-icon { filter: brightness(0); }
+[data-theme="dark"] .riot-icon,
+[data-theme="dark"] .theme-icon { filter: brightness(0) invert(1); }
 
 /* Stack section */
 .stack-grid {

@@ -50,7 +50,7 @@ const SteamIcon = () => (
 );
 
 const EpicGamesIcon = () => (
-  <Image src="/epic-games-logo.svg" alt="Epic Games" width={28} height={28} style={{ objectFit: "contain" }} />
+  <Image src="/epic-games-logo.svg" alt="Epic Games" width={28} height={28} className="theme-icon" style={{ objectFit: "contain" }} />
 );
 
 /* ── Social data ──────────────────────── */
