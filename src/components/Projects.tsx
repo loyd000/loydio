@@ -42,15 +42,21 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
 
 /* ── Dev project card ─────────────────── */
 function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
-  const [descHovered, setDescHovered] = useState(false);
-  const [scrollDist, setScrollDist] = useState(0);
+  const [descScroll, setDescScroll] = useState(0);
+  const [maxScroll, setMaxScroll] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (wrapRef.current) {
-      setScrollDist(Math.max(0, wrapRef.current.scrollHeight - wrapRef.current.clientHeight));
+      setMaxScroll(Math.max(0, wrapRef.current.scrollHeight - wrapRef.current.clientHeight));
     }
   }, [p.description]);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (maxScroll === 0) return;
+    e.preventDefault();
+    setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + e.deltaY * 0.6)));
+  };
 
   return (
     <motion.div
@@ -80,17 +86,16 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
 
         <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
 
-        {/* Description window — text rises up on hover */}
+        {/* Description window — scroll wheel scrolls the text */}
         <div
           ref={wrapRef}
-          style={{ height: 63, overflow: "hidden", marginBottom: "1.5rem", cursor: scrollDist > 0 ? "default" : "default" }}
-          onMouseEnter={() => setDescHovered(true)}
-          onMouseLeave={() => setDescHovered(false)}
+          style={{ height: 63, overflow: "hidden", marginBottom: "1.5rem" }}
+          onWheel={handleWheel}
         >
           <motion.p
             style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, margin: 0 }}
-            animate={{ y: descHovered && scrollDist > 0 ? -scrollDist : 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            animate={{ y: -descScroll }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           >
             {p.description}
           </motion.p>
@@ -254,16 +259,20 @@ export default function Projects() {
               </AnimatePresence>
             </div>
             {filtered.length > INITIAL_SHOW && (
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "1.5rem" }}>
-                <button
-                  onClick={() => setDevShowAll((v) => !v)}
-                  style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
-                >
-                  {devShowAll ? "Show Less ↑" : `Show More (${filtered.length - INITIAL_SHOW} more) ↓`}
-                </button>
-              </div>
+              <>
+                <div className="rule" />
+                <div style={{ display: "flex", justifyContent: "center", padding: "1.25rem 0" }}>
+                  <button
+                    onClick={() => setDevShowAll((v) => !v)}
+                    style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                  >
+                    {devShowAll ? "Show Less ↑" : `Show More (${filtered.length - INITIAL_SHOW} more) ↓`}
+                  </button>
+                </div>
+                <div className="rule" />
+              </>
             )}
           </>
         )}
@@ -293,16 +302,20 @@ export default function Projects() {
               </AnimatePresence>
             </div>
             {designProjects.length > INITIAL_SHOW && (
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "1.5rem" }}>
-                <button
-                  onClick={() => setDesignShowAll((v) => !v)}
-                  style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
-                >
-                  {designShowAll ? "Show Less ↑" : `Show More (${designProjects.length - INITIAL_SHOW} more) ↓`}
-                </button>
-              </div>
+              <>
+                <div className="rule" />
+                <div style={{ display: "flex", justifyContent: "center", padding: "1.25rem 0" }}>
+                  <button
+                    onClick={() => setDesignShowAll((v) => !v)}
+                    style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                  >
+                    {designShowAll ? "Show Less ↑" : `Show More (${designProjects.length - INITIAL_SHOW} more) ↓`}
+                  </button>
+                </div>
+                <div className="rule" />
+              </>
             )}
           </>
         )}
