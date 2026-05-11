@@ -151,10 +151,7 @@ export default function Social() {
 
         {/* Grid */}
         <div className="rule" />
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-        }}>
+        <div className="social-grid">
           {socials.map((s, i) => {
             const card = (
               <motion.div
@@ -174,12 +171,13 @@ export default function Social() {
                   position: "relative",
                   cursor: s.external ? "pointer" : "default",
                 }}
+                className="social-card"
                 onMouseEnter={s.external ? (e) => (e.currentTarget.style.background = "var(--hover-bg)") : undefined}
                 onMouseLeave={s.external ? (e) => (e.currentTarget.style.background = "var(--bg)") : undefined}
               >
                 {/* Top row: icon + arrow */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-                  <div style={{ opacity: 0.8 }}>
+                  <div className="social-icon" style={{ opacity: 0.8 }}>
                     <s.Icon />
                   </div>
                   {s.external && (

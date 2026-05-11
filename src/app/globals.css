@@ -509,7 +509,7 @@ body {
 }
 
 /* ── Project modal — stack to single column on mobile ── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .project-modal {
     grid-template-columns: 1fr !important;
     grid-template-rows: 56vw auto !important;
@@ -519,6 +519,27 @@ body {
   .modal-thumb {
     width: 72px !important;
     height: 54px !important;
+  }
+}
+
+/* ── Social grid ── */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+@media (max-width: 700px) {
+  .social-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .social-card {
+    padding: 1.25rem !important;
+    min-height: 130px !important;
+  }
+  .social-card .social-icon svg,
+  .social-card .social-icon img {
+    width: 22px !important;
+    height: 22px !important;
   }
 }
 
