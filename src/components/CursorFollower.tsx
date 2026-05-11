@@ -97,7 +97,7 @@ export default function CursorFollower() {
       window.removeEventListener("scroll", onScroll);
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
     };
-  }, [hasMouse, mouseX, mouseY, dotX, dotY, ringScale, findMagneticTarget]);
+  }, [hasMouse, mouseX, mouseY, dotX, dotY, ringScale]);
 
   // Don't render on mobile or when user prefers reduced motion
   if (!hasMouse || prefersReduced) return null;
