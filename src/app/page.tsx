@@ -15,6 +15,7 @@ import SiteIntro from "@/components/SiteIntro";
 import Terminal from "@/components/Terminal";
 import CommandPalette from "@/components/CommandPalette";
 import SpotifyWidget from "@/components/SpotifyWidget";
+import CurrentlyStrip from "@/components/CurrentlyStrip";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       <Terminal />
       <CommandPalette />
       <SpotifyWidget />
+      <CurrentlyStrip />
       <main>
         <Hero />
         <About />

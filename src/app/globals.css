@@ -543,6 +543,11 @@ body {
   }
 }
 
+/* ── Currently strip — hide on mobile ── */
+@media (max-width: 1024px) {
+  .currently-strip { display: none !important; }
+}
+
 /* ── Theme-aware image filter ── */
 .riot-icon,
 .theme-icon { filter: brightness(0); }
