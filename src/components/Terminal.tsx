@@ -425,7 +425,7 @@ export default function Terminal() {
           aria-label="Open terminal"
           style={{
             position: "fixed",
-            bottom: 24,
+            bottom: 84,
             right: 24,
             width: 40,
             height: 40,
