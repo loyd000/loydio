@@ -414,128 +414,167 @@ export default function Terminal() {
   const placeholder = mode.kind === "typerace" ? "Type the phrase above..." : "";
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          key="terminal-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
+    <>
+      {/* Floating terminal trigger — visible on all devices */}
+      {!open && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 3, duration: 0.5 }}
+          onClick={() => setOpen(true)}
+          aria-label="Open terminal"
           style={{
             position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            zIndex: 9000,
+            bottom: 24,
+            right: 24,
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: "var(--fg)",
+            color: "var(--bg)",
+            border: "none",
             display: "flex",
-            alignItems: "flex-end",
+            alignItems: "center",
             justifyContent: "center",
-            padding: "0 0 3rem",
+            fontFamily: MONO,
+            fontSize: 14,
+            fontWeight: 700,
+            cursor: "pointer",
+            zIndex: 8000,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+            opacity: 0.6,
+            transition: "opacity 0.2s ease, transform 0.2s ease",
           }}
-          onClick={(e) => { if (e.target === e.currentTarget) close(); }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.1)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.6"; (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
         >
-          <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 40, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 340, damping: 30 }}
-            style={{
-              width: "min(860px, 92vw)",
-              maxHeight: "55vh",
-              display: "flex",
-              flexDirection: "column",
-              background: "#0e0e0e",
-              border: "1px solid rgba(255,255,255,0.12)",
-              boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
-              overflow: "hidden",
-            }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Terminal"
-          >
-            {/* Title bar */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 16px",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
-              background: "#161616",
-              flexShrink: 0,
-            }}>
-              {["#ff5f57","#ffbd2e","#28c840"].map((c) => (
-                <div key={c} style={{ width: 12, height: 12, borderRadius: "50%", background: c }} />
-              ))}
-              <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.3)", marginLeft: 8, letterSpacing: "0.15em" }}>
-                loyd@portfolio — bash
-              </span>
-              <button
-                onClick={close}
-                style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", fontFamily: MONO, fontSize: 11 }}
-                aria-label="Close terminal"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Output area */}
-            <div style={{
-              flex: 1,
-              overflowY: "auto",
-              padding: "1rem 1.25rem",
-              fontFamily: MONO,
-              fontSize: 12,
-              lineHeight: 1.75,
-              color: "#d4d4d4",
-            }}>
-              {lines.map((l, i) => (
-                <div key={i} style={{
-                  color: l.type === "input" ? "#7dd3fc" : l.type === "error" ? "#f87171" : "#d4d4d4",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-all",
-                }}>
-                  {l.type === "input" ? `$ ${l.text}` : l.text}
-                </div>
-              ))}
-              <div ref={bottomRef} />
-            </div>
-
-            {/* Input row */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "0.6rem 1.25rem",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
-              background: "#0a0a0a",
-              flexShrink: 0,
-            }}>
-              <span style={{ fontFamily: MONO, fontSize: 12, color: inputLocked ? "#666" : "#4ade80", userSelect: "none" }}>$</span>
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKey}
-                disabled={inputLocked}
-                placeholder={placeholder}
-                spellCheck={false}
-                autoComplete="off"
-                aria-label="Terminal input"
-                style={{
-                  flex: 1,
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                  fontFamily: MONO,
-                  fontSize: 12,
-                  color: inputLocked ? "#666" : "#d4d4d4",
-                  caretColor: "#4ade80",
-                }}
-              />
-            </div>
-          </motion.div>
-        </motion.div>
+          {">_"}
+        </motion.button>
       )}
-    </AnimatePresence>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="terminal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.55)",
+              zIndex: 9000,
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "center",
+              padding: "0 0 3rem",
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) close(); }}
+          >
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 340, damping: 30 }}
+              style={{
+                width: "min(860px, 92vw)",
+                maxHeight: "55vh",
+                display: "flex",
+                flexDirection: "column",
+                background: "#0e0e0e",
+                border: "1px solid rgba(255,255,255,0.12)",
+                boxShadow: "0 24px 64px rgba(0,0,0,0.7)",
+                overflow: "hidden",
+              }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Terminal"
+            >
+              {/* Title bar */}
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "10px 16px",
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+                background: "#161616",
+                flexShrink: 0,
+              }}>
+                {["#ff5f57","#ffbd2e","#28c840"].map((c) => (
+                  <div key={c} style={{ width: 12, height: 12, borderRadius: "50%", background: c }} />
+                ))}
+                <span style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.3)", marginLeft: 8, letterSpacing: "0.15em" }}>
+                  loyd@portfolio — bash
+                </span>
+                <button
+                  onClick={close}
+                  style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", fontFamily: MONO, fontSize: 11 }}
+                  aria-label="Close terminal"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Output area */}
+              <div style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "1rem 1.25rem",
+                fontFamily: MONO,
+                fontSize: 12,
+                lineHeight: 1.75,
+                color: "#d4d4d4",
+              }}>
+                {lines.map((l, i) => (
+                  <div key={i} style={{
+                    color: l.type === "input" ? "#7dd3fc" : l.type === "error" ? "#f87171" : "#d4d4d4",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-all",
+                  }}>
+                    {l.type === "input" ? `$ ${l.text}` : l.text}
+                  </div>
+                ))}
+                <div ref={bottomRef} />
+              </div>
+
+              {/* Input row */}
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "0.6rem 1.25rem",
+                borderTop: "1px solid rgba(255,255,255,0.07)",
+                background: "#0a0a0a",
+                flexShrink: 0,
+              }}>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: inputLocked ? "#666" : "#4ade80", userSelect: "none" }}>$</span>
+                <input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKey}
+                  disabled={inputLocked}
+                  placeholder={placeholder}
+                  spellCheck={false}
+                  autoComplete="off"
+                  aria-label="Terminal input"
+                  style={{
+                    flex: 1,
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    fontFamily: MONO,
+                    fontSize: 12,
+                    color: inputLocked ? "#666" : "#d4d4d4",
+                    caretColor: "#4ade80",
+                  }}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

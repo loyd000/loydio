@@ -657,3 +657,17 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Terminal hint — show backtick on desktop, tap on mobile */
+.terminal-hint-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .terminal-hint-desktop {
+    display: none;
+  }
+  .terminal-hint-mobile {
+    display: inline;
+  }
+}

@@ -186,8 +186,13 @@ export default function Hero() {
             opacity: 0.2,
           }}
         >
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.15em", color: "var(--fg)" }}>
+          {/* Desktop hint */}
+          <span className="terminal-hint-desktop" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.15em", color: "var(--fg)" }}>
             press <kbd style={{ padding: "1px 5px", border: "1px solid var(--border-heavy)", fontSize: 10 }}>`</kbd> for terminal
+          </span>
+          {/* Mobile hint */}
+          <span className="terminal-hint-mobile" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.15em", color: "var(--fg)" }}>
+            tap <span style={{ fontWeight: 700 }}>&gt;_</span> for terminal
           </span>
           <span className="blink" style={{ color: "var(--fg)", fontSize: 10 }}>▌</span>
         </motion.div>
