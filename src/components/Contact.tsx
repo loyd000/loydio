@@ -78,7 +78,7 @@ export default function Contact() {
           <h2
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: "clamp(28px, 4vw, 58px)",
+              fontSize: "clamp(17px, 5vw, 58px)",
               fontWeight: 700,
               lineHeight: 1.05,
               maxWidth: 1120,

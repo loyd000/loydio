@@ -172,6 +172,7 @@ export default function ProjectModal({ project, onClose }: { project: Project; o
                     <button
                       key={url}
                       onClick={() => setIdx(i)}
+                      className="modal-thumb"
                       style={{ flexShrink: 0, width: 48, height: 36, border: i === idx ? "2px solid var(--fg)" : "2px solid transparent", padding: 0, cursor: "pointer", overflow: "hidden", background: "none" }}
                     >
                       <Image src={url} alt="" width={48} height={36} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />

@@ -512,8 +512,13 @@ body {
 @media (max-width: 640px) {
   .project-modal {
     grid-template-columns: 1fr !important;
-    max-height: 95vh;
+    grid-template-rows: 56vw auto !important;
+    max-height: 92vh;
     overflow-y: auto;
+  }
+  .modal-thumb {
+    width: 72px !important;
+    height: 54px !important;
   }
 }
 
