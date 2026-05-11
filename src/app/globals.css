@@ -66,8 +66,8 @@ body {
 
 /* Hide default cursor when custom magnetic cursor is active (desktop only) */
 @media (pointer: fine) {
-  * {
-    cursor: none !important;
+  html {
+    cursor: none;
   }
 }
 

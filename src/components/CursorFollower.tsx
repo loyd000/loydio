@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 
 const RING_SIZE = 32;
@@ -31,22 +31,8 @@ export default function CursorFollower() {
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [scrolling, setScrolling] = useState(false);
 
-  const findMagneticTarget = useCallback((x: number, y: number): { cx: number; cy: number } | null => {
-    const els = document.querySelectorAll("a, button, [data-magnetic]");
-    let closest: { cx: number; cy: number; dist: number } | null = null;
-
-    els.forEach((el) => {
-      const rect = (el as HTMLElement).getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dist = Math.hypot(x - cx, y - cy);
-      if (dist < MAGNETIC_RANGE && (!closest || dist < closest.dist)) {
-        closest = { cx, cy, dist };
-      }
-    });
-
-    return closest;
-  }, []);
+  // Track the currently hovered interactive element for magnetic pull
+  const magnetTarget = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     // Only show on devices with fine pointer (mouse)
@@ -68,24 +54,30 @@ export default function CursorFollower() {
       dotX.set(rawX - DOT_SIZE / 2);
       dotY.set(rawY - DOT_SIZE / 2);
 
-      // Check for magnetic target
-      const target = findMagneticTarget(rawX, rawY);
-      if (target) {
-        // Lerp toward target center
-        const lerpX = rawX + (target.cx - rawX) * MAGNETIC_STRENGTH;
-        const lerpY = rawY + (target.cy - rawY) * MAGNETIC_STRENGTH;
-        mouseX.set(lerpX - RING_SIZE / 2);
-        mouseY.set(lerpY - RING_SIZE / 2);
-      } else {
-        mouseX.set(rawX - RING_SIZE / 2);
-        mouseY.set(rawY - RING_SIZE / 2);
+      // Magnetic pull from tracked element (no DOM querying here)
+      const el = magnetTarget.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dist = Math.hypot(rawX - cx, rawY - cy);
+        if (dist < MAGNETIC_RANGE) {
+          const lerpX = rawX + (cx - rawX) * MAGNETIC_STRENGTH;
+          const lerpY = rawY + (cy - rawY) * MAGNETIC_STRENGTH;
+          mouseX.set(lerpX - RING_SIZE / 2);
+          mouseY.set(lerpY - RING_SIZE / 2);
+          return;
+        }
       }
+      mouseX.set(rawX - RING_SIZE / 2);
+      mouseY.set(rawY - RING_SIZE / 2);
     };
 
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      const interactive = !!(t.closest("a") || t.closest("button") || t.closest("[data-magnetic]"));
-      setIsHovering(interactive);
+      const interactive = t.closest("a, button, [data-magnetic]") as HTMLElement | null;
+      magnetTarget.current = interactive;
+      setIsHovering(!!interactive);
       ringScale.set(interactive ? 1.6 : 1);
     };
 
@@ -123,13 +115,12 @@ export default function CursorFollower() {
           borderRadius: "50%",
           border: isHovering ? "none" : "1.5px solid var(--fg)",
           background: isHovering ? "var(--fg)" : "transparent",
-          opacity: scrolling ? 0.15 : isHovering ? 0.15 : 0.45,
+          opacity: scrolling ? 0.15 : isHovering ? 0.15 : 0.5,
           x: ringX,
           y: ringY,
           scale: ringScale,
           pointerEvents: "none",
           zIndex: 9998,
-          mixBlendMode: "difference",
           transition: "opacity 0.25s ease, background 0.2s ease, border 0.2s ease",
         }}
       />

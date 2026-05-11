@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const LOADER_DURATION_MS = 1900;
+const LOADER_DURATION_MS = 2500;
 
 const LOADING_MESSAGES = [
   "Compiling pixels...",

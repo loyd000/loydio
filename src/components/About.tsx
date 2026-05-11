@@ -196,7 +196,6 @@ export default function About() {
                     src="/me.jpg"
                     alt="John Lloyd De Guzman"
                     fill
-                    priority
                     sizes="(max-width: 900px) 100vw, 50vw"
                     style={{ objectFit: "cover", objectPosition: "center top" }}
                   />
