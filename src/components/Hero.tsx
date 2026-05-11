@@ -170,6 +170,27 @@ export default function Hero() {
             style={{ width: 1, height: 40, background: "var(--border-heavy)" }}
           />
         </motion.div>
+
+        {/* Subtle terminal hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 4, duration: 1.5 }}
+          style={{
+            position: "absolute",
+            bottom: 44,
+            right: 32,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            opacity: 0.2,
+          }}
+        >
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, letterSpacing: "0.15em", color: "var(--fg)" }}>
+            press <kbd style={{ padding: "1px 5px", border: "1px solid var(--border-heavy)", fontSize: 10 }}>`</kbd> for terminal
+          </span>
+          <span className="blink" style={{ color: "var(--fg)", fontSize: 10 }}>▌</span>
+        </motion.div>
       </div>
     </section>
   );
