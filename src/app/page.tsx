@@ -5,9 +5,6 @@ import ScrollProgress from "@/components/ScrollProgress";
 import GridLines from "@/components/GridLines";
 import ScrollToTop from "@/components/ScrollToTop";
 import SiteIntro from "@/components/SiteIntro";
-import Terminal from "@/components/Terminal";
-import CommandPalette from "@/components/CommandPalette";
-import SpotifyWidget from "@/components/SpotifyWidget";
 import CursorFollower from "@/components/CursorFollower";
 
 // Below-fold sections — lazy-loaded for faster initial paint
@@ -19,6 +16,11 @@ const Projects = dynamic(() => import("@/components/Projects"));
 const Social = dynamic(() => import("@/components/Social"));
 const Contact = dynamic(() => import("@/components/Contact"));
 const Footer = dynamic(() => import("@/components/Footer"));
+
+// Hidden overlay components — lazy-loaded since they're not visible on initial render
+const Terminal = dynamic(() => import("@/components/Terminal"));
+const CommandPalette = dynamic(() => import("@/components/CommandPalette"));
+const SpotifyWidget = dynamic(() => import("@/components/SpotifyWidget"));
 
 export default function Home() {
   return (

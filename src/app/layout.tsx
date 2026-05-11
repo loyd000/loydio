@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-mono",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${ibmPlexMono.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <Script
           id="theme-script"
@@ -56,7 +71,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="grain antialiased">{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
