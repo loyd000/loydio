@@ -105,6 +105,12 @@ function runCommand(raw: string): { lines: string[]; action?: () => void } {
     case "clear":
       return { lines: ["__clear__"] };
 
+    case "admin":
+      return {
+        lines: ["Access granted. Redirecting to admin panel..."],
+        action: () => { window.location.href = "/admin"; },
+      };
+
     case "exit":
       return { lines: ["__exit__"] };
 
