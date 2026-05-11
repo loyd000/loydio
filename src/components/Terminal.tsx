@@ -59,7 +59,7 @@ function runCommand(raw: string): { lines: string[]; action?: () => void } {
           "  cat <file>        — read a file",
           "  open <section>    — scroll to a section",
           "  theme             — toggle light/dark mode",
-          "  flappy            — play flappy bird",
+          "  flappy            — pilot a spaceship",
           "  date              — current date/time",
           "  clear             — clear terminal",
           "  exit              — close terminal",
@@ -164,13 +164,13 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
 
     // — Game constants —
     const BIRD_X    = Math.floor(W * 0.15);
-    const BIRD_SIZE = 11;
+    const BIRD_SIZE = 14;
     const PIPE_W    = 26;
-    const PIPE_GAP  = 140;
-    const GRAVITY   = 0.24;
-    const FLAP_V    = -5.6;
-    const SPEED     = 2.3;
-    const PIPE_FREQ = 150; // frames between spawns
+    const PIPE_GAP  = 150;
+    const GRAVITY   = 0.14;
+    const FLAP_V    = -4.0;
+    const SPEED     = 2.0;
+    const PIPE_FREQ = 160; // frames between spawns
 
     type GState = "idle" | "playing" | "dead";
 
@@ -286,14 +286,45 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
       ctx.fillStyle = "rgba(255,255,255,0.08)";
       ctx.fillRect(0, H - 1, W, 1);
 
-      // — Bird (sharp square with velocity tilt) —
+      // — Spaceship —
       if (gstate !== "dead") {
-        const tilt = Math.max(-20, Math.min(30, bird.vy * 3));
+        const tilt = Math.max(-22, Math.min(28, bird.vy * 2.8));
         ctx.save();
         ctx.translate(BIRD_X + BIRD_SIZE / 2, bird.y + BIRD_SIZE / 2);
         ctx.rotate((tilt * Math.PI) / 180);
+
+        // Thruster flame (flickers when thrusting upward)
+        if (bird.vy < 0.5) {
+          const flameLen = 5 + Math.random() * 6;
+          ctx.beginPath();
+          ctx.moveTo(-8, -2.5);
+          ctx.lineTo(-8 - flameLen, 0);
+          ctx.lineTo(-8, 2.5);
+          ctx.closePath();
+          ctx.fillStyle = `rgba(255,255,255,${0.15 + Math.random() * 0.25})`;
+          ctx.fill();
+        }
+
+        // Ship body — arrow pointing right
+        ctx.beginPath();
+        ctx.moveTo(9, 0);      // nose
+        ctx.lineTo(1, -5);     // top front
+        ctx.lineTo(-1, -3);    // top waist
+        ctx.lineTo(-8, -5);    // top tail fin
+        ctx.lineTo(-6, 0);     // tail center
+        ctx.lineTo(-8, 5);     // bottom tail fin
+        ctx.lineTo(-1, 3);     // bottom waist
+        ctx.lineTo(1, 5);      // bottom front
+        ctx.closePath();
         ctx.fillStyle = "#ffffff";
-        ctx.fillRect(-BIRD_SIZE / 2, -BIRD_SIZE / 2, BIRD_SIZE, BIRD_SIZE);
+        ctx.fill();
+
+        // Cockpit window
+        ctx.beginPath();
+        ctx.arc(3, 0, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#0e0e0e";
+        ctx.fill();
+
         ctx.restore();
       }
 
@@ -310,10 +341,10 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         ctx.textAlign = "center";
         ctx.fillStyle = "rgba(255,255,255,0.72)";
         ctx.font      = `11px ${MONO}`;
-        ctx.fillText("press space to start", W / 2, H / 2 - 12);
+        ctx.fillText("press space to launch", W / 2, H / 2 - 12);
         ctx.fillStyle = "rgba(255,255,255,0.26)";
         ctx.font      = `10px ${MONO}`;
-        ctx.fillText("space / ↑  to flap  ·  esc  to exit", W / 2, H / 2 + 10);
+        ctx.fillText("space / ↑  to thrust  ·  esc  to exit", W / 2, H / 2 + 10);
       }
 
       // — Dead overlay —
@@ -376,7 +407,7 @@ export default function Terminal() {
 
   const exitFlappy = useCallback(() => {
     setMode({ kind: "normal" });
-    setLines(prev => [...prev, { type: "output", text: "exited flappy bird." }]);
+    setLines(prev => [...prev, { type: "output", text: "spaceship docked." }]);
     setTimeout(() => inputRef.current?.focus(), 50);
   }, []);
 
@@ -567,7 +598,7 @@ export default function Terminal() {
                   marginLeft: 8,
                   letterSpacing: "0.15em",
                 }}>
-                  {isFlappy ? "loyd@portfolio — flappy bird" : "loyd@portfolio — bash"}
+                  {isFlappy ? "loyd@portfolio — spaceship" : "loyd@portfolio — bash"}
                 </span>
                 <button
                   onClick={isFlappy ? exitFlappy : close}
