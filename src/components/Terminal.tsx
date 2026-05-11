@@ -166,9 +166,9 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
     const BIRD_X    = Math.floor(W * 0.15);
     const BIRD_SIZE = 11;
     const PIPE_W    = 26;
-    const PIPE_GAP  = 120;
-    const GRAVITY   = 0.38;
-    const FLAP_V    = -7.0;
+    const PIPE_GAP  = 140;
+    const GRAVITY   = 0.24;
+    const FLAP_V    = -5.6;
     const SPEED     = 2.3;
     const PIPE_FREQ = 150; // frames between spawns
 
