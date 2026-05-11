@@ -1,11 +1,62 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const LOADER_DURATION_MS = 1900;
 
+const LOADING_MESSAGES = [
+  "Compiling pixels...",
+  "Injecting caffeine...",
+  "Initializing creative engine...",
+  "Loading frameworks...",
+  "Almost there...",
+  "Booting up the good vibes...",
+  "Deploying aesthetics...",
+  "Rendering dreams...",
+  "npm install personality...",
+  "Warming up the GPU...",
+  "Fetching inspiration...",
+  "sudo make me a website...",
+  "Brewing the perfect layout...",
+  "Parsing creativity...",
+];
+
+function TypewriterMessage({ text }: { text: string }) {
+  const [displayed, setDisplayed] = useState("");
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    indexRef.current = 0;
+    setDisplayed("");
+
+    const delay = setTimeout(() => {
+      const id = setInterval(() => {
+        indexRef.current++;
+        if (indexRef.current <= text.length) {
+          setDisplayed(text.slice(0, indexRef.current));
+        } else {
+          clearInterval(id);
+        }
+      }, 40);
+      return () => clearInterval(id);
+    }, 600); // Wait for logo animation to start
+
+    return () => clearTimeout(delay);
+  }, [text]);
+
+  return (
+    <span style={{ display: "inline-block", minWidth: "1ch" }}>
+      {displayed}
+      <span className="blink" style={{ opacity: 0.6 }}>▌</span>
+    </span>
+  );
+}
+
 export default function PageLoader({ onComplete }: { onComplete?: () => void }) {
   const [loading, setLoading] = useState(true);
+  const [message] = useState(
+    () => LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]
+  );
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), LOADER_DURATION_MS);
@@ -29,8 +80,10 @@ export default function PageLoader({ onComplete }: { onComplete?: () => void }) 
             background: "var(--bg)",
             zIndex: 9999,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            gap: "2rem",
           }}
         >
           <div
@@ -87,6 +140,23 @@ export default function PageLoader({ onComplete }: { onComplete?: () => void }) 
               Loyd.
             </motion.span>
           </div>
+
+          {/* Randomized loading message with typewriter effect */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.4 }}
+            style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 10,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              opacity: 0.4,
+              color: "var(--fg)",
+            }}
+          >
+            <TypewriterMessage text={message} />
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -5,14 +5,23 @@ import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import TypewriterText from "./TypewriterText";
+import ScrambleText from "./ScrambleText";
 
 const MONO = "'IBM Plex Mono', monospace";
 const INITIAL_SHOW = 3;
 
 const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"];
 
-/* ── View Project button ──────────────── */
-function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project) => void }) {
+/* ── View Project button with scramble ── */
+function ViewBtn({ project, onModal, cardHovered }: { project: Project; onModal: (p: Project) => void; cardHovered?: boolean }) {
+  const [scrTrigger, setScrTrigger] = useState(0);
+
+  useEffect(() => {
+    if (cardHovered) setScrTrigger((n) => n + 1);
+  }, [cardHovered]);
+
+  const label = project.link ? "View Project ↗" : "View Project →";
+
   if (project.link) {
     return (
       <a
@@ -24,7 +33,7 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
         onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--fg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--bg)"; }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--bg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--fg)"; }}
       >
-        View Project ↗
+        {cardHovered ? <ScrambleText text={label} startDelay={0} trigger={scrTrigger} /> : label}
       </a>
     );
   }
@@ -35,7 +44,7 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
       onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--fg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--bg)"; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--fg)"; }}
     >
-      View Project →
+      {cardHovered ? <ScrambleText text={label} startDelay={0} trigger={scrTrigger} /> : label}
     </button>
   );
 }
@@ -44,6 +53,7 @@ function ViewBtn({ project, onModal }: { project: Project; onModal: (p: Project)
 function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
   const [descScroll, setDescScroll] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
+  const [hovered, setHovered] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,15 +81,38 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
+      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
+      {/* Progress bar sweep */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          height: 2,
+          background: "var(--fg)",
+          width: hovered ? "100%" : "0%",
+          transition: hovered ? "width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "width 0.3s ease",
+          zIndex: 4,
+        }}
+      />
+
       {p.image_url && (
-        <MagnifyImage
-          src={p.image_url}
-          alt={p.title}
-          sizes="(max-width: 900px) 100vw, 33vw"
-          style={{ width: "100%", aspectRatio: "16 / 9", borderBottom: "1px solid var(--border)" }}
-        />
+        <div style={{ overflow: "hidden", borderBottom: "1px solid var(--border)" }}>
+          <div style={{
+            transform: hovered ? "scale(1.08)" : "scale(1)",
+            transition: "transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          }}>
+            <MagnifyImage
+              src={p.image_url}
+              alt={p.title}
+              sizes="(max-width: 900px) 100vw, 33vw"
+              style={{ width: "100%", aspectRatio: "16 / 9" }}
+            />
+          </div>
+        </div>
       )}
 
       <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
@@ -112,7 +145,7 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
           {(p.tags ?? []).map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
         </div>
-        <ViewBtn project={p} onModal={onModal} />
+        <ViewBtn project={p} onModal={onModal} cardHovered={hovered} />
       </div>
     </motion.div>
   );
@@ -120,6 +153,8 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
 
 /* ── Design card ──────────────────────── */
 function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <motion.div
       layout
@@ -127,16 +162,39 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3, delay: i * 0.05 }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column" }}
+      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
+      {/* Progress bar sweep */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          height: 2,
+          background: "var(--fg)",
+          width: hovered ? "100%" : "0%",
+          transition: hovered ? "width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "width 0.3s ease",
+          zIndex: 4,
+        }}
+      />
+
       {/* Image / placeholder */}
       {p.image_url ? (
-        <MagnifyImage
-          src={p.image_url}
-          alt={p.title}
-          sizes="(max-width: 900px) 100vw, 33vw"
-          style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)" }}
-        />
+        <div style={{ overflow: "hidden", borderBottom: "1px solid var(--border)" }}>
+          <div style={{
+            transform: hovered ? "scale(1.08)" : "scale(1)",
+            transition: "transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          }}>
+            <MagnifyImage
+              src={p.image_url}
+              alt={p.title}
+              sizes="(max-width: 900px) 100vw, 33vw"
+              style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)" }}
+            />
+          </div>
+        </div>
       ) : (
         <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
@@ -160,7 +218,7 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
           </div>
           <h3 style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{p.title}</h3>
         </div>
-        <ViewBtn project={p} onModal={onModal} />
+        <ViewBtn project={p} onModal={onModal} cardHovered={hovered} />
       </div>
     </motion.div>
   );

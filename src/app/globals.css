@@ -64,6 +64,13 @@ body {
   line-height: 1.6;
 }
 
+/* Hide default cursor when custom magnetic cursor is active (desktop only) */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.22s;
@@ -541,11 +548,6 @@ body {
     width: 22px !important;
     height: 22px !important;
   }
-}
-
-/* ── Currently strip — hide on mobile ── */
-@media (max-width: 1024px) {
-  .currently-strip { display: none !important; }
 }
 
 /* ── Theme-aware image filter ── */

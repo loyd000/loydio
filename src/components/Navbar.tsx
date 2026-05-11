@@ -57,6 +57,22 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // View Transitions wrapper for smooth section navigation
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (!target) return;
+
+    const scroll = () => target.scrollIntoView({ behavior: "smooth" });
+
+    // Use View Transitions API if available for a subtle cross-fade
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(scroll);
+    } else {
+      scroll();
+    }
+  };
+
   return (
     <motion.header
       initial={{ y: -60, opacity: 0 }}
@@ -86,6 +102,7 @@ export default function Navbar() {
               <a
                 key={l.href}
                 href={l.href}
+                onClick={(e) => handleNavClick(e, l.href)}
                 className="text-xs tracking-widest uppercase transition-opacity duration-200"
                 style={{ opacity: isActive ? 1 : 0.4, fontWeight: isActive ? 700 : 400 }}
                 onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLAnchorElement).style.opacity = "0.7"; }}
@@ -149,7 +166,7 @@ export default function Navbar() {
                 <a
                   key={l.href}
                   href={l.href}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => { handleNavClick(e, l.href); setMenuOpen(false); }}
                   style={mobileMenuLinkStyle}
                 >
                   {l.label}

@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import TypewriterText from "./TypewriterText";
@@ -28,6 +28,79 @@ function CountUp({ end, suffix, inView }: { end: number; suffix: string; inView:
     return () => clearInterval(timer);
   }, [inView, end]);
   return <>{count}{suffix}</>;
+}
+
+/* ── 3D Tilt Card ─────────────────────────── */
+function TiltCard({ children }: { children: React.ReactNode }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
+  const [hovering, setHovering] = useState(false);
+  const rafRef = useRef<number>(0);
+
+  const handleMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;  // 0–1
+      const y = (e.clientY - rect.top) / rect.height;   // 0–1
+      const rotateY = (x - 0.5) * 24;   // ±12°
+      const rotateX = (0.5 - y) * 24;   // ±12°
+      setTilt({ rotateX, rotateY, glareX: x * 100, glareY: y * 100 });
+    });
+  }, []);
+
+  const handleEnter = () => setHovering(true);
+  const handleLeave = () => {
+    setHovering(false);
+    setTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+  };
+
+  // Dynamic shadow — shifts opposite to tilt
+  const shadowX = -tilt.rotateY * 0.8;
+  const shadowY = tilt.rotateX * 0.8;
+
+  return (
+    <div
+      style={{ perspective: "1000px" }}
+      onMouseMove={handleMove}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+    >
+      <div
+        ref={cardRef}
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) scale(${hovering ? 1.02 : 1})`,
+          transition: hovering
+            ? "transform 0.1s ease-out, box-shadow 0.1s ease-out"
+            : "transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease",
+          boxShadow: hovering
+            ? `${shadowX}px ${shadowY}px 30px rgba(0,0,0,0.25), 0 10px 40px rgba(0,0,0,0.15)`
+            : "0 4px 20px rgba(0,0,0,0.08)",
+          willChange: "transform",
+        }}
+      >
+        {children}
+
+        {/* Glare overlay */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.25) 0%, transparent 60%)`,
+            opacity: hovering ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            pointerEvents: "none",
+            zIndex: 5,
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default function About() {
@@ -102,51 +175,34 @@ export default function About() {
             <div className="rule" />
           </motion.div>
 
-          {/* ── Right: Tech Highlights ── */}
+          {/* ── Right: 3D Tilt Photo ── */}
           <motion.div initial={{ opacity: 0, x: 40 }} animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }} transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="rule" />
-            {/* Photo placeholder — replace src with your image later */}
-            <motion.div initial="rest" whileHover="hover" style={{ overflow: "hidden", position: "relative" }}>
+            <TiltCard>
               <motion.div
-                style={{
-                  width: "100%",
-                  aspectRatio: "3 / 4",
-                  position: "relative",
-                }}
-                variants={{
-                  rest: { scale: 1, filter: "grayscale(100%) opacity(0.9)" },
-                  hover: { scale: 1.05, filter: "grayscale(0%) opacity(1)" }
-                }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                initial="rest"
+                whileHover="hover"
+                style={{ width: "100%", aspectRatio: "3 / 4", position: "relative" }}
               >
-                <Image
-                  src="/me.jpg"
-                  alt="John Lloyd De Guzman"
-                  fill
-                  priority
-                  sizes="(max-width: 900px) 100vw, 50vw"
-                  style={{ objectFit: "cover", objectPosition: "center top" }}
-                />
+                <motion.div
+                  style={{ width: "100%", height: "100%", position: "relative" }}
+                  variants={{
+                    rest: { filter: "grayscale(100%) opacity(0.9)" },
+                    hover: { filter: "grayscale(0%) opacity(1)" },
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                  <Image
+                    src="/me.jpg"
+                    alt="John Lloyd De Guzman"
+                    fill
+                    priority
+                    sizes="(max-width: 900px) 100vw, 50vw"
+                    style={{ objectFit: "cover", objectPosition: "center top" }}
+                  />
+                </motion.div>
               </motion.div>
-              {/* Shine Overlay */}
-              <motion.div
-                variants={{
-                  rest: { left: "-150%" },
-                  hover: { left: "150%" }
-                }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  width: "35%",
-                  background: "#fff",
-                  transform: "skewX(-25deg)",
-                  pointerEvents: "none",
-                }}
-              />
-            </motion.div>
-
+            </TiltCard>
             <div className="rule" />
           </motion.div>
 
