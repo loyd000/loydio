@@ -163,25 +163,28 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
     const H = canvas.height;
 
     // — Game constants —
-    const BIRD_X    = Math.floor(W * 0.15);
-    const BIRD_SIZE = 14;
-    const PIPE_W    = 26;
-    const PIPE_GAP  = 150;
-    const GRAVITY   = 0.14;
-    const FLAP_V    = -4.0;
-    const SPEED     = 2.0;
-    const PIPE_FREQ = 160; // frames between spawns
+    const BIRD_X      = Math.floor(W * 0.15);
+    const BIRD_SIZE   = 20;
+    const PIPE_W      = 26;
+    const GAP_START   = 155;
+    const GAP_MIN     = 88;
+    const GRAVITY     = 0.14;
+    const FLAP_V      = -4.0;
+    const SPEED_START = 2.0;
+    const FREQ_START  = 170;
+    const FREQ_MIN    = 90;
 
     type GState = "idle" | "playing" | "dead";
 
     let gstate: GState  = "idle";
     let bird            = { y: H / 2, vy: 0 };
-    let pipes: { x: number; topH: number; scored: boolean }[] = [];
-    let score     = 0;
-    let hiScore   = parseInt(localStorage.getItem("flappy-hi") ?? "0", 10);
-    let frame     = 0;
-    let deadTime  = 0;
-    let raf       = 0;
+    let pipes: { x: number; topH: number; gap: number; scored: boolean }[] = [];
+    let score          = 0;
+    let hiScore        = parseInt(localStorage.getItem("flappy-hi") ?? "0", 10);
+    let frame          = 0;
+    let lastSpawn      = -9999;
+    let deadTime       = 0;
+    let raf            = 0;
 
     const die = () => {
       if (gstate !== "playing") return;
@@ -226,13 +229,18 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         bird.y  += bird.vy;
 
         frame++;
-        if (frame % PIPE_FREQ === 0) {
-          const topH = 48 + Math.random() * (H - PIPE_GAP - 76);
-          pipes.push({ x: W + PIPE_W, topH, scored: false });
+        const currentGap   = Math.max(GAP_MIN,     GAP_START   - score * 4);
+        const currentSpeed = Math.min(4.2,          SPEED_START + score * 0.09);
+        const currentFreq  = Math.max(FREQ_MIN,     FREQ_START  - score * 3);
+
+        if (frame - lastSpawn >= currentFreq) {
+          lastSpawn = frame;
+          const topH = 48 + Math.random() * (H - currentGap - 76);
+          pipes.push({ x: W + PIPE_W, topH, gap: currentGap, scored: false });
         }
 
         for (const p of pipes) {
-          p.x -= SPEED;
+          p.x -= currentSpeed;
           if (!p.scored && p.x + PIPE_W < BIRD_X) { p.scored = true; score++; }
         }
         pipes = pipes.filter(p => p.x + PIPE_W > 0);
@@ -240,19 +248,19 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         // Ceiling / floor
         if (bird.y < 0 || bird.y + BIRD_SIZE >= H) die();
 
-        // Pipe collisions (1px inset for forgiveness)
+        // Pipe collisions (3px inset for forgiveness)
         for (const p of pipes) {
           if (
-            BIRD_X + BIRD_SIZE > p.x + 1 &&
-            BIRD_X            < p.x + PIPE_W - 1 &&
-            (bird.y < p.topH || bird.y + BIRD_SIZE > p.topH + PIPE_GAP)
+            BIRD_X + BIRD_SIZE > p.x + 3 &&
+            BIRD_X             < p.x + PIPE_W - 3 &&
+            (bird.y + 3 < p.topH || bird.y + BIRD_SIZE - 3 > p.topH + p.gap)
           ) die();
         }
       }
 
       // — Draw pipes —
       for (const p of pipes) {
-        const botY  = p.topH + PIPE_GAP;
+        const botY  = p.topH + p.gap;
         const capH  = 9;
         const capOX = 3; // cap overhang x
 
@@ -295,33 +303,33 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
 
         // Thruster flame (flickers when thrusting upward)
         if (bird.vy < 0.5) {
-          const flameLen = 5 + Math.random() * 6;
+          const flameLen = 8 + Math.random() * 10;
           ctx.beginPath();
-          ctx.moveTo(-8, -2.5);
-          ctx.lineTo(-8 - flameLen, 0);
-          ctx.lineTo(-8, 2.5);
+          ctx.moveTo(-13, -4);
+          ctx.lineTo(-13 - flameLen, 0);
+          ctx.lineTo(-13, 4);
           ctx.closePath();
-          ctx.fillStyle = `rgba(255,255,255,${0.15 + Math.random() * 0.25})`;
+          ctx.fillStyle = `rgba(255,255,255,${0.15 + Math.random() * 0.3})`;
           ctx.fill();
         }
 
-        // Ship body — arrow pointing right
+        // Ship body — scaled up arrow pointing right
         ctx.beginPath();
-        ctx.moveTo(9, 0);      // nose
-        ctx.lineTo(1, -5);     // top front
-        ctx.lineTo(-1, -3);    // top waist
-        ctx.lineTo(-8, -5);    // top tail fin
-        ctx.lineTo(-6, 0);     // tail center
-        ctx.lineTo(-8, 5);     // bottom tail fin
-        ctx.lineTo(-1, 3);     // bottom waist
-        ctx.lineTo(1, 5);      // bottom front
+        ctx.moveTo(14, 0);     // nose
+        ctx.lineTo(1, -8);     // top front
+        ctx.lineTo(-2, -5);    // top waist
+        ctx.lineTo(-13, -8);   // top tail fin
+        ctx.lineTo(-10, 0);    // tail center
+        ctx.lineTo(-13, 8);    // bottom tail fin
+        ctx.lineTo(-2, 5);     // bottom waist
+        ctx.lineTo(1, 8);      // bottom front
         ctx.closePath();
         ctx.fillStyle = "#ffffff";
         ctx.fill();
 
         // Cockpit window
         ctx.beginPath();
-        ctx.arc(3, 0, 2, 0, Math.PI * 2);
+        ctx.arc(5, 0, 3, 0, Math.PI * 2);
         ctx.fillStyle = "#0e0e0e";
         ctx.fill();
 

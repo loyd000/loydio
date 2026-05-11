@@ -104,7 +104,7 @@ export default function CursorFollower() {
 
   return (
     <>
-      {/* Ring cursor */}
+      {/* Ring cursor — white + difference blend stays visible on any bg */}
       <motion.div
         style={{
           position: "fixed",
@@ -113,14 +113,15 @@ export default function CursorFollower() {
           width: RING_SIZE,
           height: RING_SIZE,
           borderRadius: "50%",
-          border: isHovering ? "none" : "1.5px solid var(--fg)",
-          background: isHovering ? "var(--fg)" : "transparent",
+          border: isHovering ? "none" : "1.5px solid #fff",
+          background: isHovering ? "#fff" : "transparent",
           opacity: scrolling ? 0.15 : isHovering ? 0.15 : 0.5,
           x: ringX,
           y: ringY,
           scale: ringScale,
           pointerEvents: "none",
           zIndex: 9998,
+          mixBlendMode: "difference",
           transition: "opacity 0.25s ease, background 0.2s ease, border 0.2s ease",
         }}
       />
@@ -134,12 +135,13 @@ export default function CursorFollower() {
           width: DOT_SIZE,
           height: DOT_SIZE,
           borderRadius: "50%",
-          background: "var(--fg)",
+          background: "#fff",
           opacity: scrolling ? 0.2 : 0.8,
           x: dotX,
           y: dotY,
           pointerEvents: "none",
           zIndex: 9999,
+          mixBlendMode: "difference",
           transition: "opacity 0.2s ease",
         }}
       />
