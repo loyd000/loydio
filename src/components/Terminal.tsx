@@ -6,13 +6,6 @@ const MONO = "'IBM Plex Mono', monospace";
 
 type Line = { type: "input" | "output" | "error"; text: string };
 
-// Interactive mode state
-type Mode =
-  | { kind: "normal" }
-  | { kind: "typerace"; target: string; startTime: number }
-  | { kind: "hack"; step: number }
-  | { kind: "matrix" };
-
 const BANNER = [
   "loyd@portfolio:~$ welcome",
   "─────────────────────────────────────────",
@@ -45,61 +38,7 @@ const FILES: Record<string, string[]> = {
 
 const SECTIONS = ["about", "stack", "credentials", "projects", "social", "contact"];
 
-/* ── Type Race phrases ────────────────── */
-const TYPERACE_PHRASES = [
-  "const app = express();",
-  "npm install framer-motion",
-  "git commit -m \"ship it\"",
-  "SELECT * FROM users WHERE active = true;",
-  "export default function Home() {",
-  "docker compose up -d",
-  "const [state, setState] = useState(null);",
-  "npx create-next-app@latest",
-  "console.log(\"Hello, World!\");",
-  "import React from 'react';",
-];
-
-/* ── Hack simulation data ─────────────── */
-const HACK_LINES = [
-  "[*] Initializing breach protocol...",
-  "[*] Scanning target network... 192.168.1.0/24",
-  "[+] Found 3 open ports: 22, 80, 443",
-  "[*] Bypassing firewall rules...",
-  "[+] Firewall bypassed. Injecting payload...",
-  "[*] Decrypting AES-256 cipher...",
-  "    ░░░░░░░░░░░░░░░░░░░░░░░░ 0%",
-  "    ████░░░░░░░░░░░░░░░░░░░░ 18%",
-  "    ████████░░░░░░░░░░░░░░░░ 35%",
-  "    ████████████░░░░░░░░░░░░ 52%",
-  "    ████████████████░░░░░░░░ 71%",
-  "    ████████████████████░░░░ 87%",
-  "    ████████████████████████ 100%",
-  "[+] Cipher cracked successfully.",
-  "[*] Extracting credentials...",
-  `    admin:${Array.from({ length: 16 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("")}`,
-  `    root:${Array.from({ length: 16 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("")}`,
-  "[*] Establishing reverse shell...",
-  "[+] Connection established on port 4444.",
-  "[*] Downloading /etc/shadow...",
-  "[+] Download complete. 2.4KB transferred.",
-  "[*] Cleaning logs...",
-  "[+] Tracks covered. Session terminated.",
-  "",
-  "╔══════════════════════════════════════╗",
-  "║        ACCESS GRANTED ✓             ║",
-  "║   Just kidding. This is a portfolio ║",
-  "╚══════════════════════════════════════╝",
-];
-
-/* ── Matrix characters ────────────────── */
-const MATRIX_CHARS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF";
-function randomMatrixLine(width: number): string {
-  return Array.from({ length: width }, () =>
-    Math.random() > 0.7 ? MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)] : " "
-  ).join("");
-}
-
-function runCommand(raw: string): { lines: string[]; action?: () => void; mode?: Mode } {
+function runCommand(raw: string): { lines: string[]; action?: () => void } {
   const parts = raw.trim().split(/\s+/);
   const cmd = parts[0]?.toLowerCase() ?? "";
   const arg = parts.slice(1).join(" ");
@@ -114,13 +53,11 @@ function runCommand(raw: string): { lines: string[]; action?: () => void; mode?:
           "",
           "  help              — show this message",
           "  whoami            — who am I?",
+          "  fetch             — portfolio system info",
           "  ls                — list available files",
           "  cat <file>        — read a file",
           "  open <section>    — scroll to a section",
           "  theme             — toggle light/dark mode",
-          "  hack              — breach the mainframe",
-          "  type-race         — test your typing speed",
-          "  matrix            — enter the matrix",
           "  date              — current date/time",
           "  clear             — clear terminal",
           "  exit              — close terminal",
@@ -129,6 +66,26 @@ function runCommand(raw: string): { lines: string[]; action?: () => void; mode?:
 
     case "whoami":
       return { lines: ["loyd — developer, designer, and occasional overthinker."] };
+
+    case "fetch":
+      return {
+        lines: [
+          "  loyd@portfolio",
+          "  ──────────────────────────────",
+          "  Name     : John Lloyd De Guzman",
+          "  Role     : Developer & Designer",
+          "  OS       : Next.js 16",
+          "  Shell    : TypeScript",
+          "  WM       : Framer Motion",
+          "  Editor   : VS Code",
+          "  Frontend : React · Tailwind v4 · Framer Motion",
+          "  Backend  : Node · Supabase · PostgreSQL",
+          "  Design   : Figma · UI/UX",
+          "  Based    : Philippines 🇵🇭",
+          "  ──────────────────────────────",
+          "  ██ ██ ██ ██ ██ ██ ██ ██",
+        ],
+      };
 
     case "ls":
       return { lines: ["about.txt   projects.txt   contact.txt"] };
@@ -175,33 +132,6 @@ function runCommand(raw: string): { lines: string[]; action?: () => void; mode?:
         action: () => { window.location.href = "/admin"; },
       };
 
-    case "hack":
-      return {
-        lines: ["[*] BREACH PROTOCOL v3.7 — Starting..."],
-        mode: { kind: "hack", step: 0 },
-      };
-
-    case "type-race": {
-      const phrase = TYPERACE_PHRASES[Math.floor(Math.random() * TYPERACE_PHRASES.length)];
-      return {
-        lines: [
-          "╔═══ TYPE RACE ═══════════════════════════╗",
-          "║ Type the following as fast as you can:   ║",
-          "╚══════════════════════════════════════════╝",
-          "",
-          `  ▸ ${phrase}`,
-          "",
-        ],
-        mode: { kind: "typerace", target: phrase, startTime: Date.now() },
-      };
-    }
-
-    case "matrix":
-      return {
-        lines: ["Entering the Matrix..."],
-        mode: { kind: "matrix" },
-      };
-
     case "exit":
       return { lines: ["__exit__"] };
 
@@ -216,19 +146,10 @@ export default function Terminal() {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIdx, setHistoryIdx] = useState(-1);
-  const [mode, setMode] = useState<Mode>({ kind: "normal" });
-  const [inputLocked, setInputLocked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const close = useCallback(() => setOpen(false), []);
-
-  // Clean up animation timers
-  const clearTimers = useCallback(() => {
-    animTimers.current.forEach(clearTimeout);
-    animTimers.current = [];
-  }, []);
 
   // Backtick key opens/closes terminal
   useEffect(() => {
@@ -260,67 +181,6 @@ export default function Terminal() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [lines]);
 
-  // ── Hack animation ──
-  useEffect(() => {
-    if (mode.kind !== "hack") return;
-    clearTimers();
-    setInputLocked(true);
-
-    HACK_LINES.forEach((line, i) => {
-      const t = setTimeout(() => {
-        setLines((prev) => [...prev, { type: "output", text: line }]);
-        // Last line: unlock input
-        if (i === HACK_LINES.length - 1) {
-          setMode({ kind: "normal" });
-          setInputLocked(false);
-        }
-      }, (i + 1) * 180);
-      animTimers.current.push(t);
-    });
-
-    return clearTimers;
-  }, [mode.kind === "hack" ? mode.step : null, clearTimers]);
-
-  // ── Matrix animation ──
-  useEffect(() => {
-    if (mode.kind !== "matrix") return;
-    clearTimers();
-    setInputLocked(true);
-
-    const totalLines = 30;
-    for (let i = 0; i < totalLines; i++) {
-      const t = setTimeout(() => {
-        setLines((prev) => [...prev, { type: "output", text: randomMatrixLine(60) }]);
-        if (i === totalLines - 1) {
-          const end = setTimeout(() => {
-            setLines((prev) => [
-              ...prev,
-              { type: "output", text: "" },
-              { type: "output", text: "Wake up, Neo..." },
-              { type: "output", text: "The Matrix has you." },
-              { type: "output", text: "" },
-            ]);
-            setMode({ kind: "normal" });
-            setInputLocked(false);
-          }, 300);
-          animTimers.current.push(end);
-        }
-      }, (i + 1) * 100);
-      animTimers.current.push(t);
-    }
-
-    return clearTimers;
-  }, [mode.kind === "matrix" ? "active" : null, clearTimers]);
-
-  // Clean up on close
-  useEffect(() => {
-    if (!open) {
-      clearTimers();
-      setMode({ kind: "normal" });
-      setInputLocked(false);
-    }
-  }, [open, clearTimers]);
-
   const submit = () => {
     const raw = input.trim();
     setInput("");
@@ -328,51 +188,9 @@ export default function Terminal() {
 
     if (!raw) return;
 
-    // Handle type-race mode
-    if (mode.kind === "typerace") {
-      const elapsed = (Date.now() - mode.startTime) / 1000;
-      const words = mode.target.split(" ").length;
-      const wpm = Math.round((words / elapsed) * 60);
-      const isCorrect = raw === mode.target;
-
-      const results: Line[] = [
-        { type: "input", text: raw },
-        { type: "output", text: "" },
-        {
-          type: isCorrect ? "output" : "error",
-          text: isCorrect
-            ? `✓ Correct! Time: ${elapsed.toFixed(2)}s — ${wpm} WPM`
-            : `✗ Incorrect! You typed:`,
-        },
-      ];
-
-      if (!isCorrect) {
-        // Show diff: highlight wrong characters
-        const diff = mode.target
-          .split("")
-          .map((ch, i) => (raw[i] === ch ? ch : `[${raw[i] ?? "·"}]`))
-          .join("");
-        results.push({ type: "error", text: `  ${diff}` });
-        results.push({ type: "output", text: `  Expected: ${mode.target}` });
-      } else if (wpm >= 80) {
-        results.push({ type: "output", text: "  🔥 Blazing fast!" });
-      } else if (wpm >= 50) {
-        results.push({ type: "output", text: "  ⚡ Not bad!" });
-      } else {
-        results.push({ type: "output", text: "  🐌 Keep practicing!" });
-      }
-
-      results.push({ type: "output", text: "" });
-      results.push({ type: "output", text: "Type 'type-race' to try again." });
-
-      setLines((prev) => [...prev, ...results]);
-      setMode({ kind: "normal" });
-      return;
-    }
-
     setHistory((h) => [raw, ...h].slice(0, 50));
 
-    const { lines: out, action, mode: newMode } = runCommand(raw);
+    const { lines: out, action } = runCommand(raw);
 
     if (out[0] === "__clear__") {
       setLines([]);
@@ -389,13 +207,11 @@ export default function Terminal() {
     ];
     setLines((prev) => [...prev, ...newLines]);
 
-    if (newMode) setMode(newMode);
     if (action) setTimeout(action, 100);
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") { submit(); return; }
-    if (mode.kind !== "normal" && mode.kind !== "typerace") return; // Ignore arrows during animations
     if (e.key === "ArrowUp") {
       e.preventDefault();
       const next = Math.min(historyIdx + 1, history.length - 1);
@@ -410,9 +226,6 @@ export default function Terminal() {
     }
   };
 
-  // Input placeholder text based on mode
-  const placeholder = mode.kind === "typerace" ? "Type the phrase above..." : "";
-
   return (
     <>
       {/* Floating terminal trigger — visible on all devices */}
@@ -425,8 +238,8 @@ export default function Terminal() {
           aria-label="Open terminal"
           style={{
             position: "fixed",
-            bottom: 84,
-            right: 24,
+            bottom: 32,
+            right: 32,
             width: 40,
             height: 40,
             borderRadius: "50%",
@@ -548,14 +361,12 @@ export default function Terminal() {
                 background: "#0a0a0a",
                 flexShrink: 0,
               }}>
-                <span style={{ fontFamily: MONO, fontSize: 12, color: inputLocked ? "#666" : "#4ade80", userSelect: "none" }}>$</span>
+                <span style={{ fontFamily: MONO, fontSize: 12, color: "#4ade80", userSelect: "none" }}>$</span>
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKey}
-                  disabled={inputLocked}
-                  placeholder={placeholder}
                   spellCheck={false}
                   autoComplete="off"
                   aria-label="Terminal input"
@@ -566,7 +377,7 @@ export default function Terminal() {
                     outline: "none",
                     fontFamily: MONO,
                     fontSize: 12,
-                    color: inputLocked ? "#666" : "#d4d4d4",
+                    color: "#d4d4d4",
                     caretColor: "#4ade80",
                   }}
                 />
