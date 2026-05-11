@@ -203,11 +203,12 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
       } else if (gstate === "playing") {
         bird.vy = FLAP_V;
       } else if (gstate === "dead" && Date.now() - deadTime > 600) {
-        gstate  = "playing";
-        bird    = { y: H / 2, vy: FLAP_V };
-        pipes   = [];
-        score   = 0;
-        frame   = 0;
+        gstate     = "playing";
+        bird       = { y: H / 2, vy: FLAP_V };
+        pipes      = [];
+        score      = 0;
+        frame      = 0;
+        lastSpawn  = -9999;
       }
     };
 
