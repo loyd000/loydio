@@ -12,7 +12,7 @@ export default function Footer() {
       }}
     >
       <div
-        className="section-container"
+        className="section-container footer-inner"
         style={{
           display: "flex",
           flexWrap: "wrap",
@@ -42,7 +42,7 @@ export default function Footer() {
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
+        <div className="footer-links" style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
           {["About", "Projects", "Experience", "Contact"].map((link) => (
             <a
               key={link}
@@ -65,6 +65,7 @@ export default function Footer() {
           ))}
           <a
             href="mailto:deguzman.johnlloyd12@gmail.com"
+            className="footer-email"
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: 11,

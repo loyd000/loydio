@@ -50,11 +50,13 @@ function ViewBtn({ project, onModal, cardHovered }: { project: Project; onModal:
 }
 
 /* ── Dev project card ─────────────────── */
-function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
+function ProjectCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Project) => void }) {
   const [descScroll, setDescScroll] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [hovered, setHovered] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef(null);
+  const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
 
   useEffect(() => {
     if (wrapRef.current) {
@@ -70,17 +72,36 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
       e.preventDefault();
       setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + e.deltaY * 0.6)));
     };
+    // Touch scroll support for mobile
+    let touchStartY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      if (maxScroll === 0) return;
+      touchStartY = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (maxScroll === 0) return;
+      const deltaY = touchStartY - e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
+      setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + deltaY * 0.8)));
+    };
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+    };
   }, [maxScroll]);
 
   return (
     <motion.div
+      ref={cardRef}
       layout
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.3, delay: i * 0.05 }}
+      transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -152,16 +173,19 @@ function ProjectCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i
 }
 
 /* ── Design card ──────────────────────── */
-function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i: number; onModal: (p: Project) => void }) {
+function DesignCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Project) => void }) {
   const [hovered, setHovered] = useState(false);
+  const cardRef = useRef(null);
+  const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
 
   return (
     <motion.div
+      ref={cardRef}
       layout
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.3, delay: i * 0.05 }}
+      transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
       style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -299,7 +323,7 @@ export default function Projects() {
   useEffect(() => { setDevShowAll(false); }, [active]);
 
   return (
-    <section id="projects" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
+    <section id="projects" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Projects</span>
       </div>
@@ -362,7 +386,7 @@ export default function Projects() {
             <div className="project-grid">
               <AnimatePresence mode="popLayout">
                 {displayedDev.map((p, i) => (
-                  <ProjectCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
+                  <ProjectCard key={p.id} p={p} i={i} onModal={setModal} />
                 ))}
               </AnimatePresence>
             </div>
@@ -412,7 +436,7 @@ export default function Projects() {
             <div className="project-grid">
               <AnimatePresence mode="popLayout">
                 {displayedDesign.map((p, i) => (
-                  <DesignCard key={p.id} p={p} inView={inView} i={i} onModal={setModal} />
+                  <DesignCard key={p.id} p={p} i={i} onModal={setModal} />
                 ))}
               </AnimatePresence>
             </div>

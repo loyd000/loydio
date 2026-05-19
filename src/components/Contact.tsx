@@ -32,6 +32,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={ref}
+      className="section-mobile-pad"
       style={{ position: "relative", padding: "10rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
 
@@ -78,7 +79,7 @@ export default function Contact() {
           <h2
             style={{
               fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: "clamp(17px, 5vw, 58px)",
+              fontSize: "clamp(22px, 5vw, 58px)",
               fontWeight: 700,
               lineHeight: 1.05,
               maxWidth: 1120,
@@ -113,7 +114,7 @@ export default function Contact() {
 
           {/* CTA buttons */}
           <div className="rule" />
-          <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+          <div className="contact-ctas" style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
             <a
               href={`mailto:${EMAIL}`}
               className="btn btn-primary"

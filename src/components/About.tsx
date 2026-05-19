@@ -108,7 +108,7 @@ export default function About() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
+    <section id="about" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">About Me</span>
       </div>
@@ -160,7 +160,7 @@ export default function About() {
             <Spacer />
 
             <div className="rule" />
-            <div style={{ display: "flex", gap: "2.5rem" }}>
+            <div className="about-stats" style={{ display: "flex", gap: "2.5rem" }}>
               {stats.map((s) => (
                 <div key={s.label}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, lineHeight: 1 }}>

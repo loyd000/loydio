@@ -69,7 +69,7 @@ export default function Credentials() {
   const slideDuration = photos.length > 0 ? Math.max(10, photos.length * 3) : 8;
 
   return (
-    <section id="credentials" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
+    <section id="credentials" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Credentials</span>
       </div>
@@ -105,7 +105,7 @@ export default function Credentials() {
         ) : credentials.length === 0 ? (
           <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>— NO CREDENTIALS UPLOADED</div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "4rem" }}>
+          <div className="credentials-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "4rem" }}>
             
             {/* Left: Text List */}
             <div style={{ display: "flex", flexDirection: "column" }}>

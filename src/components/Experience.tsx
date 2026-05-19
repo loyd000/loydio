@@ -36,7 +36,7 @@ export default function Experience() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="experience" ref={ref} style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
+    <section id="experience" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
         <span className="vertical-label">Experience</span>
       </div>

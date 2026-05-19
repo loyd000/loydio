@@ -179,6 +179,7 @@ export default function TechStack() {
     <section
       id="stack"
       ref={ref}
+      className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
       <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>

@@ -167,8 +167,8 @@ body {
 
 @media (max-width: 600px) {
   .section-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
 
@@ -260,7 +260,7 @@ body {
 @media (max-width: 600px) {
 
   .grid-strip {
-    width: 2rem;
+    width: 1.25rem;
   }
 
   .grid-strip-left {
@@ -272,11 +272,11 @@ body {
   }
 
   .grid-line-left {
-    left: 2rem;
+    left: 1.25rem;
   }
 
   .grid-line-right {
-    right: 2rem;
+    right: 1.25rem;
   }
 
   .grid-line-outer-left {
@@ -308,8 +308,8 @@ body {
 
 @media (max-width: 600px) {
   .rule {
-    margin-left: -2rem;
-    margin-right: -2rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
   }
 }
 
@@ -328,8 +328,8 @@ body {
 
 @media (max-width: 600px) {
   .full-bleed {
-    margin-left: -2rem;
-    margin-right: -2rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
   }
 }
 
@@ -447,6 +447,14 @@ body {
 @media (max-width: 600px) {
   .project-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Mobile section padding reduction ────── */
+@media (max-width: 600px) {
+  .section-mobile-pad {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
   }
 }
 
@@ -573,6 +581,14 @@ body {
   }
 }
 
+/* ── Credentials grid mobile fix ── */
+@media (max-width: 600px) {
+  .credentials-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
 /* ── Theme-aware image filter ── */
 .riot-icon,
 .theme-icon { filter: brightness(0); }
@@ -627,7 +643,8 @@ body {
   white-space: normal;
 }
 
-.tech-chip:hover .tech-chip-note {
+.tech-chip:hover .tech-chip-note,
+.tech-chip.touch-active .tech-chip-note {
   opacity: 1;
   transform: translate(-50%, 0);
 }
@@ -747,5 +764,56 @@ body {
   }
   .terminal-hint-mobile {
     display: inline;
+  }
+}
+
+/* ── Footer mobile stacking ── */
+@media (max-width: 600px) {
+  .footer-inner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1.5rem !important;
+  }
+  .footer-links {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  .footer-email {
+    word-break: break-all;
+  }
+}
+
+/* ── Terminal & ScrollToTop mobile positioning ── */
+@media (max-width: 768px) {
+  .terminal-fab {
+    bottom: 20px !important;
+    right: 20px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .scroll-to-top-btn {
+    bottom: 68px !important;
+    right: 20px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+
+/* ── About stats mobile ── */
+@media (max-width: 480px) {
+  .about-stats {
+    gap: 1.5rem !important;
+  }
+}
+
+/* ── Contact CTA buttons mobile ── */
+@media (max-width: 600px) {
+  .contact-ctas {
+    flex-direction: column !important;
+    width: 100%;
+  }
+  .contact-ctas .btn {
+    width: 100%;
+    justify-content: center;
   }
 }

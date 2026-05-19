@@ -147,6 +147,7 @@ function runCommand(raw: string): { lines: string[]; action?: () => void } {
 
 function FlappyGame({ onExit }: { onExit: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const flapRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -211,6 +212,8 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         lastSpawn  = -9999;
       }
     };
+
+    flapRef.current = flap;
 
     const loop = () => {
       // — Background —
@@ -350,10 +353,10 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         ctx.textAlign = "center";
         ctx.fillStyle = "rgba(255,255,255,0.72)";
         ctx.font      = `11px ${MONO}`;
-        ctx.fillText("press space to launch", W / 2, H / 2 - 12);
+        ctx.fillText("tap or press space to launch", W / 2, H / 2 - 12);
         ctx.fillStyle = "rgba(255,255,255,0.26)";
         ctx.font      = `10px ${MONO}`;
-        ctx.fillText("space / ↑  to thrust  ·  esc  to exit", W / 2, H / 2 + 10);
+        ctx.fillText("tap / space  to thrust  ·  esc  to exit", W / 2, H / 2 + 10);
       }
 
       // — Dead overlay —
@@ -367,7 +370,7 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
         ctx.fillStyle = "rgba(255,255,255,0.4)";
         ctx.font      = `10px ${MONO}`;
         ctx.fillText(`score  ${score}  ·  best  ${hiScore}`, W / 2, H / 2 + 4);
-        ctx.fillText("space to retry  ·  esc to exit", W / 2, H / 2 + 22);
+        ctx.fillText("tap or space to retry  ·  esc to exit", W / 2, H / 2 + 22);
       }
 
       ctx.textAlign = "left";
@@ -379,19 +382,28 @@ function FlappyGame({ onExit }: { onExit: () => void }) {
       if (e.key === "Escape") { e.preventDefault(); onExit(); }
     };
 
+    // Touch support for mobile
+    const onTouch = (e: TouchEvent) => {
+      e.preventDefault();
+      flap();
+    };
+
     window.addEventListener("keydown", onKey);
+    canvas.addEventListener("touchstart", onTouch, { passive: false });
     raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKey);
+      canvas.removeEventListener("touchstart", onTouch);
     };
   }, [onExit]);
 
   return (
     <canvas
       ref={canvasRef}
-      style={{ display: "block", width: "100%", height: "300px" }}
+      onClick={() => flapRef.current()}
+      style={{ display: "block", width: "100%", height: "300px", touchAction: "none" }}
     />
   );
 }
@@ -511,6 +523,7 @@ export default function Terminal() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 3, duration: 0.5 }}
+          className="terminal-fab"
           onClick={() => setOpen(true)}
           aria-label="Open terminal"
           style={{

@@ -130,7 +130,7 @@ export default function Hero() {
           <div className="rule" />
           <div style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(14px, 1.5vw, 20px)" }}>
             <span style={{ opacity: 0.4 }}>I am a</span>
-            <span style={{ fontWeight: 600, minWidth: 180 }}>
+            <span style={{ fontWeight: 600, minWidth: "clamp(100px, 20vw, 180px)" }}>
               {displayed}<span className="blink">|</span>
             </span>
           </div>
