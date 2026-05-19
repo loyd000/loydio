@@ -28,17 +28,8 @@ type RevealCharProps = {
   baseOpacity: number;
 };
 
-type ScrollRevealTextProps = {
-  text: string;
-  className?: string;
-  delay?: number;
-  baseOpacity?: number;
-};
-
 const HEADING_BASE_OPACITY = 0.18;
-const COPY_BASE_OPACITY = 0.42;
 const HEADING_REVEAL_DELAY = 0.22;
-const COPY_REVEAL_DELAY = 0.16;
 const REVEAL_SPAN = 0.9;
 
 export default function TypewriterText({ text1, text2 }: TypewriterTextProps) {
@@ -93,41 +84,6 @@ export default function TypewriterText({ text1, text2 }: TypewriterTextProps) {
             />
           </>
         )}
-      </span>
-    </span>
-  );
-}
-
-export function ScrollRevealText({
-  text,
-  className,
-  delay = COPY_REVEAL_DELAY,
-  baseOpacity = COPY_BASE_OPACITY,
-}: ScrollRevealTextProps) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 94%", "end 28%"],
-  });
-
-  if (prefersReducedMotion) {
-    return <span className={className}>{text}</span>;
-  }
-
-  return (
-    <span ref={ref} className={className ? `scroll-reveal-typewriter ${className}` : "scroll-reveal-typewriter"}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
-        <RevealLine
-          text={text}
-          lineId="copy"
-          charOffset={0}
-          totalChars={text.length}
-          progress={scrollYProgress}
-          delay={delay}
-          baseOpacity={baseOpacity}
-        />
       </span>
     </span>
   );

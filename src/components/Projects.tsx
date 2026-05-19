@@ -225,6 +225,40 @@ function DesignCard({ p, inView, i, onModal }: { p: Project; inView: boolean; i:
 }
 
 /* ── Section ──────────────────────────── */
+function ProjectSkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
+  const imageAspect = variant === "design" ? "4 / 3" : "16 / 9";
+  const label = variant === "design" ? "Loading design work" : "Loading development projects";
+
+  return (
+    <div className="project-grid" role="status" aria-label={label}>
+      {Array.from({ length: INITIAL_SHOW }).map((_, i) => (
+        <div
+          className="project-skeleton-card"
+          key={`${variant}-skeleton-${i}`}
+          style={{ animationDelay: `${i * 0.12}s` }}
+          aria-hidden="true"
+        >
+          <div className="project-skeleton-block" style={{ aspectRatio: imageAspect }} />
+          <div style={{ padding: variant === "design" ? "1.25rem 1.5rem" : "1.75rem 2rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: "1.25rem" }}>
+              <div className="project-skeleton-pill" />
+              <div className="project-skeleton-meta" />
+            </div>
+            <div className="project-skeleton-title" />
+            <div className="project-skeleton-line" style={{ width: "92%" }} />
+            <div className="project-skeleton-line" style={{ width: "68%" }} />
+            <div style={{ display: "flex", gap: 8, marginTop: "1.5rem" }}>
+              <div className="project-skeleton-tag" />
+              <div className="project-skeleton-tag" />
+            </div>
+          </div>
+        </div>
+      ))}
+      <span className="sr-only">{label}</span>
+    </div>
+  );
+}
+
 export default function Projects() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -315,7 +349,11 @@ export default function Projects() {
         <div style={{ height: "1.5rem" }} />
 
         {loading ? (
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+          <>
+            <div className="rule" />
+            <ProjectSkeletonGrid />
+            <div className="rule" />
+          </>
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>PROJECTS FAILED TO LOAD</div>
         ) : (
@@ -361,7 +399,11 @@ export default function Projects() {
         </motion.div>
 
         {loading ? (
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
+          <>
+            <div className="rule" />
+            <ProjectSkeletonGrid variant="design" />
+            <div className="rule" />
+          </>
         ) : loadError ? (
           <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>DESIGN WORK FAILED TO LOAD</div>
         ) : (

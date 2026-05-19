@@ -381,6 +381,63 @@ body {
   grid-template-columns: repeat(3, 1fr);
 }
 
+@keyframes project-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.project-skeleton-card {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  min-height: 320px;
+  overflow: hidden;
+  animation: project-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.project-skeleton-block,
+.project-skeleton-pill,
+.project-skeleton-meta,
+.project-skeleton-title,
+.project-skeleton-line,
+.project-skeleton-tag {
+  background: var(--subtle-bg);
+}
+
+.project-skeleton-pill {
+  width: 86px;
+  height: 28px;
+  border: 1px solid var(--border);
+}
+
+.project-skeleton-meta {
+  width: 42px;
+  height: 12px;
+  margin-top: 7px;
+}
+
+.project-skeleton-title {
+  width: 72%;
+  height: 18px;
+  margin-bottom: 1rem;
+}
+
+.project-skeleton-line {
+  height: 10px;
+  margin-bottom: 0.65rem;
+}
+
+.project-skeleton-tag {
+  width: 56px;
+  height: 10px;
+}
+
 @media (max-width: 900px) {
   .project-grid {
     grid-template-columns: repeat(2, 1fr);
