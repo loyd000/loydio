@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
+import TypewriterText, { ScrollRevealText } from "./TypewriterText";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiFramer, SiVite,
   SiNodedotjs, SiExpress, SiPostgresql, SiSupabase, SiPrisma, SiOpenapiinitiative,
@@ -204,7 +204,7 @@ export default function TechStack() {
           <Spacer h="1.5rem" />
           <div className="rule" />
           <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 400, lineHeight: 1.8 }}>
-            The tools and technologies I use to build fast, scalable, and beautiful products.
+            <ScrollRevealText text="The tools and technologies I use to build fast, scalable, and beautiful products." />
           </p>
           <div className="rule" />
         </motion.div>

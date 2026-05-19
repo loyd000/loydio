@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
+import TypewriterText, { ScrollRevealText } from "./TypewriterText";
 
 const experiences = [
   {
@@ -73,7 +73,9 @@ export default function Experience() {
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <h3 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 18, fontWeight: 700, marginBottom: "0.25rem" }}>{exp.role}</h3>
                     <p style={{ fontSize: 12, opacity: 0.4, marginBottom: "1rem", letterSpacing: "0.05em" }}>{exp.company}</p>
-                    <p style={{ fontSize: 13, opacity: 0.6, lineHeight: 1.8, maxWidth: 500, marginBottom: "1.25rem" }}>{exp.desc}</p>
+                    <p style={{ fontSize: 13, opacity: 0.6, lineHeight: 1.8, maxWidth: 500, marginBottom: "1.25rem" }}>
+                      <ScrollRevealText text={exp.desc} />
+                    </p>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                       {exp.tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}
                     </div>
