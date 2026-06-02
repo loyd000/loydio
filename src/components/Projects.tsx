@@ -4,175 +4,130 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
-import TypewriterText from "./TypewriterText";
-import ScrambleText from "./ScrambleText";
 
 const MONO = "'IBM Plex Mono', monospace";
 const INITIAL_SHOW = 3;
-
 const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"];
 
-/* ── View Project button with scramble ── */
-function ViewBtn({ project, onModal, cardHovered }: { project: Project; onModal: (p: Project) => void; cardHovered?: boolean }) {
-  const [scrTrigger, setScrTrigger] = useState(0);
-
-  useEffect(() => {
-    if (cardHovered) setScrTrigger((n) => n + 1);
-  }, [cardHovered]);
-
-  const label = project.link ? "View Project ↗" : "View Project →";
-
-  if (project.link) {
-    return (
-      <a
-        href={project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(e) => e.stopPropagation()}
-        style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", transition: "background 0.2s, color 0.2s" }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--fg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--bg)"; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "var(--bg)"; (e.currentTarget as HTMLAnchorElement).style.color = "var(--fg)"; }}
-      >
-        {cardHovered ? <ScrambleText text={label} startDelay={0} trigger={scrTrigger} /> : label}
-      </a>
-    );
-  }
-  return (
-    <button
-      onClick={(e) => { e.stopPropagation(); onModal(project); }}
-      style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", border: "1px solid var(--border-heavy)", color: "var(--fg)", background: "var(--bg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--fg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--bg)"; }}
-      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--fg)"; }}
-    >
-      {cardHovered ? <ScrambleText text={label} startDelay={0} trigger={scrTrigger} /> : label}
-    </button>
-  );
-}
-
-/* ── Dev project card ─────────────────── */
+/* ── Project card (dev) ───────────────── */
 function ProjectCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Project) => void }) {
-  const [descScroll, setDescScroll] = useState(0);
-  const [maxScroll, setMaxScroll] = useState(0);
   const [hovered, setHovered] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef(null);
   const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
-
-  useEffect(() => {
-    if (wrapRef.current) {
-      setMaxScroll(Math.max(0, wrapRef.current.scrollHeight - wrapRef.current.clientHeight));
-    }
-  }, [p.description]);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      if (maxScroll === 0) return;
-      e.preventDefault();
-      setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + e.deltaY * 0.6)));
-    };
-    // Touch scroll support for mobile
-    let touchStartY = 0;
-    const onTouchStart = (e: TouchEvent) => {
-      if (maxScroll === 0) return;
-      touchStartY = e.touches[0].clientY;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (maxScroll === 0) return;
-      const deltaY = touchStartY - e.touches[0].clientY;
-      touchStartY = e.touches[0].clientY;
-      setDescScroll(prev => Math.max(0, Math.min(maxScroll, prev + deltaY * 0.8)));
-    };
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchmove", onTouchMove, { passive: true });
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-    };
-  }, [maxScroll]);
 
   return (
     <motion.div
       ref={cardRef}
       layout
-      initial={{ opacity: 0, y: 40 }}
-      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 32 }}
+      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", color: "var(--fg)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
+      transition={{ duration: 0.45, delay: i * 0.07, ease: "easeOut" }}
+      style={{
+        border: "1px solid var(--border)",
+        background: "var(--bg)",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 2,
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        boxShadow: hovered ? "0 4px 24px rgba(0,0,0,0.08)" : "none",
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Progress bar sweep */}
+      {/* Accent bottom bar sweep */}
       <div
         style={{
           position: "absolute",
-          bottom: 0,
-          left: 0,
+          bottom: 0, left: 0,
           height: 2,
-          background: "var(--fg)",
+          background: "var(--accent)",
           width: hovered ? "100%" : "0%",
-          transition: hovered ? "width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "width 0.3s ease",
+          transition: hovered ? "width 0.5s ease" : "width 0.25s ease",
           zIndex: 4,
         }}
       />
 
       {p.image_url && (
-        <div style={{ overflow: "hidden", borderBottom: "1px solid var(--border)" }}>
-          <div style={{
-            transform: hovered ? "scale(1.08)" : "scale(1)",
-            transition: "transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-          }}>
+        <div style={{ overflow: "hidden" }}>
+          <div style={{ transform: hovered ? "scale(1.05)" : "scale(1)", transition: "transform 3s ease" }}>
             <MagnifyImage
               src={p.image_url}
               alt={p.title}
-              sizes="(max-width: 900px) 100vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               style={{ width: "100%", aspectRatio: "16 / 9" }}
             />
           </div>
         </div>
       )}
 
-      <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", flex: 1 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+      <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", flex: 1 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.875rem", gap: 8 }}>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {(p.category || "").split(",").map(c => <span key={c.trim()} className="tag">{c.trim()}</span>)}
+            {(p.category || "").split(",").map((c) => (
+              <span key={c.trim()} className="tag">{c.trim()}</span>
+            ))}
           </div>
-          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+          <span style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap" }}>{p.year}</span>
         </div>
 
-        <h3 style={{ fontFamily: MONO, fontSize: 15, fontWeight: 700, marginBottom: "0.75rem", lineHeight: 1.3 }}>{p.title}</h3>
-
-        {/* Description window — scroll wheel scrolls the text */}
-        <div
-          ref={wrapRef}
-          style={{ position: "relative", height: 63, overflow: "hidden", marginBottom: "1.5rem" }}
+        <h3
+          className="section-heading"
+          style={{ fontSize: 16, marginBottom: "0.625rem" }}
         >
-          <motion.p
-            style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.75, margin: 0 }}
-            animate={{ y: -descScroll }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            {p.description}
-          </motion.p>
-          {maxScroll > 0 && descScroll < maxScroll && (
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 20, background: "linear-gradient(to bottom, transparent, var(--bg))", pointerEvents: "none" }} />
-          )}
+          {p.title}
+        </h3>
+
+        <p
+          style={{
+            fontSize: 13,
+            color: "var(--muted)",
+            lineHeight: 1.75,
+            marginBottom: "1.25rem",
+            flex: 1,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {p.description}
+        </p>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.25rem" }}>
+          {(p.tags ?? []).map((tag) => (
+            <span key={tag} style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)" }}>#{tag}</span>
+          ))}
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: "1.5rem" }}>
-          {(p.tags ?? []).map((tag) => <span key={tag} style={{ fontFamily: MONO, fontSize: 10, opacity: 0.35 }}>#{tag}</span>)}
-        </div>
-        <ViewBtn project={p} onModal={onModal} cardHovered={hovered} />
+        {p.link ? (
+          <a
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="btn btn-outline"
+            style={{ alignSelf: "flex-start", padding: "8px 16px" }}
+          >
+            View Project ↗
+          </a>
+        ) : (
+          <button
+            onClick={(e) => { e.stopPropagation(); onModal(p); }}
+            className="btn btn-outline"
+            style={{ alignSelf: "flex-start", padding: "8px 16px" }}
+          >
+            View Project →
+          </button>
+        )}
       </div>
     </motion.div>
   );
 }
 
-/* ── Design card ──────────────────────── */
+/* ── Design card ───────────────────────── */
 function DesignCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Project) => void }) {
   const [hovered, setHovered] = useState(false);
   const cardRef = useRef(null);
@@ -182,130 +137,112 @@ function DesignCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Pro
     <motion.div
       ref={cardRef}
       layout
-      initial={{ opacity: 0, y: 40 }}
-      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 32 }}
+      animate={cardInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
-      style={{ borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)", background: "var(--bg)", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}
+      transition={{ duration: 0.45, delay: i * 0.07, ease: "easeOut" }}
+      style={{
+        border: "1px solid var(--border)",
+        background: "var(--bg)",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        borderRadius: 2,
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        boxShadow: hovered ? "0 4px 24px rgba(0,0,0,0.08)" : "none",
+        position: "relative",
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Progress bar sweep */}
       <div
         style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          height: 2,
-          background: "var(--fg)",
+          position: "absolute", bottom: 0, left: 0,
+          height: 2, background: "var(--accent)",
           width: hovered ? "100%" : "0%",
-          transition: hovered ? "width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)" : "width 0.3s ease",
+          transition: hovered ? "width 0.5s ease" : "width 0.25s ease",
           zIndex: 4,
         }}
       />
 
-      {/* Image / placeholder */}
       {p.image_url ? (
-        <div style={{ overflow: "hidden", borderBottom: "1px solid var(--border)" }}>
-          <div style={{
-            transform: hovered ? "scale(1.08)" : "scale(1)",
-            transition: "transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-          }}>
+        <div style={{ overflow: "hidden" }}>
+          <div style={{ transform: hovered ? "scale(1.05)" : "scale(1)", transition: "transform 3s ease" }}>
             <MagnifyImage
               src={p.image_url}
               alt={p.title}
-              sizes="(max-width: 900px) 100vw, 33vw"
-              style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)" }}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              style={{ width: "100%", aspectRatio: "4 / 3" }}
             />
           </div>
         </div>
       ) : (
-        <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--border)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.12 }}>
+        <div style={{ width: "100%", aspectRatio: "4 / 3", background: "var(--subtle-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.15 }}>
             <rect x="3" y="3" width="18" height="18" stroke="var(--fg)" strokeWidth="1" />
             <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
             <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
           </svg>
-          <span style={{ position: "absolute", bottom: 10, right: 12, fontFamily: MONO, fontSize: 9, opacity: 0.2, letterSpacing: "0.2em" }}>DESIGN SAMPLE</span>
         </div>
       )}
 
-      <div style={{ padding: "1.25rem 1.5rem", display: "flex", flexDirection: "column", flex: 1, gap: "1rem" }}>
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {(p.category || "").split(",").map(c => (
-                <span key={c.trim()} className="tag">{c.trim()}</span>
-              ))}
-            </div>
-            <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3 }}>{p.year}</span>
+      <div style={{ padding: "1.25rem 1.5rem", display: "flex", flexDirection: "column", flex: 1, gap: "0.875rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {(p.category || "").split(",").map((c) => (
+              <span key={c.trim()} className="tag">{c.trim()}</span>
+            ))}
           </div>
-          <h3 style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, lineHeight: 1.3 }}>{p.title}</h3>
+          <span style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap" }}>{p.year}</span>
         </div>
-        <ViewBtn project={p} onModal={onModal} cardHovered={hovered} />
+        <h3 className="section-heading" style={{ fontSize: 15 }}>{p.title}</h3>
+        <button
+          onClick={() => onModal(p)}
+          className="btn btn-outline"
+          style={{ alignSelf: "flex-start", padding: "8px 16px" }}
+        >
+          View →
+        </button>
       </div>
     </motion.div>
   );
 }
 
-/* ── Section ──────────────────────────── */
-function ProjectSkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
-  const imageAspect = variant === "design" ? "4 / 3" : "16 / 9";
-  const label = variant === "design" ? "Loading design work" : "Loading development projects";
-
+/* ── Skeleton ──────────────────────────── */
+function SkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
   return (
-    <div className="project-grid" role="status" aria-label={label}>
+    <div className="project-grid" role="status" aria-label="Loading projects">
       {Array.from({ length: INITIAL_SHOW }).map((_, i) => (
-        <div
-          className="project-skeleton-card"
-          key={`${variant}-skeleton-${i}`}
-          style={{ animationDelay: `${i * 0.12}s` }}
-          aria-hidden="true"
-        >
-          <div className="project-skeleton-block" style={{ aspectRatio: imageAspect }} />
-          <div style={{ padding: variant === "design" ? "1.25rem 1.5rem" : "1.75rem 2rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: "1.25rem" }}>
-              <div className="project-skeleton-pill" />
-              <div className="project-skeleton-meta" />
-            </div>
+        <div key={i} className="project-skeleton-card" style={{ animationDelay: `${i * 0.12}s` }} aria-hidden>
+          <div className="project-skeleton-block" style={{ aspectRatio: variant === "design" ? "4 / 3" : "16 / 9" }} />
+          <div style={{ padding: "1.5rem" }}>
             <div className="project-skeleton-title" />
-            <div className="project-skeleton-line" style={{ width: "92%" }} />
-            <div className="project-skeleton-line" style={{ width: "68%" }} />
-            <div style={{ display: "flex", gap: 8, marginTop: "1.5rem" }}>
-              <div className="project-skeleton-tag" />
-              <div className="project-skeleton-tag" />
-            </div>
+            <div className="project-skeleton-line" style={{ width: "85%" }} />
+            <div className="project-skeleton-line" style={{ width: "65%" }} />
           </div>
         </div>
       ))}
-      <span className="sr-only">{label}</span>
     </div>
   );
 }
 
+/* ── Main section ──────────────────────── */
 export default function Projects() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  const [active, setActive] = useState("All");
-  const [devProjects, setDevProjects] = useState<Project[]>([]);
+  const [active, setActive]               = useState("All");
+  const [devProjects, setDevProjects]     = useState<Project[]>([]);
   const [designProjects, setDesignProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
-  const [modal, setModal] = useState<Project | null>(null);
-  const [devShowAll, setDevShowAll] = useState(false);
+  const [loading, setLoading]             = useState(true);
+  const [loadError, setLoadError]         = useState("");
+  const [modal, setModal]                 = useState<Project | null>(null);
+  const [devShowAll, setDevShowAll]       = useState(false);
   const [designShowAll, setDesignShowAll] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from("projects")
-      .select("*")
-      .order("sort_order", { ascending: true })
+    supabase.from("projects").select("*").order("sort_order", { ascending: true })
       .then(({ data, error }) => {
-        if (error) {
-          setLoadError(error.message);
-          setLoading(false);
-          return;
-        }
+        if (error) { setLoadError(error.message); setLoading(false); return; }
         const all = data ?? [];
         setDevProjects(all.filter((p) => p.type === "dev"));
         setDesignProjects(all.filter((p) => p.type === "design"));
@@ -314,75 +251,84 @@ export default function Projects() {
   }, []);
 
   const filtered = useMemo(
-    () => active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map(c => c.trim()).includes(active)),
+    () => active === "All" ? devProjects : devProjects.filter((p) => (p.category || "").split(",").map((c) => c.trim()).includes(active)),
     [active, devProjects]
   );
-  const displayedDev = devShowAll ? filtered : filtered.slice(0, INITIAL_SHOW);
+  const displayedDev    = devShowAll ? filtered : filtered.slice(0, INITIAL_SHOW);
   const displayedDesign = designShowAll ? designProjects : designProjects.slice(0, INITIAL_SHOW);
 
   useEffect(() => { setDevShowAll(false); }, [active]);
 
   return (
-    <section id="projects" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
-      <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
-        <span className="vertical-label">Projects</span>
-      </div>
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">05</span>
-      </div>
-
+    <section
+      id="projects"
+      ref={ref}
+      className="lean-section"
+      style={{ background: "var(--subtle-bg)" }}
+    >
       <div className="section-container">
 
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
-          <div className="rule" />
-          <h2 style={{ fontFamily: MONO, fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            <TypewriterText text1="Code that scales," text2="interfaces that inspire." inView={inView} />
+        {/* Heading */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          style={{ marginBottom: "2.5rem" }}
+        >
+          <span className="eyebrow" style={{ marginBottom: "1.25rem" }}>Projects</span>
+          <h2 className="section-heading" style={{ fontSize: "clamp(26px, 4vw, 42px)", marginBottom: "1rem", marginTop: "1rem" }}>
+            Code that scales,<br />interfaces that inspire.
           </h2>
-          <div className="rule" />
-          <div style={{ height: "1.5rem" }} />
-          <div className="rule" />
-          <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 460, lineHeight: 1.8 }}>
-            A selection of development projects and graphic design samples — spanning web platforms, IoT systems, mobile apps, and visual work.
+          <p style={{ fontSize: 16, color: "var(--muted)", maxWidth: 460, lineHeight: 1.75 }}>
+            Development projects and graphic design work — spanning web platforms, IoT, mobile apps, and visual design.
           </p>
-          <div className="rule" />
         </motion.div>
 
-        <div style={{ height: "4rem" }} />
+        {/* ── Development ── */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.15 }}
+          style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "1rem" }}
+        >
+          — Development
+        </motion.p>
 
-        {/* ══ Dev ══ */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 }}>
-          <div className="rule" />
-          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.4 }}>— Development</p>
-          <div className="rule" />
+        {/* Category filter */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.2 }}
+          style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "1.5rem" }}
+        >
+          {devCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActive(cat)}
+              style={{
+                fontFamily: MONO,
+                fontSize: 10,
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                padding: "7px 14px",
+                border: "1px solid",
+                borderColor: active === cat ? "var(--accent)" : "var(--border-strong)",
+                background: active === cat ? "var(--accent)" : "transparent",
+                color: active === cat ? "#fff" : "var(--fg)",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                borderRadius: 2,
+              }}
+            >
+              {cat}
+            </button>
+          ))}
         </motion.div>
 
-        <div style={{ height: "2rem" }} />
-
-        <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.3 }}>
-          <div className="rule" />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {devCategories.map((cat) => (
-              <button key={cat} onClick={() => setActive(cat)} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "8px 16px", border: "1px solid", borderColor: active === cat ? "var(--fg)" : "var(--border-strong)", background: active === cat ? "var(--fg)" : "transparent", color: active === cat ? "var(--bg)" : "var(--fg)", cursor: "pointer", transition: "all 0.2s" }}>
-                {cat}
-              </button>
-            ))}
-          </div>
-          <div className="rule" />
-        </motion.div>
-
-        <div style={{ height: "1.5rem" }} />
-
-        {loading ? (
-          <>
-            <div className="rule" />
-            <ProjectSkeletonGrid />
-            <div className="rule" />
-          </>
-        ) : loadError ? (
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>PROJECTS FAILED TO LOAD</div>
+        {loading ? <SkeletonGrid /> : loadError ? (
+          <p style={{ fontFamily: MONO, fontSize: 11, color: "var(--muted)", padding: "2rem 0" }}>Failed to load projects.</p>
         ) : (
           <>
-            <div className="rule" />
             <div className="project-grid">
               <AnimatePresence mode="popLayout">
                 {displayedDev.map((p, i) => (
@@ -390,81 +336,52 @@ export default function Projects() {
                 ))}
               </AnimatePresence>
             </div>
-            <div style={{ height: "1.5rem" }} />
-            {filtered.length > INITIAL_SHOW ? (
-              <>
-                <div className="rule" />
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button
-                    onClick={() => setDevShowAll((v) => !v)}
-                    aria-expanded={devShowAll}
-                    style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
-                  >
-                    {devShowAll ? "Show Less ↑" : `Show More (${filtered.length - INITIAL_SHOW} more) ↓`}
-                  </button>
-                </div>
-                <div className="rule" />
-              </>
-            ) : (
-              <div className="rule" />
+
+            {filtered.length > INITIAL_SHOW && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+                <button
+                  onClick={() => setDevShowAll((v) => !v)}
+                  className="btn btn-outline"
+                >
+                  {devShowAll ? "Show Less ↑" : `Show ${filtered.length - INITIAL_SHOW} More ↓`}
+                </button>
+              </div>
             )}
           </>
         )}
 
-        <div style={{ height: "5rem" }} />
+        {/* ── Design ── */}
+        <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>
+          <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
+            — Graphic Design
+          </p>
 
-        {/* ══ Design ══ */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }}>
-          <div className="rule" />
-          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", opacity: 0.4 }}>— Graphic Design</p>
-          <div className="rule" />
-        </motion.div>
+          {loading ? <SkeletonGrid variant="design" /> : loadError ? null : (
+            <>
+              <div className="project-grid">
+                <AnimatePresence mode="popLayout">
+                  {displayedDesign.map((p, i) => (
+                    <DesignCard key={p.id} p={p} i={i} onModal={setModal} />
+                  ))}
+                </AnimatePresence>
+              </div>
 
-        {loading ? (
-          <>
-            <div className="rule" />
-            <ProjectSkeletonGrid variant="design" />
-            <div className="rule" />
-          </>
-        ) : loadError ? (
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>DESIGN WORK FAILED TO LOAD</div>
-        ) : (
-          <>
-            <div className="rule" />
-            <div className="project-grid">
-              <AnimatePresence mode="popLayout">
-                {displayedDesign.map((p, i) => (
-                  <DesignCard key={p.id} p={p} i={i} onModal={setModal} />
-                ))}
-              </AnimatePresence>
-            </div>
-            <div style={{ height: "1.5rem" }} />
-            {designProjects.length > INITIAL_SHOW ? (
-              <>
-                <div className="rule" />
-                <div style={{ display: "flex", justifyContent: "center" }}>
+              {designProjects.length > INITIAL_SHOW && (
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
                   <button
                     onClick={() => setDesignShowAll((v) => !v)}
-                    aria-expanded={designShowAll}
-                    style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
+                    className="btn btn-outline"
                   >
-                    {designShowAll ? "Show Less ↑" : `Show More (${designProjects.length - INITIAL_SHOW} more) ↓`}
+                    {designShowAll ? "Show Less ↑" : `Show ${designProjects.length - INITIAL_SHOW} More ↓`}
                   </button>
                 </div>
-                <div className="rule" />
-              </>
-            ) : (
-              <div className="rule" />
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
+
       </div>
 
-      {/* Modal */}
       <AnimatePresence>
         {modal && <ProjectModal project={modal} onClose={() => setModal(null)} />}
       </AnimatePresence>

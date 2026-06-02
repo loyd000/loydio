@@ -2,33 +2,54 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --font-sans: 'Space Grotesk', sans-serif;
+  --background: #fafafa;
+  --foreground: #09090b;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --font-display: 'Syne', sans-serif;
+  --font-sans:    'Manrope', sans-serif;
 
-  /* ── Theme tokens ── */
-  --bg:            #ffffff;
-  --fg:            #000000;
-  --border:        rgba(0, 0, 0, 0.075);
-  --border-strong: rgba(0, 0, 0, 0.2);
-  --border-mid:    rgba(0, 0, 0, 0.12);
-  --border-heavy:  rgba(0, 0, 0, 0.25);
-  --hover-bg:      rgba(0, 0, 0, 0.02);
+  /* ── Core theme tokens ── */
+  --bg:            #fafafa;
+  --fg:            #09090b;
+  --surface:       #ffffff;
+  --border:        rgba(0, 0, 0, 0.07);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --border-mid:    rgba(0, 0, 0, 0.10);
+  --border-heavy:  rgba(0, 0, 0, 0.22);
+  --hover-bg:      rgba(0, 0, 0, 0.025);
   --subtle-bg:     rgba(0, 0, 0, 0.04);
-  --nav-bg:        rgba(255, 255, 255, 0.95);
+  --nav-bg:        rgba(250, 250, 250, 0.92);
+
+  /* ── Semantic tokens ── */
+  --muted:         #71717a;
+  --accent:        #9b1c1c;
+  --accent-hover:  #7f1d1d;
+  --accent-subtle: rgba(155, 28, 28, 0.07);
+  --accent-border: rgba(155, 28, 28, 0.3);
+  --accent-glow:   0 0 20px rgba(155, 28, 28, 0.25);
+  --success:       #22c55e;
 }
 
 [data-theme="dark"] {
-  --bg:            #181818;
-  --fg:            #ffffff;
-  --border:        rgba(255, 255, 255, 0.075);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --border-mid:    rgba(255, 255, 255, 0.12);
-  --border-heavy:  rgba(255, 255, 255, 0.25);
-  --hover-bg:      rgba(255, 255, 255, 0.03);
+  --bg:            #09090b;
+  --fg:            #f4f4f5;
+  --surface:       #111113;
+  --border:        rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --border-mid:    rgba(255, 255, 255, 0.10);
+  --border-heavy:  rgba(255, 255, 255, 0.22);
+  --hover-bg:      rgba(255, 255, 255, 0.035);
   --subtle-bg:     rgba(255, 255, 255, 0.05);
-  --nav-bg:        rgba(24, 24, 24, 0.95);
+  --nav-bg:        rgba(9, 9, 11, 0.92);
+
+  /* ── Semantic tokens (dark) ── */
+  --muted:         #71717a;
+  --accent:        #dc2626;
+  --accent-hover:  #b91c1c;
+  --accent-subtle: rgba(220, 38, 38, 0.10);
+  --accent-border: rgba(220, 38, 38, 0.3);
+  --accent-glow:   0 0 20px rgba(220, 38, 38, 0.3);
+  --success:       #22c55e;
 }
 
 * {
@@ -59,17 +80,13 @@ html {
 body {
   background-color: var(--bg);
   color: var(--fg);
-  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-size: 16px;
   overflow-x: hidden;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* Hide default cursor when custom magnetic cursor is active (desktop only) */
-@media (pointer: fine) {
-  html {
-    cursor: none;
-  }
-}
+
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -78,8 +95,15 @@ body {
 }
 
 ::selection {
-  background: var(--fg);
-  color: var(--bg);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* ── Focus visible ring ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar {
@@ -99,20 +123,37 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 12px 28px;
+  min-height: 44px;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
-              transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.25s ease;
+  touch-action: manipulation;
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease,
+              transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s ease;
   cursor: pointer;
   white-space: nowrap;
 }
 
+/* Accent (electric blue) — primary CTA */
+.btn-accent {
+  background: var(--accent);
+  color: #ffffff;
+  border: 1px solid var(--accent);
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--accent-glow);
+}
+
+/* Primary — solid fg/bg invert */
 .btn-primary {
   background: var(--fg);
   color: var(--bg);
@@ -126,23 +167,25 @@ body {
   box-shadow: 0 6px 20px var(--border-mid);
 }
 
+/* Outline — accent border on hover */
 .btn-outline {
   background: transparent;
   color: var(--fg);
-  border: 1px solid var(--fg);
+  border: 1px solid var(--border-strong);
 }
 
 .btn-outline:hover {
-  background: var(--fg);
-  color: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px var(--border-mid);
+  box-shadow: 0 4px 16px var(--accent-border);
 }
 
 .btn-outline-white {
   background: transparent;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .btn-outline-white:hover {
@@ -151,11 +194,45 @@ body {
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
 }
 
-/* ── Section layout ──────────────────────── */
+/* ── Lean section layout ────────────────────── */
+.lean-section {
+  padding: 5rem 0;
+}
+
+@media (max-width: 640px) {
+  .lean-section {
+    padding: 3.5rem 0;
+  }
+}
+
+/* ── Section container (tightened for no vertical-label offset) ── */
 .section-container {
-  width: 100%;
-  padding-left: 16rem;
-  padding-right: 16rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.25rem, 5vw, 5rem);
+  padding-right: clamp(1.25rem, 5vw, 5rem);
+}
+
+/* ── Skills tag grid ─────────────────────── */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ── About grid ────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
 }
 
 @media (max-width: 900px) {
@@ -290,28 +367,11 @@ body {
 }
 
 /* ── Full-bleed horizontal rule ─────────────────────────
-   Negative margins mirror section-container padding so the
-   line bleeds from one inner-edge grid-line to the other.  */
+   Hidden in lean layout — no longer used.                */
 .rule {
-  height: 1px;
-  background: var(--border);
-  margin-left: -16rem;
-  margin-right: -16rem;
+  display: none;
 }
 
-@media (max-width: 900px) {
-  .rule {
-    margin-left: -7rem;
-    margin-right: -7rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .rule {
-    margin-left: -1.25rem;
-    margin-right: -1.25rem;
-  }
-}
 
 /* ── Full-bleed block (same negative margins as .rule, for non-rule elements) */
 .full-bleed {
@@ -338,12 +398,12 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  opacity: 0.5;
+  color: var(--muted);
   margin-bottom: 0;
-  /* no gap — rule sits flush below eyebrow */
 }
 
 .eyebrow::before {
@@ -351,7 +411,8 @@ body {
   display: block;
   width: 2rem;
   height: 1px;
-  background: currentColor;
+  background: var(--accent);
+  opacity: 0.7;
 }
 
 /* ── Pill tag ────────────────────────────── */
@@ -359,11 +420,37 @@ body {
   display: inline-block;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border: 1px solid var(--border-strong);
   white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.tag:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* ── Section heading utility ── */
+.section-heading {
+  font-family: 'Syne', var(--font-display), sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* ── Accent text utility ── */
+.accent-text {
+  color: var(--accent);
+}
+
+/* ── Surface card utility ── */
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 
 /* ── Tech graph responsive ───────────────── */
@@ -507,8 +594,9 @@ body {
 .section-watermark {
   font-size: clamp(100px, 18vw, 220px);
   font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
   color: var(--fg);
-  opacity: 0.05;
+  opacity: 0.04;
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -518,11 +606,12 @@ body {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.28em;
   font-weight: 500;
   text-transform: uppercase;
-  opacity: 0.3;
+  color: var(--muted);
+  opacity: 0.6;
   font-family: 'IBM Plex Mono', monospace;
 }
 

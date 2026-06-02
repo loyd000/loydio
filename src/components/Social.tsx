@@ -136,14 +136,14 @@ export default function Social() {
         {/* Heading */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
           <div className="rule" />
-          <h2 style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
+          <h2 className="section-heading" style={{ fontSize: "clamp(28px, 4.5vw, 52px)" }}>
             <TypewriterText text1="Find Me" text2="Across the Internet." inView={inView} />
           </h2>
           <div className="rule" />
           <Spacer h="1.5rem" />
           <div className="rule" />
-          <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 400, lineHeight: 1.8 }}>
-            Connect, follow, or just lurk — I&apos;m around on these platforms.
+          <p style={{ fontSize: 16, color: "var(--muted)", maxWidth: 400, lineHeight: 1.8 }}>
+            Connect, follow, or just lurk &mdash; I&apos;m around on these platforms.
           </p>
           <div className="rule" />
         </motion.div>
@@ -166,15 +166,22 @@ export default function Social() {
                   padding: "2rem",
                   borderRight: "1px solid var(--border)",
                   borderBottom: "1px solid var(--border)",
+                  borderLeft: "3px solid transparent",
                   minHeight: 180,
                   background: "var(--bg)",
-                  transition: s.external ? "background 0.2s" : undefined,
                   position: "relative",
                   cursor: s.external ? "pointer" : "default",
+                  transition: "background 0.2s ease, border-left-color 0.2s ease",
                 }}
                 className="social-card"
-                onMouseEnter={s.external ? (e) => (e.currentTarget.style.background = "var(--hover-bg)") : undefined}
-                onMouseLeave={s.external ? (e) => (e.currentTarget.style.background = "var(--bg)") : undefined}
+                onMouseEnter={s.external ? (e) => {
+                  e.currentTarget.style.background = "var(--accent-subtle)";
+                  e.currentTarget.style.borderLeftColor = "var(--accent)";
+                } : undefined}
+                onMouseLeave={s.external ? (e) => {
+                  e.currentTarget.style.background = "var(--bg)";
+                  e.currentTarget.style.borderLeftColor = "transparent";
+                } : undefined}
               >
                 {/* Top row: icon + arrow */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
@@ -182,12 +189,14 @@ export default function Social() {
                     <s.Icon />
                   </div>
                   {s.external && (
-                    <span style={{
-                      fontSize: 16,
-                      opacity: 0.2,
-                      transition: "opacity 0.2s, transform 0.2s",
-                    }}
-                    className="project-arrow"
+                    <span
+                      style={{
+                        fontSize: 16,
+                        color: "var(--accent)",
+                        opacity: 0.3,
+                        transition: "opacity 0.2s ease, transform 0.2s ease",
+                      }}
+                      className="project-arrow"
                     >↗</span>
                   )}
                 </div>
@@ -199,16 +208,17 @@ export default function Social() {
                     fontSize: 9,
                     letterSpacing: "0.28em",
                     textTransform: "uppercase",
-                    opacity: 0.35,
+                    color: "var(--muted)",
                     marginBottom: "0.4rem",
                   }}>
                     {s.platform}
                   </p>
                   <p style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "'Space Grotesk', sans-serif",
                     fontSize: 14,
                     fontWeight: 700,
                     letterSpacing: "-0.01em",
+                    color: "var(--fg)",
                   }}>
                     {s.handle}
                   </p>
