@@ -1,171 +1,180 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { supabase, type Credential, type CredentialPhoto } from "@/lib/supabase";
-import TypewriterText from "./TypewriterText";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { supabase, type Credential } from "@/lib/supabase";
+import MagnifyImage from "./MagnifyImage";
 
 const MONO = "'IBM Plex Mono', monospace";
-const INITIAL_SHOW = 7;
 
-function CredentialItem({ item, index, inView, groupIndex }: { item: Credential; index: number; inView: boolean; groupIndex: number }) {
+function CredentialRow({ c, index }: { c: Credential; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-20px" });
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-      transition={{ duration: 0.5, delay: groupIndex * 0.1 + index * 0.08 }}
+      ref={ref}
+      initial={{ opacity: 0, y: 15 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+      style={{
+        borderBottom: "1px solid var(--border)",
+      }}
     >
-      <div className="rule" />
-      <div style={{ padding: "1.25rem 0" }}>
-        <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, lineHeight: 1.3, marginBottom: "0.4rem" }}>
-          {item.link
-            ? <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: "var(--fg)", textDecoration: "none", borderBottom: "1px solid var(--border)" }}>{item.title}</a>
-            : item.title
-          }
+      <button
+        onClick={() => setExpanded(!expanded)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        aria-expanded={expanded}
+        style={{
+          width: "100%",
+          padding: "1.25rem 0",
+          background: "transparent",
+          border: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          cursor: "pointer",
+          textAlign: "left",
+          gap: "1rem",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "baseline", gap: "1.5rem", flex: 1 }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, color: "var(--muted)", width: "3.5rem", flexShrink: 0 }}>
+            {c.year}
+          </span>
+          <div style={{ flex: 1 }}>
+            <h4 style={{ 
+              fontSize: 15, 
+              fontWeight: 500, 
+              color: hovered ? "var(--accent)" : "var(--fg)",
+              transition: "color 0.2s ease"
+            }}>
+              {c.title}
+            </h4>
+            <span style={{ fontSize: 13, color: "var(--muted)" }}>{c.org}</span>
+          </div>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.45 }}>{item.org}</span>
-          <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.3, whiteSpace: "nowrap" }}>{item.year}</span>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
+          <span style={{ 
+            fontFamily: MONO, 
+            fontSize: 10, 
+            letterSpacing: "0.1em",
+            textTransform: "uppercase", 
+            color: "var(--muted)",
+          }} className="hide-on-mobile">
+            {c.type}
+          </span>
+          <motion.div 
+            animate={{ rotate: expanded ? 45 : 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            style={{ width: 16, height: 16, color: "var(--muted)" }}
+          >
+            {/* Plus icon that rotates to an X */}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </motion.div>
         </div>
-        {item.description && (
-          <p style={{ fontSize: 12, opacity: 0.5, lineHeight: 1.7, marginTop: "0.5rem" }}>{item.description}</p>
+      </button>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="credential-content">
+              {c.description && (
+                <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.6, maxWidth: 600 }}>
+                  {c.description}
+                </p>
+              )}
+              
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "1rem" }}>
+                {c.link && (
+                  <a href={c.link} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: "6px 12px", fontSize: 11 }}>
+                    View Link ↗
+                  </a>
+                )}
+              </div>
+              
+              {c.image_url && (
+                <div style={{ marginTop: "1.5rem", borderRadius: 4, overflow: "hidden", border: "1px solid var(--border)", maxWidth: 400 }}>
+                  <MagnifyImage src={c.image_url} alt={c.title} style={{ width: "100%", height: "auto" }} />
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </motion.div>
   );
 }
 
 export default function Credentials() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [credentials, setCredentials] = useState<Credential[]>([]);
-  const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
-  const [showAll, setShowAll] = useState(false);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   useEffect(() => {
-    Promise.all([
-      supabase.from("credentials").select("*").order("sort_order", { ascending: true }),
-      supabase.from("credential_photos").select("*").order("created_at", { ascending: false })
-    ]).then(([credRes, photoRes]) => {
-      if (credRes.error || photoRes.error) {
-        setLoadError(credRes.error?.message ?? photoRes.error?.message ?? "Credentials failed to load.");
+    supabase.from("credentials").select("*").order("sort_order", { ascending: true })
+      .then(({ data, error }) => {
+        if (!error && data) setCredentials(data);
         setLoading(false);
-        return;
-      }
-      setCredentials(credRes.data ?? []);
-      setPhotos(photoRes.data ?? []);
-      setLoading(false);
-    });
+      });
   }, []);
 
-  const displayPhotos = photos.length > 0
-    ? [...photos, ...photos]
-    : [
-        { id: "1", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto,
-        { id: "2", image_url: "https://images.unsplash.com/photo-1589330694653-efa647611efd?q=80&w=800&auto=format&fit=crop" } as CredentialPhoto
-      ];
-  const slideDuration = photos.length > 0 ? Math.max(10, photos.length * 3) : 8;
+  if (loading || credentials.length === 0) return null;
 
   return (
-    <section id="credentials" ref={ref} className="section-mobile-pad" style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}>
-      <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
-        <span className="vertical-label">Credentials</span>
-      </div>
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">04</span>
-      </div>
-
-      <div className="section-container">
-
-        {/* Heading */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
-          <div className="rule" />
-          <h2 style={{ fontFamily: MONO, fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            <TypewriterText text1="Learned, Certified," text2="Recognized." inView={inView} />
-          </h2>
-          <div className="rule" />
-          <div style={{ height: "1.5rem" }} />
-          <div className="rule" />
-          <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 460, lineHeight: 1.8 }}>
-            Courses completed, events attended, and recognition earned throughout my journey as a developer and designer.
+    <section id="credentials" className="lean-section" ref={ref}>
+      {/* Container is constrained to 800px for better typography line-length (UX rule) */}
+      <div className="section-container" style={{ maxWidth: 800, margin: "0 auto" }}>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          style={{ marginBottom: "2rem" }}
+        >
+          <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "1rem" }}>
+            — Accolades
           </p>
-          <div className="rule" />
+          <h2 className="section-heading" style={{ fontSize: "clamp(24px, 3vw, 32px)", marginBottom: "1rem" }}>
+            Credentials & Certifications
+          </h2>
         </motion.div>
 
-        <div style={{ height: "4rem" }} />
-
-        {/* Unified Layout with Vertical Slider */}
-        <div className="rule" />
-        {loading ? (
-          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>LOADING...</div>
-        ) : loadError ? (
-          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.5, letterSpacing: "0.1em", padding: "2rem 0" }}>CREDENTIALS FAILED TO LOAD</div>
-        ) : credentials.length === 0 ? (
-          <div style={{ fontFamily: MONO, fontSize: 11, opacity: 0.35, letterSpacing: "0.2em", padding: "2rem 0" }}>— NO CREDENTIALS UPLOADED</div>
-        ) : (
-          <div className="credentials-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "4rem" }}>
-            
-            {/* Left: Text List */}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {(showAll ? credentials : credentials.slice(0, INITIAL_SHOW)).map((item, ii) => (
-                <CredentialItem key={item.id} item={item} index={ii} inView={inView} groupIndex={0} />
-              ))}
-              {credentials.length > INITIAL_SHOW ? (
-                <>
-                  <div className="rule" />
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <button
-                      onClick={() => setShowAll((v) => !v)}
-                      style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 28px", border: "1px solid var(--border-heavy)", background: "transparent", color: "var(--fg)", cursor: "pointer", transition: "background 0.2s, color 0.2s" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--fg)"; e.currentTarget.style.color = "var(--bg)"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--fg)"; }}
-                    >
-                      {showAll ? "Show Less ↑" : `Show More (${credentials.length - INITIAL_SHOW} more) ↓`}
-                    </button>
-                  </div>
-                  <div className="rule" />
-                </>
-              ) : (
-                <div className="rule" />
-              )}
-            </div>
-
-            {/* Right: Vertical Image Slider */}
-            <div style={{ position: "relative", height: "100%", minHeight: "400px" }}>
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                style={{ position: "absolute", inset: 0, overflow: "hidden" }}
-              >
-                <motion.div 
-                  initial={{ y: "0%" }}
-                  animate={inView ? { y: ["0%", "-50%"] } : { y: "0%" }}
-                  transition={{ ease: "linear", duration: slideDuration, repeat: Infinity }}
-                  style={{ display: "flex", flexDirection: "column" }}
-                >
-                  {displayPhotos.map((p, i) => (
-                    <Image
-                      key={`${p.id}-${i}`}
-                      src={p.image_url}
-                      alt=""
-                      width={800}
-                      height={600}
-                      sizes="(max-width: 900px) 100vw, 50vw"
-                      style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
-                    />
-                  ))}
-                </motion.div>
-              </motion.div>
-            </div>
-
-          </div>
-        )}
-        <div className="rule" />
+        <div style={{ borderTop: "1px solid var(--border)" }}>
+          {credentials.map((c, i) => (
+            <CredentialRow key={c.id} c={c} index={i} />
+          ))}
+        </div>
 
       </div>
+
+      <style>{`
+        .credential-content {
+          padding-left: 5rem;
+          padding-bottom: 1.5rem;
+        }
+        @media (max-width: 600px) {
+          .credential-content {
+            padding-left: 0;
+            padding-top: 1rem;
+          }
+          .hide-on-mobile {
+            display: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -81,7 +81,7 @@ export default function Contact() {
             >
               {copied ? "✓ Copied!" : "Copy Email"}
             </button>
-            <a href="/RESUME_DE GUZMAN.pdf" download className="btn btn-outline">
+            <a href="/RESUME_DE_GUZMAN.pdf" download className="btn btn-outline">
               ↓ Resume
             </a>
           </div>

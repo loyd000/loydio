@@ -5,10 +5,11 @@ import ScrollToTop from "@/components/ScrollToTop";
 import SiteIntro from "@/components/SiteIntro";
 
 // Below-fold sections — lazy-loaded for faster initial paint
-const About    = dynamic(() => import("@/components/About"));
-const Projects = dynamic(() => import("@/components/Projects"));
-const Contact  = dynamic(() => import("@/components/Contact"));
-const Footer   = dynamic(() => import("@/components/Footer"));
+const About       = dynamic(() => import("@/components/About"));
+const Projects    = dynamic(() => import("@/components/Projects"));
+const Credentials = dynamic(() => import("@/components/Credentials"));
+const Contact     = dynamic(() => import("@/components/Contact"));
+const Footer      = dynamic(() => import("@/components/Footer"));
 
 // Hidden overlay features — kept for power users
 const Terminal       = dynamic(() => import("@/components/Terminal"));
@@ -27,6 +28,7 @@ export default function Home() {
         <Hero />
         <About />
         <Projects />
+        <Credentials />
         <Contact />
       </main>
       <Footer />

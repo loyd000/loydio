@@ -32,10 +32,6 @@ export default function Gallery() {
       ref={ref}
       style={{ position: "relative", padding: "8rem 0", background: "#fff", borderTop: "1px solid rgba(0,0,0,0.09)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
-        <span className="vertical-label">Gallery</span>
-      </div>
-
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
         <span className="section-watermark">05</span>
       </div>

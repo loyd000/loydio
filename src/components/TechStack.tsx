@@ -182,9 +182,6 @@ export default function TechStack() {
       className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
-        <span className="vertical-label">Tech Stack</span>
-      </div>
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
         <span className="section-watermark">03</span>
       </div>

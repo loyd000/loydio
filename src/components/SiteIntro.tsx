@@ -26,12 +26,16 @@ export default function SiteIntro({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Guaranteed fallback: reveal after SITE_REVEAL_DELAY_MS even if
+    // PageLoader never fires onComplete (e.g. animation skipped/failed)
+    revealSite();
+
     return () => {
       if (revealTimer.current !== null) {
         window.clearTimeout(revealTimer.current);
       }
     };
-  }, [prefersReduced]);
+  }, [prefersReduced, revealSite]);
 
   // Skip loader for reduced motion users
   if (prefersReduced) {

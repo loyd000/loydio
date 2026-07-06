@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Syne, Manrope } from "next/font/google";
+import { IBM_Plex_Mono, Syne, Manrope, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
@@ -23,6 +23,13 @@ const manrope = Manrope({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   variable: "--font-sans",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -68,7 +75,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexMono.variable} ${syne.variable} ${manrope.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${ibmPlexMono.variable} ${syne.variable} ${manrope.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <Script
           id="theme-script"

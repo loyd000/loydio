@@ -42,9 +42,6 @@ export default function Experience() {
       className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", left: 24, top: "50%", transform: "translateY(-50%)" }}>
-        <span className="vertical-label">Experience</span>
-      </div>
       <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
         <span className="section-watermark">02</span>
       </div>

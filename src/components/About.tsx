@@ -91,7 +91,7 @@ export default function About() {
                 <div key={s.label}>
                   <div
                     style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontFamily: "var(--font-grotesk), 'Space Grotesk', sans-serif",
                       fontSize: "clamp(24px, 3vw, 36px)",
                       fontWeight: 800,
                       lineHeight: 1,
@@ -125,6 +125,7 @@ export default function About() {
             initial={{ opacity: 0, x: 24 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ maxWidth: 340 }}
           >
             <motion.div
               whileHover={{ scale: 1.02 }}
