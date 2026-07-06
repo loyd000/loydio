@@ -1,11 +1,10 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
+import HeroAbout from "@/components/HeroAbout";
 import ScrollToTop from "@/components/ScrollToTop";
 import SiteIntro from "@/components/SiteIntro";
 
 // Below-fold sections — lazy-loaded for faster initial paint
-const About       = dynamic(() => import("@/components/About"));
 const Projects    = dynamic(() => import("@/components/Projects"));
 const Credentials = dynamic(() => import("@/components/Credentials"));
 const Contact     = dynamic(() => import("@/components/Contact"));
@@ -25,8 +24,7 @@ export default function Home() {
       <CommandPalette />
       <SpotifyWidget />
       <main>
-        <Hero />
-        <About />
+        <HeroAbout />
         <Projects />
         <Credentials />
         <Contact />

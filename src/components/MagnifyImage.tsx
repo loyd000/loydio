@@ -8,12 +8,12 @@ const ZOOM = 2.5;
 export default function MagnifyImage({
   src,
   alt,
-  sizes,
+  sizes = "100vw",
   style,
 }: {
   src: string;
   alt: string;
-  sizes: string;
+  sizes?: string;
   style?: React.CSSProperties;
 }) {
   const ref = useRef<HTMLDivElement>(null);

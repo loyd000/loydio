@@ -222,19 +222,8 @@ body {
   gap: 0.5rem;
 }
 
-/* ── About grid ────────────────────────── */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-}
+/* .about-grid removed — merged into HeroAbout component */
 
-@media (min-width: 768px) {
-  .about-grid {
-    grid-template-columns: 3fr 2fr;
-    align-items: start;
-  }
-}
 
 /* clamp() handles tablet sizing — no override needed */
 

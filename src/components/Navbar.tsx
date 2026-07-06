@@ -16,7 +16,7 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
-    const allSections = ["about", "experience", "stack", "credentials", "projects", "social", "contact"];
+    const allSections = ["about", "credentials", "projects", "social", "contact"];
 
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
@@ -33,7 +33,7 @@ export default function Navbar() {
       });
 
       if (current) {
-        if (["about", "experience", "stack", "credentials"].includes(current)) setActiveSection("about");
+        if (["about", "credentials"].includes(current)) setActiveSection("about");
         else if (["projects", "social"].includes(current)) setActiveSection("projects");
         else if (current === "contact") setActiveSection("contact");
       }
