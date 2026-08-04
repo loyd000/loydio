@@ -9,7 +9,7 @@ import {
 } from "react-icons/si";
 import type { IconType } from "react-icons";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 const SENTENCES = [
   { prefix: "I build interfaces with", phrase: "React, Next.js, TypeScript, Tailwind, Framer Motion & Vite." },

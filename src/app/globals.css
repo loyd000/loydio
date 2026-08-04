@@ -1,19 +1,20 @@
 /* Fonts are self-hosted via next/font in layout.tsx — no external requests */
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #09090b;
-  --font-mono:    'IBM Plex Mono', monospace;
+  --font-mono:    'Geist Mono', monospace;
   --font-display: 'Syne', sans-serif;
-  --font-sans:    'Manrope', sans-serif;
-  --font-grotesk: 'Space Grotesk', sans-serif;
+  --font-sans:    'Geist', sans-serif;
 
   /* ── Core theme tokens ── */
   --bg:            #fafafa;
   --fg:            #09090b;
   --surface:       #ffffff;
-  --border:        rgba(0, 0, 0, 0.07);
+  --border:    oklch(0.922 0 0);
   --border-strong: rgba(0, 0, 0, 0.18);
   --border-mid:    rgba(0, 0, 0, 0.10);
   --border-heavy:  rgba(0, 0, 0, 0.22);
@@ -29,6 +30,35 @@
   --accent-border: rgba(0, 0, 0, 0.2);
   --accent-glow:   0 4px 16px rgba(0, 0, 0, 0.08);
   --success:       #22c55e;
+  --background:    oklch(1 0 0);
+  --foreground:    oklch(0.145 0 0);
+  --card:    oklch(1 0 0);
+  --card-foreground:    oklch(0.145 0 0);
+  --popover:    oklch(1 0 0);
+  --popover-foreground:    oklch(0.145 0 0);
+  --primary:    oklch(0.205 0 0);
+  --primary-foreground:    oklch(0.985 0 0);
+  --secondary:    oklch(0.97 0 0);
+  --secondary-foreground:    oklch(0.205 0 0);
+  --muted-foreground:    oklch(0.556 0 0);
+  --accent-foreground:    oklch(0.205 0 0);
+  --destructive:    oklch(0.577 0.245 27.325);
+  --input:    oklch(0.922 0 0);
+  --ring:    oklch(0.708 0 0);
+  --chart-1:    oklch(0.87 0 0);
+  --chart-2:    oklch(0.556 0 0);
+  --chart-3:    oklch(0.439 0 0);
+  --chart-4:    oklch(0.371 0 0);
+  --chart-5:    oklch(0.269 0 0);
+  --radius:    0.625rem;
+  --sidebar:    oklch(0.985 0 0);
+  --sidebar-foreground:    oklch(0.145 0 0);
+  --sidebar-primary:    oklch(0.205 0 0);
+  --sidebar-primary-foreground:    oklch(0.985 0 0);
+  --sidebar-accent:    oklch(0.97 0 0);
+  --sidebar-accent-foreground:    oklch(0.205 0 0);
+  --sidebar-border:    oklch(0.922 0 0);
+  --sidebar-ring:    oklch(0.708 0 0);
 }
 
 [data-theme="dark"] {
@@ -83,7 +113,7 @@ html {
 body {
   background-color: var(--bg);
   color: var(--fg);
-  font-family: var(--font-sans), 'Manrope', sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 500;
   overflow-x: hidden;
@@ -94,8 +124,6 @@ body {
 p {
   font-weight: 500;
 }
-
-
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -134,7 +162,7 @@ p {
   gap: 8px;
   padding: 12px 28px;
   min-height: 44px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -233,7 +261,6 @@ p {
 
 /* .about-grid removed — merged into HeroAbout component */
 
-
 /* clamp() handles tablet sizing — no override needed */
 
 @media (max-width: 600px) {
@@ -258,13 +285,12 @@ p {
   margin-right: calc(50% - 50vw);
 }
 
-
 /* ── Eyebrow / tag labels ────────────────── */
 .eyebrow {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -284,7 +310,7 @@ p {
 /* ── Pill tag — liquid glass ─────────────── */
 .tag {
   display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -475,11 +501,7 @@ p {
   border: 0;
 }
 
-
-
 /* Grain overlay removed for performance */
-
-
 
 .vertical-label {
   writing-mode: vertical-rl;
@@ -491,7 +513,7 @@ p {
   text-transform: uppercase;
   color: var(--muted);
   opacity: 0.6;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
 }
 
 @media (max-width: 600px) {
@@ -611,6 +633,16 @@ p {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+/* Arc carousel card inner hover scale */
+.arc-card-inner {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(1);
+}
+
+.arc-card:hover .arc-card-inner {
+  transform: scale(1.04);
+}
+
 .tech-chip {
   position: relative;
   display: inline-flex;
@@ -621,7 +653,7 @@ p {
   background: var(--bg);
   color: var(--fg);
   cursor: default;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 11px;
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
   will-change: transform;
@@ -746,7 +778,7 @@ p {
 }
 
 .tech-icon-item span:last-child {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -763,8 +795,6 @@ p {
     grid-template-columns: 1fr;
   }
 }
-
-
 
 /* ── Footer mobile stacking ── */
 @media (max-width: 600px) {
@@ -830,7 +860,7 @@ p {
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(32px) saturate(220%);
   -webkit-backdrop-filter: blur(32px) saturate(220%);
-  border: 1.5px solid var(--fg);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 
     inset 0 2px 2px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.08),
@@ -852,7 +882,7 @@ p {
   background: rgba(18, 18, 22, 0.94);
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 
     inset 0 2px 2px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.7),
@@ -1007,4 +1037,93 @@ p {
   background: rgba(255, 255, 255, 0.12) !important;
   border-color: rgba(255, 255, 255, 0.35) !important;
   box-shadow: inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.25), 0 8px 28px rgba(0,0,0,0.4) !important;
+}
+
+@theme inline {
+  --font-heading:    var(--font-sans);
+  --font-sans:    var(--font-sans);
+  --color-sidebar-ring:    var(--sidebar-ring);
+  --color-sidebar-border:    var(--sidebar-border);
+  --color-sidebar-accent-foreground:    var(--sidebar-accent-foreground);
+  --color-sidebar-accent:    var(--sidebar-accent);
+  --color-sidebar-primary-foreground:    var(--sidebar-primary-foreground);
+  --color-sidebar-primary:    var(--sidebar-primary);
+  --color-sidebar-foreground:    var(--sidebar-foreground);
+  --color-sidebar:    var(--sidebar);
+  --color-chart-5:    var(--chart-5);
+  --color-chart-4:    var(--chart-4);
+  --color-chart-3:    var(--chart-3);
+  --color-chart-2:    var(--chart-2);
+  --color-chart-1:    var(--chart-1);
+  --color-ring:    var(--ring);
+  --color-input:    var(--input);
+  --color-border:    var(--border);
+  --color-destructive:    var(--destructive);
+  --color-accent-foreground:    var(--accent-foreground);
+  --color-accent:    var(--accent);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-muted:    var(--muted);
+  --color-secondary-foreground:    var(--secondary-foreground);
+  --color-secondary:    var(--secondary);
+  --color-primary-foreground:    var(--primary-foreground);
+  --color-primary:    var(--primary);
+  --color-popover-foreground:    var(--popover-foreground);
+  --color-popover:    var(--popover);
+  --color-card-foreground:    var(--card-foreground);
+  --color-card:    var(--card);
+  --color-foreground:    var(--foreground);
+  --color-background:    var(--background);
+  --radius-sm:    calc(var(--radius) * 0.6);
+  --radius-md:    calc(var(--radius) * 0.8);
+  --radius-lg:    var(--radius);
+  --radius-xl:    calc(var(--radius) * 1.4);
+  --radius-2xl:    calc(var(--radius) * 1.8);
+  --radius-3xl:    calc(var(--radius) * 2.2);
+  --radius-4xl:    calc(var(--radius) * 2.6);
+}
+
+.dark {
+  --background:    oklch(0.145 0 0);
+  --foreground:    oklch(0.985 0 0);
+  --card:    oklch(0.205 0 0);
+  --card-foreground:    oklch(0.985 0 0);
+  --popover:    oklch(0.205 0 0);
+  --popover-foreground:    oklch(0.985 0 0);
+  --primary:    oklch(0.922 0 0);
+  --primary-foreground:    oklch(0.205 0 0);
+  --secondary:    oklch(0.269 0 0);
+  --secondary-foreground:    oklch(0.985 0 0);
+  --muted:    oklch(0.269 0 0);
+  --muted-foreground:    oklch(0.708 0 0);
+  --accent:    oklch(0.269 0 0);
+  --accent-foreground:    oklch(0.985 0 0);
+  --destructive:    oklch(0.704 0.191 22.216);
+  --border:    oklch(1 0 0 / 10%);
+  --input:    oklch(1 0 0 / 15%);
+  --ring:    oklch(0.556 0 0);
+  --chart-1:    oklch(0.87 0 0);
+  --chart-2:    oklch(0.556 0 0);
+  --chart-3:    oklch(0.439 0 0);
+  --chart-4:    oklch(0.371 0 0);
+  --chart-5:    oklch(0.269 0 0);
+  --sidebar:    oklch(0.205 0 0);
+  --sidebar-foreground:    oklch(0.985 0 0);
+  --sidebar-primary:    oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground:    oklch(0.985 0 0);
+  --sidebar-accent:    oklch(0.269 0 0);
+  --sidebar-accent-foreground:    oklch(0.985 0 0);
+  --sidebar-border:    oklch(1 0 0 / 10%);
+  --sidebar-ring:    oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

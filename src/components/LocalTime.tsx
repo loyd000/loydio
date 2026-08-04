@@ -35,7 +35,7 @@ export default function LocalTime() {
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-mono), monospace",
         fontSize: 10,
         lineHeight: 1.5,
         color: "var(--fg)",

@@ -3,7 +3,7 @@
 import "./globals.css";
 import { useEffect } from "react";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 export default function GlobalError({
   error,

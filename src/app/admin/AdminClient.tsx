@@ -18,7 +18,7 @@ import {
   uploadImage,
 } from "./actions";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 const DEV_CATEGORIES = ["Web Dev", "Full-Stack", "Mobile", "IoT", "Tools", "Other"];
 const DESIGN_CATEGORIES = ["UI/UX", "Branding", "Graphic Design", "Web Design", "Other"];

@@ -91,7 +91,7 @@ export default function Hero() {
           style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1.25rem" }}
         >
           <div style={{ width: 24, height: 1, background: "var(--accent)", flexShrink: 0 }} />
-          <span style={{ fontFamily: "var(--font-mono), 'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--muted)" }}>
+          <span style={{ fontFamily: "var(--font-mono), var(--font-mono), monospace", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--muted)" }}>
             Full-Stack Developer &amp; Graphic Designer
           </span>
         </motion.div>
@@ -122,7 +122,7 @@ export default function Hero() {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            fontFamily: "var(--font-sans), 'Manrope', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "clamp(14px, 1.5vw, 17px)",
             marginBottom: "1.25rem",
           }}
@@ -140,7 +140,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.42 }}
           style={{
-            fontFamily: "var(--font-sans), 'Manrope', sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: 15,
             fontWeight: 400,
             color: "var(--muted)",

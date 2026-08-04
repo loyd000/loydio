@@ -91,7 +91,7 @@ export default function About() {
                 <div key={s.label}>
                   <div
                     style={{
-                      fontFamily: "var(--font-grotesk), 'Space Grotesk', sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "clamp(24px, 3vw, 36px)",
                       fontWeight: 800,
                       lineHeight: 1,
@@ -103,7 +103,7 @@ export default function About() {
                   </div>
                   <div
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-mono), monospace",
                       fontSize: 10,
                       letterSpacing: "0.2em",
                       textTransform: "uppercase",
@@ -167,7 +167,7 @@ export default function About() {
         >
           <p
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono), monospace",
               fontSize: 10,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
@@ -192,7 +192,7 @@ export default function About() {
         >
           <p
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono), monospace",
               fontSize: 10,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
@@ -251,12 +251,12 @@ export default function About() {
                   >
                     {exp.role}
                   </h3>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap" }}>
+                  <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap" }}>
                     {exp.period}
                   </span>
                 </div>
 
-                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "var(--muted)", marginBottom: "0.5rem" }}>
+                <p style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "var(--muted)", marginBottom: "0.5rem" }}>
                   {exp.company}
                 </p>
 

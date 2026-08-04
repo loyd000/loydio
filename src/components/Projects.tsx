@@ -6,7 +6,7 @@ import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 const INITIAL_SHOW = 4; // 2-col grid looks better with 4 base
 const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"];
 
@@ -65,14 +65,12 @@ function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => voi
       {/* Project Image Preview */}
       {p.image_url && (
         <div style={{ overflow: "hidden", flexShrink: 0 }}>
-          <div style={{ transform: hovered ? "scale(1.03)" : "scale(1)", transition: "transform 1.8s ease" }}>
-            <MagnifyImage
-              src={p.image_url}
-              alt={p.title}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 60vw"
-              style={{ width: "100%", aspectRatio: "16 / 9" }}
-            />
-          </div>
+          <MagnifyImage
+            src={p.image_url}
+            alt={p.title}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 60vw"
+            style={{ width: "100%", aspectRatio: "16 / 9" }}
+          />
         </div>
       )}
 
@@ -189,14 +187,12 @@ function ProjectCard({ p, i, onModal }: { p: Project; i: number; onModal: (p: Pr
 
       {p.image_url && (
         <div style={{ overflow: "hidden", flexShrink: 0 }}>
-          <div style={{ transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform 2.8s ease" }}>
-            <MagnifyImage
-              src={p.image_url}
-              alt={p.title}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
-              style={{ width: "100%", aspectRatio: "16 / 9" }}
-            />
-          </div>
+          <MagnifyImage
+            src={p.image_url}
+            alt={p.title}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+            style={{ width: "100%", aspectRatio: "16 / 9" }}
+          />
         </div>
       )}
 
@@ -465,10 +461,12 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                   style={{
                     opacity: isVisible ? (isActive ? 1 : 0.34) : 0,
                     pointerEvents: isVisible ? "auto" : "none",
-                    transform: `translate(-50%, -50%) translateX(${translateX}) translateY(${isActive ? "0px" : "18px"}) scale(${isActive ? 1 : 0.76})`,
+                    transform: `translate(-50%, -50%) translateX(${translateX}) translateY(${isActive ? (hovered ? "-3px" : "0px") : "18px"}) scale(${isActive ? 1 : 0.76})`,
                     zIndex: isActive ? 4 : 2,
                     cursor: isActive ? "default" : "pointer",
                     filter: isActive ? "none" : "saturate(0.72)",
+                    transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, opacity 0.35s ease, filter 0.35s ease",
+                    boxShadow: isActive && hovered ? "0 16px 48px rgba(0,0,0,0.18)" : undefined,
                   }}
                 >
                   <div
@@ -488,8 +486,8 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                       left: 0,
                       height: 2,
                       background: "var(--accent)",
-                      width: hovered || isActive ? "100%" : "0%",
-                      transition: hovered || isActive ? "width 0.48s ease" : "width 0.22s ease",
+                      width: isActive ? "100%" : "0%",
+                      transition: "width 0.48s ease",
                       zIndex: 5,
                     }}
                   />
@@ -501,19 +499,12 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                         pointerEvents: isActive ? "auto" : "none",
                       }}
                     >
-                      <div
-                        style={{
-                          transform: hovered && isActive ? "scale(1.045)" : "scale(1)",
-                          transition: "transform 2.6s ease",
-                        }}
-                      >
-                        <MagnifyImage
-                          src={p.image_url}
-                          alt={p.title}
-                          sizes="(max-width: 640px) 82vw, (max-width: 1024px) 68vw, 620px"
-                          style={{ width: "100%", height: "100%" }}
-                        />
-                      </div>
+                      <MagnifyImage
+                        src={p.image_url}
+                        alt={p.title}
+                        sizes="(max-width: 640px) 82vw, (max-width: 1024px) 68vw, 620px"
+                        style={{ width: "100%", height: "100%" }}
+                      />
                     </div>
                   ) : (
                     <div className="design-carousel-placeholder" aria-hidden>
@@ -882,7 +873,7 @@ export default function Projects() {
           height: 42px;
           border-radius: 50%;
           font-size: 14px;
-          font-family: 'IBM Plex Mono', monospace;
+          font-family: var(--font-mono), monospace;
           display: flex;
           align-items: center;
           justify-content: center;

@@ -4,7 +4,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Credential } from "@/lib/supabase";
 import MagnifyImage from "./MagnifyImage";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 function CredentialRow({ c, index }: { c: Credential; index: number }) {
   const [expanded, setExpanded] = useState(false);

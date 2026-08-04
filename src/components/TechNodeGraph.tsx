@@ -2,7 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 type NodeCategory = "Frontend" | "Backend" | "Design" | "DevOps";
 type Node = { id: string; label: string; category: NodeCategory; x: number; y: number };

@@ -2,7 +2,7 @@
 import { useActionState } from "react";
 import { login } from "./actions";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState(login, null);

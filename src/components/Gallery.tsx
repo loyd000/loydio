@@ -42,7 +42,7 @@ export default function Gallery() {
         >
           <h2
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono), monospace",
               fontSize: "clamp(28px, 4.5vw, 52px)",
               fontWeight: 700,
               lineHeight: 1.1,
@@ -92,34 +92,11 @@ export default function Gallery() {
                 <circle cx="8.5" cy="8.5" r="1.5"/>
                 <path d="m21 15-5-5L5 21"/>
               </svg>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.3 }}>
+              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, opacity: 0.3 }}>
                 {item.label}
               </span>
 
-              {/* Hover overlay */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "rgba(0,0,0,0.7)",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                }}
-              >
-                <span style={{ color: "#fff", fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600 }}>
-                  {item.label}
-                </span>
-                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase" }}>
-                  {item.type}
-                </span>
-                <span style={{ color: "#fff", fontSize: 20, marginTop: 8 }}>↗</span>
-              </motion.div>
+
             </motion.div>
           ))}
         </div>
@@ -164,7 +141,7 @@ export default function Gallery() {
                   justifyContent: "center",
                 }}
               >
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, opacity: 0.3 }}>
+                <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 13, opacity: 0.3 }}>
                   {selected.label}
                 </span>
               </div>
@@ -177,7 +154,7 @@ export default function Gallery() {
                 }}
               >
                 <div>
-                  <p style={{ fontWeight: 700, fontFamily: "'IBM Plex Mono', monospace" }}>{selected.label}</p>
+                  <p style={{ fontWeight: 700, fontFamily: "var(--font-mono), monospace" }}>{selected.label}</p>
                   <p style={{ fontSize: 10, opacity: 0.4, letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 4 }}>
                     {selected.type}
                   </p>
@@ -192,7 +169,7 @@ export default function Gallery() {
                     cursor: "pointer",
                     background: "none",
                     border: "none",
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-mono), monospace",
                   }}
                 >
                   ✕

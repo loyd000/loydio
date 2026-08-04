@@ -51,7 +51,7 @@ export default function SkillsExperience() {
         >
           <p
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono), monospace",
               fontSize: 10,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
@@ -76,7 +76,7 @@ export default function SkillsExperience() {
         >
           <p
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono), monospace",
               fontSize: 10,
               letterSpacing: "0.3em",
               textTransform: "uppercase",
@@ -101,14 +101,14 @@ export default function SkillsExperience() {
                     <h3 style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1.2, marginBottom: 4 }}>
                       {exp.role}
                     </h3>
-                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "var(--muted)", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>
+                    <p style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "var(--muted)", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>
                       {exp.company}
                     </p>
                     <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.7, maxWidth: 460 }}>
                       {exp.desc}
                     </p>
                   </div>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap", paddingTop: 2 }}>
+                  <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap", paddingTop: 2 }}>
                     {exp.period}
                   </span>
                 </div>

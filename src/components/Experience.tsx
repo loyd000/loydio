@@ -106,7 +106,7 @@ export default function Experience() {
                     </h3>
                     <p
                       style={{
-                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontFamily: "var(--font-mono), monospace",
                         fontSize: 11,
                         color: "var(--muted)",
                         marginBottom: "1rem",
@@ -126,7 +126,7 @@ export default function Experience() {
                   </div>
                   <span
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-mono), monospace",
                       fontSize: 11,
                       color: "var(--muted)",
                       whiteSpace: "nowrap",

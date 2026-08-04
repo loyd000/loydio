@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Syne, Manrope, Space_Grotesk } from "next/font/google";
+import { Syne, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
-const ibmPlexMono = IBM_Plex_Mono({
+const geist = Geist({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-mono",
 });
@@ -16,20 +22,6 @@ const syne = Syne({
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-display",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-sans",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -75,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexMono.variable} ${syne.variable} ${manrope.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
+    <html lang="en" className={cn(geist.variable, geistMono.variable, syne.variable, "font-sans")} suppressHydrationWarning>
       <head>
         <Script
           id="theme-script"

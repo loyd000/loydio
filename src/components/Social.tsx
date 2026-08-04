@@ -185,7 +185,7 @@ export default function Social() {
                 {/* Bottom: platform + handle */}
                 <div>
                   <p style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-mono), monospace",
                     fontSize: 9,
                     letterSpacing: "0.28em",
                     textTransform: "uppercase",
@@ -195,7 +195,7 @@ export default function Social() {
                     {s.platform}
                   </p>
                   <p style={{
-                    fontFamily: "var(--font-grotesk), 'Space Grotesk', sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: 14,
                     fontWeight: 700,
                     letterSpacing: "-0.01em",

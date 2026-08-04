@@ -29,7 +29,7 @@ export default function ThemeToggle() {
       title={dark ? "Light mode" : "Dark mode"}
       style={{
         background: "none",
-        border: "1px solid var(--border-strong)",
+        border: "none",
         color: "var(--fg)",
         cursor: "pointer",
         width: 32,
@@ -39,9 +39,11 @@ export default function ThemeToggle() {
         justifyContent: "center",
         fontSize: 14,
         flexShrink: 0,
+        opacity: 0.7,
+        transition: "opacity 0.18s ease",
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--fg)")}
-      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-strong)")}
+      onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+      onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
     >
       {dark ? "☀" : "☾"}
     </button>

@@ -62,7 +62,7 @@ export default function HeroAbout() {
               style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}
             >
               <div style={{ width: 24, height: 1, background: "var(--accent)", flexShrink: 0 }} />
-              <span style={{ fontFamily: "var(--font-mono), 'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--muted)" }}>
+              <span style={{ fontFamily: "var(--font-mono), var(--font-mono), monospace", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--muted)" }}>
                 Full-Stack Developer &amp; Graphic Designer
               </span>
             </motion.div>
@@ -89,7 +89,7 @@ export default function HeroAbout() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.32 }}
               style={{
-                fontFamily: "var(--font-sans), 'Manrope', sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: 14,
                 fontWeight: 500,
                 color: "var(--muted)",
@@ -121,7 +121,7 @@ export default function HeroAbout() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-mono), monospace",
                     fontSize: 12,
                     color: "var(--fg)",
                     opacity: 0.6,

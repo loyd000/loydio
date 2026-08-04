@@ -368,12 +368,12 @@ export default function ArcCarousel({
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "var(--muted)" }}>
+                  <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "var(--muted)" }}>
                     0{i + 1}
                   </span>
                   <span
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-mono), monospace",
                       fontSize: 10,
                       textTransform: "uppercase",
                       color: isShipped(p) ? "var(--fg)" : "var(--muted)",
@@ -446,16 +446,13 @@ export default function ArcCarousel({
                 marginLeft: -125,
                 marginTop: -125,
                 borderRadius: 18,
-                padding: "0.85rem",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
                 overflow: "hidden",
                 willChange: "transform, opacity",
                 pointerEvents: "auto",
                 cursor: "pointer",
               }}
             >
+              <div className="arc-card-inner" style={{ padding: "0.85rem", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
               {/* Liquid specular reflection highlight */}
               <div
                 style={{
@@ -499,7 +496,7 @@ export default function ArcCarousel({
                       justifyContent: "center",
                       background: "linear-gradient(135deg, var(--hover-bg) 0%, var(--border) 100%)",
                       color: "var(--fg)",
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-mono), monospace",
                       fontSize: 11,
                       letterSpacing: "0.1em",
                       opacity: 0.7,
@@ -514,7 +511,7 @@ export default function ArcCarousel({
                     position: "absolute",
                     top: 6,
                     left: 6,
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-mono), monospace",
                     fontSize: 10,
                     color: "var(--bg)",
                     background: "var(--fg)",
@@ -548,7 +545,7 @@ export default function ArcCarousel({
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span
                     style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-mono), monospace",
                       fontSize: 10,
                       color: "var(--muted)",
                     }}
@@ -565,6 +562,7 @@ export default function ArcCarousel({
                     }}
                   />
                 </div>
+              </div>
               </div>
             </div>
           ))}
@@ -592,7 +590,7 @@ export default function ArcCarousel({
             height: 42,
             borderRadius: "50%",
             fontSize: 14,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono), monospace",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -630,7 +628,7 @@ export default function ArcCarousel({
             height: 42,
             borderRadius: "50%",
             fontSize: 14,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono), monospace",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -652,7 +650,7 @@ export default function ArcCarousel({
       >
         <div
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono), monospace",
             fontSize: 10,
             letterSpacing: "0.15em",
             textTransform: "uppercase",
@@ -704,7 +702,7 @@ export default function ArcCarousel({
             <span
               key={t}
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "var(--font-mono), monospace",
                 fontSize: 10,
                 color: "var(--fg)",
                 border: "1px solid var(--border-strong)",

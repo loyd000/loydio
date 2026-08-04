@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const MONO = "'IBM Plex Mono', monospace";
+const MONO = "var(--font-mono), monospace";
 
 export default function NotFound() {
   return (

@@ -120,11 +120,11 @@ export default function Footer() {
                 transform: "rotate(12deg)",
               }}
             >
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
+              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
                 L
               </span>
             </div>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "rgba(244,244,245,0.3)" }}>
+            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "rgba(244,244,245,0.3)" }}>
               © {year} John Lloyd De Guzman
             </span>
           </div>
@@ -136,7 +136,7 @@ export default function Footer() {
                 key={link}
                 href={`#${link.toLowerCase()}`}
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-mono), monospace",
                   fontSize: 10,
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
