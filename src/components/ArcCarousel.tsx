@@ -91,6 +91,7 @@ export default function ArcCarousel({
   const draggingRef = useRef(false);
   const hasDraggedRef = useRef(false);
   const dragStartXRef = useRef(0);
+  const dragStartTimeRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const animRafRef = useRef<number | null>(null);
   const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -259,30 +260,54 @@ export default function ArcCarousel({
     if (reducedMotion) return;
     draggingRef.current = true;
     hasDraggedRef.current = false;
-    setIsDragging(true);
     dragStartXRef.current = e.clientX;
+    dragStartTimeRef.current = performance.now();
     dragStartOffsetRef.current = offsetRef.current;
     if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
-    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
     const dx = e.clientX - dragStartXRef.current;
-    if (Math.abs(dx) > 4) {
-      hasDraggedRef.current = true;
+    if (Math.abs(dx) > 6) {
+      if (!hasDraggedRef.current) {
+        hasDraggedRef.current = true;
+        setIsDragging(true);
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch (_) {}
+      }
     }
-    const DEG_PER_PX = 0.28;
-    offsetRef.current = dragStartOffsetRef.current - dx * DEG_PER_PX;
-    renderArc();
+    if (hasDraggedRef.current) {
+      const DEG_PER_PX = 0.28;
+      offsetRef.current = dragStartOffsetRef.current - dx * DEG_PER_PX;
+      renderArc();
+    }
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
     draggingRef.current = false;
     setIsDragging(false);
+
+    try {
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+    } catch (_) {}
+
     if (hasDraggedRef.current) {
-      snapToNearest();
+      const dt = performance.now() - dragStartTimeRef.current;
+      const dx = e.clientX - dragStartXRef.current;
+
+      // Swipe / flick velocity
+      if (dt < 350 && Math.abs(dx) > 20) {
+        const stepDir = dx < 0 ? 1 : -1;
+        const currentNearest = Math.round(offsetRef.current / ANGLE_STEP);
+        animateTo((currentNearest + stepDir) * ANGLE_STEP, 400);
+      } else {
+        snapToNearest();
+      }
     }
   };
 
