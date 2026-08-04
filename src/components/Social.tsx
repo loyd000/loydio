@@ -2,7 +2,6 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
 
 const Spacer = ({ h = "2.5rem" }: { h?: string }) => (
   <div style={{ height: h }} aria-hidden />
@@ -124,9 +123,7 @@ export default function Social() {
       className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">06</span>
-      </div>
+
 
       <div className="section-container">
 
@@ -134,7 +131,7 @@ export default function Social() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }} transition={{ duration: 0.6 }}>
           <div className="rule" />
           <h2 className="section-heading" style={{ fontSize: "clamp(28px, 4.5vw, 52px)" }}>
-            <TypewriterText text1="Find Me" text2="Across the Internet." inView={inView} />
+            Find Me<br />Across the Internet.
           </h2>
           <div className="rule" />
           <Spacer h="1.5rem" />

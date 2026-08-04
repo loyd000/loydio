@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiFramer, SiVite,
   SiNodedotjs, SiExpress, SiPostgresql, SiSupabase, SiPrisma, SiOpenapiinitiative,
@@ -182,9 +181,7 @@ export default function TechStack() {
       className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">03</span>
-      </div>
+
 
       <div className="section-container">
 
@@ -196,7 +193,7 @@ export default function TechStack() {
         >
           <div className="rule" />
           <h2 style={{ fontFamily: MONO, fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 700, lineHeight: 1.1 }}>
-            <TypewriterText text1="Balanced Between Logic" text2="and Creativity." inView={inView} />
+            Balanced Between Logic<br />and Creativity.
           </h2>
           <div className="rule" />
           <Spacer h="1.5rem" />

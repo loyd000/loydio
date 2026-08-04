@@ -1,7 +1,6 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import TypewriterText from "./TypewriterText";
 
 const experiences = [
   {
@@ -42,9 +41,7 @@ export default function Experience() {
       className="section-mobile-pad"
       style={{ position: "relative", padding: "8rem 0", background: "var(--bg)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">02</span>
-      </div>
+
 
       <div className="section-container">
         <motion.div
@@ -54,7 +51,7 @@ export default function Experience() {
         >
           <div className="rule" />
           <h2 className="section-heading" style={{ fontSize: "clamp(28px, 4.5vw, 42px)" }}>
-            <TypewriterText text1="Where I've" text2="Worked & Grown." inView={inView} />
+            Where I&apos;ve<br />Worked & Grown.
           </h2>
           <div className="rule" />
         </motion.div>

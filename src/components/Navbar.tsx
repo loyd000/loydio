@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import LocalTime from "./LocalTime";
 import ThemeToggle from "./ThemeToggle";
 
+const MONO = "'IBM Plex Mono', monospace";
+const SIDEBAR_W = 200; // px — desktop sidebar width
+
 const links = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
@@ -11,7 +14,6 @@ const links = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -19,8 +21,6 @@ export default function Navbar() {
     const allSections = ["about", "credentials", "projects", "social", "contact"];
 
     const onScroll = () => {
-      setScrolled(window.scrollY > 40);
-
       let current = "";
       allSections.forEach((id) => {
         const el = document.getElementById(id);
@@ -55,161 +55,193 @@ export default function Navbar() {
     const target = document.querySelector(href);
     if (!target) return;
     setMenuOpen(false);
-
-    const scroll = () => target.scrollIntoView({ behavior: "smooth" });
-
-    if (typeof document !== "undefined" && "startViewTransition" in document) {
-      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(scroll);
-    } else {
-      scroll();
-    }
+    target.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      {/* ── Fixed Header ── */}
-      <motion.header
-        initial={{ y: -60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.55, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        style={scrolled ? {
-          background: "var(--nav-bg)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          borderBottom: "1px solid var(--border)",
-          boxShadow: "0 1px 0 var(--accent-border)",
-        } : {}}
-      >
-        <div className="section-container flex items-center justify-between h-16">
-
-          {/* Logo */}
-          <a
-            href="#"
-            className="flex items-center gap-2.5 group"
-            aria-label="Loyd — back to top"
+      {/* ── Desktop: Fixed Left Sidebar ── */}
+      <aside className="sidebar-nav" aria-label="Main navigation">
+        {/* Logo — top */}
+        <a
+          href="#"
+          aria-label="Loyd — back to top"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            textDecoration: "none",
+            color: "var(--fg)",
+          }}
+        >
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              border: "2px solid var(--fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transform: "rotate(12deg)",
+              flexShrink: 0,
+            }}
           >
-            <div
-              className="w-7 h-7 flex items-center justify-center rotate-12 group-hover:rotate-0"
-              style={{
-                border: "2px solid var(--fg)",
-                transition: "border-color 0.3s ease, transform 0.3s ease",
-              }}
-            >
-              <span
-                className="text-xs font-bold -rotate-12 group-hover:rotate-0 transition-transform duration-300"
-                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-              >
-                L
-              </span>
-            </div>
             <span
-              className="font-bold text-sm tracking-widest uppercase"
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                transition: "color 0.3s ease",
+                fontFamily: MONO,
+                fontSize: 12,
+                fontWeight: 700,
+                transform: "rotate(-12deg)",
+                display: "block",
               }}
             >
-              Loyd
+              L
             </span>
-          </a>
+          </div>
+          <span
+            style={{
+              fontFamily: MONO,
+              fontWeight: 700,
+              fontSize: 13,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+            }}
+          >
+            Loyd
+          </span>
+        </a>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
-            {links.map((l) => {
-              const isActive = activeSection === l.href.slice(1);
-              return (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={(e) => handleNavClick(e, l.href)}
-                  className="relative text-xs tracking-widest uppercase"
-                  style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
-                    color: isActive ? "var(--accent)" : "var(--fg)",
-                    opacity: isActive ? 1 : 0.45,
-                    fontWeight: isActive ? 600 : 400,
-                    paddingBottom: "4px",
-                    transition: "color 0.2s ease, opacity 0.2s ease",
-                    textDecoration: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      (e.currentTarget as HTMLElement).style.opacity = "0.75";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      (e.currentTarget as HTMLElement).style.opacity = "0.45";
-                    }
-                  }}
-                >
-                  {l.label}
-                  {/* Blue underline active indicator */}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-indicator"
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: "2px",
-                        background: "var(--accent)",
-                        borderRadius: "1px",
-                        display: "block",
-                      }}
-                    />
-                  )}
-                </a>
-              );
-            })}
-          </nav>
+        {/* Nav links — middle */}
+        <nav style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {links.map((l) => {
+            const isActive = activeSection === l.href.slice(1);
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={(e) => handleNavClick(e, l.href)}
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 10,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  color: isActive ? "var(--accent)" : "var(--fg)",
+                  opacity: isActive ? 1 : 0.4,
+                  fontWeight: isActive ? 600 : 400,
+                  padding: "8px 0",
+                  borderLeft: isActive ? "2px solid var(--accent)" : "2px solid transparent",
+                  paddingLeft: 12,
+                  transition: "color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) (e.currentTarget as HTMLElement).style.opacity = "0.7";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) (e.currentTarget as HTMLElement).style.opacity = "0.4";
+                }}
+              >
+                {l.label}
+              </a>
+            );
+          })}
+        </nav>
 
-          {/* Desktop right side */}
-          <div className="hidden md:flex items-center gap-6">
-            <LocalTime />
+        {/* Meta — bottom */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <LocalTime />
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <ThemeToggle />
-            <div className="flex items-center gap-2">
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span
-                className="w-2 h-2 rounded-full blink"
-                style={{ background: "var(--success)" }}
+                className="blink"
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: "var(--success)",
+                  display: "block",
+                }}
               />
               <span
-                className="text-[10px] uppercase tracking-widest"
-                style={{ color: "var(--muted)", fontFamily: "'IBM Plex Mono', monospace" }}
+                style={{
+                  fontFamily: MONO,
+                  fontSize: 9,
+                  color: "var(--muted)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.15em",
+                }}
               >
                 Available
               </span>
             </div>
           </div>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden flex flex-col gap-1.5 p-2 z-50"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            style={{ position: "relative" }}
-          >
-            <motion.span
-              animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px origin-center"
-              style={{ background: menuOpen ? "var(--accent)" : "var(--fg)" }}
-            />
-            <motion.span
-              animate={menuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-              className="block w-6 h-px"
-              style={{ background: "var(--fg)" }}
-            />
-            <motion.span
-              animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px origin-center"
-              style={{ background: menuOpen ? "var(--accent)" : "var(--fg)" }}
-            />
-          </button>
         </div>
-      </motion.header>
+      </aside>
+
+      {/* ── Mobile: Top Bar ── */}
+      <header className="mobile-topbar">
+        <a
+          href="#"
+          aria-label="Loyd — back to top"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            textDecoration: "none",
+            color: "var(--fg)",
+          }}
+        >
+          <div
+            style={{
+              width: 24,
+              height: 24,
+              border: "2px solid var(--fg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transform: "rotate(12deg)",
+            }}
+          >
+            <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
+              L
+            </span>
+          </div>
+          <span style={{ fontFamily: MONO, fontWeight: 700, fontSize: 12, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+            Loyd
+          </span>
+        </a>
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 5,
+            padding: 8,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            position: "relative",
+            zIndex: 60,
+          }}
+        >
+          <motion.span
+            animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+            style={{ display: "block", width: 22, height: 1, background: menuOpen ? "var(--accent)" : "var(--fg)", transformOrigin: "center" }}
+          />
+          <motion.span
+            animate={menuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+            style={{ display: "block", width: 22, height: 1, background: "var(--fg)" }}
+          />
+          <motion.span
+            animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+            style={{ display: "block", width: 22, height: 1, background: menuOpen ? "var(--accent)" : "var(--fg)", transformOrigin: "center" }}
+          />
+        </button>
+      </header>
 
       {/* ── Mobile Full-Screen Overlay ── */}
       <AnimatePresence>
@@ -219,8 +251,10 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.28, ease: "easeOut" }}
-            className="md:hidden fixed inset-0 z-40"
             style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 50,
               background: "var(--bg)",
               display: "flex",
               flexDirection: "column",
@@ -228,7 +262,6 @@ export default function Navbar() {
               padding: "2rem",
             }}
           >
-            {/* Big nav links */}
             <nav style={{ marginBottom: "3rem" }}>
               {links.map((l, i) => {
                 const isActive = activeSection === l.href.slice(1);
@@ -244,9 +277,9 @@ export default function Navbar() {
                       onClick={(e) => handleNavClick(e, l.href)}
                       style={{
                         display: "block",
-                        fontFamily: "'Syne', var(--font-display), sans-serif",
+                        fontFamily: "var(--font-display), 'Syne', sans-serif",
                         fontSize: "clamp(32px, 8vw, 52px)",
-                        fontWeight: 700,
+                        fontWeight: 400,
                         letterSpacing: "-0.02em",
                         color: isActive ? "var(--accent)" : "var(--fg)",
                         textDecoration: "none",
@@ -263,7 +296,6 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Bottom: time + theme + available */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -273,19 +305,8 @@ export default function Navbar() {
               <LocalTime />
               <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span
-                    className="w-2 h-2 rounded-full blink"
-                    style={{ background: "var(--success)" }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
-                      fontSize: 10,
-                      color: "var(--muted)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.15em",
-                    }}
-                  >
+                  <span className="blink" style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)", display: "block" }} />
+                  <span style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.15em" }}>
                     Available
                   </span>
                 </div>
@@ -295,6 +316,62 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        /* Desktop sidebar */
+        .sidebar-nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: ${SIDEBAR_W}px;
+          padding: 2.5rem 1.75rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          z-index: 50;
+          background: var(--bg);
+          border-right: 1px solid var(--border);
+        }
+
+        .mobile-topbar {
+          display: none;
+        }
+
+        /* Push main content right on desktop */
+        body > main,
+        body > footer,
+        body > section {
+          margin-left: ${SIDEBAR_W}px;
+        }
+
+        @media (max-width: 899px) {
+          .sidebar-nav {
+            display: none;
+          }
+          .mobile-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            padding: 0 1.25rem;
+            height: 56px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+          }
+          body > main,
+          body > footer,
+          body > section {
+            margin-left: 0;
+          }
+        }
+      `}</style>
     </>
   );
 }

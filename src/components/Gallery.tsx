@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import TypewriterText from "./TypewriterText";
 
 const items = [
   { id: 1, label: "Dashboard UI", type: "UI Design", cols: 2, rows: 1, color: "#f0f0f0" },
@@ -32,9 +31,7 @@ export default function Gallery() {
       ref={ref}
       style={{ position: "relative", padding: "8rem 0", background: "#fff", borderTop: "1px solid rgba(0,0,0,0.09)", overflow: "hidden" }}
     >
-      <div style={{ position: "absolute", right: 0, top: 0, overflow: "hidden", pointerEvents: "none" }}>
-        <span className="section-watermark">05</span>
-      </div>
+
 
       <div className="section-container">
         <motion.div
@@ -52,7 +49,7 @@ export default function Gallery() {
               marginBottom: "1rem",
             }}
           >
-            <TypewriterText text1="Visual Archive." text2="Work & Experiments." inView={inView} />
+            Visual Archive.<br />Work & Experiments.
           </h2>
           <p style={{ fontSize: 13, opacity: 0.5, maxWidth: 420, lineHeight: 1.8 }}>
             Screenshots, mockups, and visual explorations from past projects and side experiments.

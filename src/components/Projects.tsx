@@ -4,6 +4,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
+import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
 
 const MONO = "'IBM Plex Mono', monospace";
 const INITIAL_SHOW = 4; // 2-col grid looks better with 4 base
@@ -15,7 +16,6 @@ const devCategories = ["All", "Web Dev", "Full-Stack", "Mobile", "IoT", "Tools"]
 function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => void }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
-  const [iframeLoaded, setIframeLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -36,9 +36,9 @@ function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => voi
         flexDirection: "column",
         height: "100%",
         boxShadow: hovered
-          ? "0 20px 60px rgba(0,0,0,0.18), 0 0 0 1px var(--accent-border)"
-          : "0 4px 24px rgba(0,0,0,0.06)",
-        transition: "box-shadow 0.35s ease",
+          ? "0 12px 36px rgba(0,0,0,0.12)"
+          : "0 2px 12px rgba(0,0,0,0.04)",
+        transition: "box-shadow 0.35s ease, border-color 0.35s ease",
       }}
     >
       {/* Featured badge */}
@@ -50,8 +50,8 @@ function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => voi
         display: "flex",
         alignItems: "center",
         gap: 6,
-        background: "var(--accent)",
-        color: "#fff",
+        background: "var(--fg)",
+        color: "var(--bg)",
         fontFamily: MONO,
         fontSize: 9,
         letterSpacing: "0.22em",
@@ -59,70 +59,22 @@ function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => voi
         padding: "5px 10px",
         borderRadius: 2,
       }}>
-        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", opacity: 0.85, flexShrink: 0, animation: "blink 1s step-end infinite" }} />
         Featured
       </div>
 
-      {/* Live preview iframe */}
-      <div style={{
-        position: "relative",
-        width: "100%",
-        flex: 1,
-        minHeight: 320,
-        background: "#0a0a0a",
-        overflow: "hidden",
-      }}>
-        {/* Skeleton while loading */}
-        {!iframeLoaded && (
-          <div style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(90deg, var(--subtle-bg) 25%, var(--hover-bg) 50%, var(--subtle-bg) 75%)",
-            backgroundSize: "200% 100%",
-            animation: "project-skeleton-pulse 1.4s ease-in-out infinite",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-            gap: 12,
-          }}>
-            <div style={{ width: 32, height: 32, border: "2px solid var(--accent)", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-            <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--muted)" }}>
-              Loading preview…
-            </span>
+      {/* Project Image Preview */}
+      {p.image_url && (
+        <div style={{ overflow: "hidden", flexShrink: 0 }}>
+          <div style={{ transform: hovered ? "scale(1.03)" : "scale(1)", transition: "transform 1.8s ease" }}>
+            <MagnifyImage
+              src={p.image_url}
+              alt={p.title}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 60vw"
+              style={{ width: "100%", aspectRatio: "16 / 9" }}
+            />
           </div>
-        )}
-
-        {p.link && (
-          <iframe
-            src={p.link}
-            title={`Live preview of ${p.title}`}
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "none",
-              opacity: iframeLoaded ? 1 : 0,
-              transition: "opacity 0.5s ease",
-              pointerEvents: hovered ? "auto" : "none",
-            }}
-            loading="lazy"
-            onLoad={() => setIframeLoaded(true)}
-            sandbox="allow-scripts allow-same-origin allow-forms"
-          />
-        )}
-
-        {/* Gradient overlay at bottom */}
-        <div style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "20%",
-          background: "linear-gradient(to top, var(--bg) 0%, transparent 100%)",
-          pointerEvents: "none",
-          zIndex: 2,
-        }} />
-      </div>
+        </div>
+      )}
 
       {/* Card info row */}
       <div style={{
@@ -140,8 +92,7 @@ function FeaturedCard({ p, onModal }: { p: Project; onModal: (p: Project) => voi
           <h3 style={{
             fontFamily: "var(--font-display), 'Syne', sans-serif",
             fontSize: "clamp(20px, 2.5vw, 28px)",
-            fontWeight: 800,
-            letterSpacing: "-0.02em",
+            fontWeight: 400,
             lineHeight: 1.15,
             marginBottom: "0.625rem",
           }}>
@@ -576,14 +527,24 @@ export default function Projects() {
   const displayedDev    = devShowAll ? filtered : filtered.slice(0, INITIAL_SHOW);
   const displayedDesign = designShowAll ? designProjects : designProjects.slice(0, INITIAL_SHOW);
 
-  useEffect(() => { setDevShowAll(false); }, [active]);
+  const carouselProjects: ProjectItem[] = useMemo(() => {
+    return devProjects.map((p) => ({
+      title: p.title,
+      status: (p.year === "2024" || p.year === "2025" || p.year === "2026" ? "Shipped" : "In progress") as "Shipped" | "In progress",
+      shipped: p.year === "2024" || p.year === "2025" || p.year === "2026",
+      description: p.description,
+      tags: p.tags || [],
+      link: p.link ?? null,
+      image_url: p.image_url ?? null,
+    }));
+  }, [devProjects]);
 
   return (
     <section
       id="projects"
       ref={ref}
       className="lean-section"
-      style={{ background: "var(--subtle-bg)" }}
+      style={{ background: "var(--bg)", paddingTop: "4rem", paddingBottom: "1.5rem" }}
     >
       <div className="section-container">
 
@@ -592,106 +553,23 @@ export default function Projects() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          style={{ marginBottom: "2.5rem" }}
+          style={{ marginBottom: "1rem" }}
         >
-          <span className="eyebrow" style={{ marginBottom: "1.25rem" }}>Projects</span>
-          <h2 className="section-heading" style={{ fontSize: "clamp(26px, 4vw, 42px)", marginBottom: "1rem", marginTop: "1rem" }}>
-            Code that scales,<br />interfaces that inspire.
-          </h2>
-          <p style={{ fontSize: 16, color: "var(--muted)", maxWidth: 460, lineHeight: 1.75 }}>
-            Development projects and graphic design work — spanning web platforms, IoT, mobile apps, and visual design.
+          <p
+            style={{
+              fontFamily: MONO,
+              fontSize: 10,
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+            }}
+          >
+            — Projects
           </p>
         </motion.div>
 
-        {/* ── Development ── */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.15 }}
-          style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "1.5rem" }}
-        >
-          — Development
-        </motion.p>
-
-        {loading ? (
-          <>
-            {/* Featured skeleton */}
-            <div className="project-skeleton-card" style={{ aspectRatio: "16 / 8", marginBottom: "2.5rem" }} aria-hidden />
-            <SkeletonGrid />
-          </>
-        ) : loadError ? (
-          <p style={{ fontFamily: MONO, fontSize: 11, color: "var(--muted)", padding: "2rem 0" }}>Failed to load projects.</p>
-        ) : (
-          <>
-            {/* Bento grid layout: Strictly Lampara + 2 Side Projects */}
-            <div className="bento-grid">
-              {featuredProject && (
-                <div className="bento-featured">
-                  <FeaturedCard p={featuredProject} onModal={setModal} />
-                </div>
-              )}
-              
-              <AnimatePresence mode="popLayout">
-                {bentoSideProjects.map((p, i) => (
-                  <BentoSideCard key={p.id} p={p} i={i} onModal={setModal} />
-                ))}
-              </AnimatePresence>
-            </div>
-
-            {/* Category filter for the rest of the projects */}
-            {restDevProjects.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : {}}
-                transition={{ delay: 0.2 }}
-                style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: "1.5rem" }}
-              >
-                {devCategories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActive(cat)}
-                    style={{
-                      fontFamily: MONO,
-                      fontSize: 10,
-                      letterSpacing: "0.15em",
-                      textTransform: "uppercase",
-                      padding: "7px 14px",
-                      border: "1px solid",
-                      borderColor: active === cat ? "var(--accent)" : "var(--border-strong)",
-                      background: active === cat ? "var(--accent)" : "transparent",
-                      color: active === cat ? "#fff" : "var(--fg)",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      borderRadius: 2,
-                    }}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-
-            {/* 2-col project grid for the rest */}
-            <div className="project-grid-2col">
-              <AnimatePresence mode="popLayout">
-                {displayedDev.map((p, i) => (
-                  <ProjectCard key={p.id} p={p} i={i} onModal={setModal} />
-                ))}
-              </AnimatePresence>
-            </div>
-
-            {filtered.length > INITIAL_SHOW && (
-              <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
-                <button
-                  onClick={() => setDevShowAll((v) => !v)}
-                  className="btn btn-outline"
-                >
-                  {devShowAll ? "Show Less ↑" : `Show ${filtered.length - INITIAL_SHOW} More ↓`}
-                </button>
-              </div>
-            )}
-          </>
-        )}
+        {/* ── Arc Carousel ── */}
+        <ArcCarousel projects={carouselProjects} />
 
         {/* ── Design — untouched ── */}
         <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>

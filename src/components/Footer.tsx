@@ -77,8 +77,8 @@ export default function Footer() {
                 transition: "color 0.2s ease, border-color 0.2s ease",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = "#dc2626";
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(220,38,38,0.4)";
+                (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff";
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.4)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLAnchorElement).style.color = "rgba(244,244,245,0.45)";
@@ -139,7 +139,7 @@ export default function Footer() {
                   textDecoration: "none",
                   transition: "color 0.2s ease",
                 }}
-                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#dc2626")}
+                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
                 onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
               >
                 {link}
