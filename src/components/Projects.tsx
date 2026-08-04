@@ -447,14 +447,10 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                 isActive
                   ? "0px"
                   : direction < 0
-                    ? "calc(-1 * clamp(17rem, 48vw, 31rem))"
-                    : "clamp(17rem, 48vw, 31rem)";
+                    ? "calc(-1 * clamp(17.5rem, 52vw, 35rem))"
+                    : "clamp(17.5rem, 52vw, 35rem)";
               const id = p.id ?? p.title;
               const hovered = hoveredId === id;
-              const categories = (p.category || "Graphic Design")
-                .split(",")
-                .map((category) => category.trim())
-                .filter(Boolean);
 
               return (
                 <div
@@ -500,10 +496,8 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
 
                   {p.image_url ? (
                     <div
+                      className="design-carousel-image"
                       style={{
-                        overflow: "hidden",
-                        borderRadius: 6,
-                        flexShrink: 0,
                         pointerEvents: isActive ? "auto" : "none",
                       }}
                     >
@@ -517,7 +511,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                           src={p.image_url}
                           alt={p.title}
                           sizes="(max-width: 640px) 82vw, (max-width: 1024px) 68vw, 620px"
-                          style={{ width: "100%", height: "clamp(190px, 28vw, 282px)" }}
+                          style={{ width: "100%", height: "100%" }}
                         />
                       </div>
                     </div>
@@ -532,49 +526,10 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                   )}
 
                   <div className="design-carousel-content">
-                    <div className="design-carousel-meta">
-                      <span style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)" }}>
-                        0{i + 1}
-                      </span>
-                      <span style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap" }}>
-                        {p.year}
-                      </span>
-                    </div>
-
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                      {categories.slice(0, isActive ? 3 : 1).map((category) => (
-                        <span key={category} className="tag" style={{ fontSize: 9, padding: "4px 9px" }}>
-                          {category}
-                        </span>
-                      ))}
-                    </div>
-
                     <h3 className="section-heading design-carousel-title">{p.title}</h3>
 
-                    <p
-                      style={{
-                        color: "var(--muted)",
-                        fontSize: 13,
-                        lineHeight: 1.65,
-                        display: "-webkit-box",
-                        WebkitLineClamp: isActive ? 3 : 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {p.description}
-                    </p>
-
                     {isActive && (
-                      <div className="design-carousel-actions">
-                        <div style={{ display: "flex", gap: 5, flexWrap: "wrap", flex: 1 }}>
-                          {(p.tags ?? []).slice(0, 4).map((tag) => (
-                            <span key={tag} style={{ fontFamily: MONO, fontSize: 10, color: "var(--muted)" }}>
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-
+                      <div className="design-carousel-action">
                         {p.link ? (
                           <a
                             href={p.link}
@@ -814,7 +769,7 @@ export default function Projects() {
         }
         .design-carousel-shell {
           position: relative;
-          height: clamp(440px, 58vw, 560px);
+          height: clamp(500px, 64vw, 650px);
           overflow: hidden;
           padding: 1rem 0;
           touch-action: pan-y;
@@ -853,10 +808,10 @@ export default function Projects() {
           position: absolute;
           left: 50%;
           top: 50%;
-          width: clamp(280px, 64vw, 620px);
-          min-height: clamp(392px, 50vw, 500px);
+          width: clamp(300px, 68vw, 700px);
+          min-height: clamp(430px, 56vw, 585px);
           border-radius: 8px;
-          padding: 0.9rem;
+          padding: clamp(0.95rem, 1.5vw, 1.15rem);
           display: flex;
           flex-direction: column;
           overflow: hidden;
@@ -866,9 +821,20 @@ export default function Projects() {
             filter 0.34s ease,
             transform 0.54s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .design-carousel-image {
+          width: 100%;
+          height: clamp(300px, 40vw, 430px);
+          border-radius: 6px;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .design-carousel-image > div {
+          width: 100%;
+          height: 100%;
+        }
         .design-carousel-placeholder {
           width: 100%;
-          height: clamp(190px, 28vw, 282px);
+          height: clamp(300px, 40vw, 430px);
           border-radius: 6px;
           background: var(--subtle-bg);
           display: flex;
@@ -880,27 +846,27 @@ export default function Projects() {
           position: relative;
           z-index: 3;
           display: flex;
-          flex: 1;
-          flex-direction: column;
-          gap: 0.65rem;
-          padding: 1rem 0.1rem 0.1rem;
-        }
-        .design-carousel-meta {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 0.75rem;
-        }
-        .design-carousel-title {
-          font-size: clamp(18px, 2.6vw, 28px);
-          margin: 0;
-        }
-        .design-carousel-actions {
-          display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 1rem;
-          margin-top: auto;
+          min-height: 76px;
+          padding: 1rem 0 0;
+        }
+        .design-carousel-title {
+          font-size: clamp(20px, 2.8vw, 31px);
+          line-height: 1.1;
+          margin: 0;
+          max-width: 420px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .design-carousel-content .btn {
+          flex-shrink: 0;
+        }
+        .design-carousel-action {
+          flex-shrink: 0;
         }
         .design-carousel-controls {
           display: flex;
@@ -964,13 +930,23 @@ export default function Projects() {
             width: min(82vw, 380px);
             min-height: 430px;
           }
-          .design-carousel-actions {
-            align-items: flex-start;
-            flex-direction: column;
+          .design-carousel-image,
+          .design-carousel-placeholder {
+            height: 300px;
           }
-          .design-carousel-actions .btn {
+          .design-carousel-content {
+            align-items: stretch;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0.85rem;
+            min-height: auto;
+          }
+          .design-carousel-content .btn {
             width: 100%;
             justify-content: center;
+          }
+          .design-carousel-action {
+            width: 100%;
           }
           .design-carousel-title {
             font-size: 20px;
