@@ -87,47 +87,15 @@ export default function SkillsExperience() {
             — Experience
           </p>
 
-          <div style={{ position: "relative" }}>
-            {/* Timeline line */}
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: "1px",
-                background: "linear-gradient(to bottom, var(--border-strong) 0%, var(--border) 60%, transparent 100%)",
-                opacity: 0.4,
-              }}
-            />
-
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {experience.map((exp, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -14 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
+                initial={{ opacity: 0, y: 14 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                style={{
-                  paddingLeft: "2rem",
-                  paddingTop: "1.5rem",
-                  paddingBottom: "1.5rem",
-                  borderBottom: "1px solid var(--border)",
-                  position: "relative",
-                }}
+                className="exp-glass-card"
               >
-                {/* Dot */}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: -4,
-                    top: "1.75rem",
-                    width: 9,
-                    height: 9,
-                    borderRadius: "50%",
-                    background: i === 0 ? "var(--fg)" : "var(--bg)",
-                    border: `1.5px solid ${i === 0 ? "var(--fg)" : "var(--border-strong)"}`,
-                  }}
-                />
                 <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "0.5rem" }}>
                   <div style={{ flex: 1, minWidth: 200 }}>
                     <h3 style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1.2, marginBottom: 4 }}>

@@ -153,29 +153,16 @@ export default function Social() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ duration: 0.4, delay: i * 0.07 }}
+                className="social-card"
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   padding: "2rem",
-                  borderRight: "1px solid var(--border)",
-                  borderBottom: "1px solid var(--border)",
-                  borderLeft: "3px solid transparent",
                   minHeight: 180,
-                  background: "var(--bg)",
                   position: "relative",
                   cursor: s.external ? "pointer" : "default",
-                  transition: "background 0.2s ease, border-left-color 0.2s ease",
                 }}
-                className="social-card"
-                onMouseEnter={s.external ? (e) => {
-                  e.currentTarget.style.background = "var(--accent-subtle)";
-                  e.currentTarget.style.borderLeftColor = "var(--accent)";
-                } : undefined}
-                onMouseLeave={s.external ? (e) => {
-                  e.currentTarget.style.background = "var(--bg)";
-                  e.currentTarget.style.borderLeftColor = "transparent";
-                } : undefined}
               >
                 {/* Top row: icon + arrow */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>

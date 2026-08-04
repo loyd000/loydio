@@ -16,7 +16,7 @@ export default function ScrollToTop() {
       {visible && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.78, scale: 1 }}
+          animate={{ opacity: 0.85, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.2 }}
           whileHover={{ opacity: 1, scale: 1.08 }}
@@ -28,10 +28,13 @@ export default function ScrollToTop() {
             bottom: 104,
             right: 32,
             zIndex: 7990,
-            width: 40,
-            height: 40,
-            border: "1px solid var(--border-heavy)",
-            background: "var(--bg)",
+            width: 42,
+            height: 42,
+            borderRadius: 10,
+            border: "1px solid rgba(255, 255, 255, 0.4)",
+            background: "rgba(255, 255, 255, 0.55)",
+            backdropFilter: "blur(16px) saturate(160%)",
+            WebkitBackdropFilter: "blur(16px) saturate(160%)",
             color: "var(--fg)",
             display: "flex",
             alignItems: "center",
@@ -39,14 +42,18 @@ export default function ScrollToTop() {
             cursor: "pointer",
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: 16,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-            transition: "border-color 0.2s",
+            boxShadow: "inset 0 1px 1px 0 rgba(255,255,255,0.7), 0 6px 20px rgba(0,0,0,0.1)",
+            transition: "border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "var(--fg)";
+            e.currentTarget.style.background = "rgba(255,255,255,0.8)";
+            e.currentTarget.style.boxShadow = "inset 0 1.5px 1.5px 0 rgba(255,255,255,0.9), 0 8px 28px rgba(0,0,0,0.14)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--border-heavy)";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+            e.currentTarget.style.background = "rgba(255,255,255,0.55)";
+            e.currentTarget.style.boxShadow = "inset 0 1px 1px 0 rgba(255,255,255,0.7), 0 6px 20px rgba(0,0,0,0.1)";
           }}
         >
           ↑

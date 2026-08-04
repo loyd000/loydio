@@ -35,6 +35,7 @@ export default function Contact() {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
+          className="contact-glass-wrapper"
         >
           {/* Eyebrow */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: "1.5rem" }}>
