@@ -30,7 +30,19 @@ export default function LocalTime() {
   }, []);
 
   return (
-    <div className="flex flex-col items-end text-[10px] font-mono leading-tight opacity-50">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        fontFamily: "'IBM Plex Mono', monospace",
+        fontSize: 10,
+        lineHeight: 1.5,
+        color: "var(--fg)",
+        opacity: 0.5,
+        letterSpacing: "0.05em",
+      }}
+    >
       <span>{time}</span>
       <span>{date} · PH</span>
     </div>
