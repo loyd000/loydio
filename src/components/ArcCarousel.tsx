@@ -527,7 +527,7 @@ export default function ArcCarousel({
                 </span>
               </div>
 
-              {/* Info Bottom */}
+              {/* Title & Primary Tag Footer */}
               <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 6, flex: 1, justifyContent: "space-between" }}>
                 <h3
                   style={{
