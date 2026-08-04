@@ -297,17 +297,20 @@ export default function ArcCarousel({
     } catch (_) {}
 
     if (hasDraggedRef.current) {
-      const dt = performance.now() - dragStartTimeRef.current;
       const dx = e.clientX - dragStartXRef.current;
+      const startNearest = Math.round(dragStartOffsetRef.current / ANGLE_STEP);
+      
+      const DEG_PER_PX = 0.28;
+      const totalDegDragged = -dx * DEG_PER_PX; // positive means advancing forward
 
-      // Swipe / flick velocity
-      if (dt < 350 && Math.abs(dx) > 20) {
-        const stepDir = dx < 0 ? 1 : -1;
-        const currentNearest = Math.round(offsetRef.current / ANGLE_STEP);
-        animateTo((currentNearest + stepDir) * ANGLE_STEP, 400);
-      } else {
-        snapToNearest();
+      let stepShift = 0;
+      if (Math.abs(dx) > 15) {
+        stepShift = Math.sign(totalDegDragged) * Math.max(1, Math.round(Math.abs(totalDegDragged) / (ANGLE_STEP * 0.55)));
       }
+
+      const target = (startNearest + stepShift) * ANGLE_STEP;
+      targetOffsetRef.current = target;
+      animateTo(target, 420);
     }
   };
 
