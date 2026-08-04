@@ -190,13 +190,13 @@ export default function TechNodeGraph() {
   const ripples        = useRef<{ x: number; y: number; t: number }[]>([]);
   const lastRippleT    = useRef(0);
   const isHoveringRef  = useRef(false);
-  const nextIdleRipple = useRef(performance.now() + 1500 + Math.random() * 1500);
+  const nextIdleRipple = useRef<number | null>(null);
 
   const inView = useInView(sectionRef, { once: true, margin: "-60px" });
   const [hovered,        setHovered]        = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<NodeCategory | null>(null);
-  const [revealed,       setRevealed]       = useState(false);
   const [isDark,         setIsDark]         = useState(false);
+  const revealed = inView;
 
   useEffect(() => {
     const check = () => setIsDark(document.documentElement.getAttribute("data-theme") === "dark");
@@ -216,7 +216,9 @@ export default function TechNodeGraph() {
   const rotateY = useTransform(smoothX, [-0.5, 0.5], [-5, 5]);
   const rotateX = useTransform(smoothY, [-0.5, 0.5], [3, -3]);
 
-  useEffect(() => { if (inView) setRevealed(true); }, [inView]);
+  useEffect(() => {
+    nextIdleRipple.current = performance.now() + 1500 + Math.random() * 1500;
+  }, []);
 
   // Smooth viewBox zoom via RAF lerp (no re-renders during animation)
   useEffect(() => {
@@ -277,7 +279,7 @@ export default function TechNodeGraph() {
       ripples.current = ripples.current.filter(r => now - r.t < 2000);
 
       // Idle auto-ripples when cursor is not over the component
-      if (!isHoveringRef.current && now > nextIdleRipple.current) {
+      if (!isHoveringRef.current && nextIdleRipple.current !== null && now > nextIdleRipple.current) {
         nextIdleRipple.current = now + 1500 + Math.random() * 1500;
         ripples.current = [...ripples.current, {
           x: Math.random() * 880 + 10,

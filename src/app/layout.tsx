@@ -85,7 +85,20 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {/* Global SVG filters (used for subtle refraction/displacement) */}
+        <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
+          <defs>
+            <filter id="glass-displacement" x="-50%" y="-50%" width="200%" height="200%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="turb" />
+              <feColorMatrix in="turb" type="saturate" values="0" result="turbBW" />
+              <feGaussianBlur in="turbBW" stdDeviation="1" result="turbBlur" />
+              <feDisplacementMap in="SourceGraphic" in2="turbBlur" scale="8" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+        </svg>
+        {children}
+      </body>
     </html>
   );
 }

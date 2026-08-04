@@ -82,8 +82,11 @@ export default function ArcCarousel({
   const [activeIndex, setActiveIndex] = useState(0);
   const [detailItem, setDetailItem] = useState<ProjectItem>(items[0]);
   const [detailOpacity, setDetailOpacity] = useState(1);
-  const [reducedMotion, setReducedMotion] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   // Refs for animation & drag state
   const offsetRef = useRef(0);
@@ -94,15 +97,12 @@ export default function ArcCarousel({
   const dragStartTimeRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const animRafRef = useRef<number | null>(null);
-  const wheelTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const activeIndexRef = useRef(0);
 
   // Detect prefers-reduced-motion
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
-
     const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
@@ -111,7 +111,7 @@ export default function ArcCarousel({
   // Shortest angular distance wrapped into [-HALF_TOTAL, HALF_TOTAL)
   const wrapDiff = useCallback(
     (d: number) => {
-      let x =
+      const x =
         (((d + HALF_TOTAL) % (N * ANGLE_STEP)) + N * ANGLE_STEP) %
           (N * ANGLE_STEP) -
         HALF_TOTAL;

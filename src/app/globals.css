@@ -258,6 +258,68 @@ p {
   margin-right: calc(50% - 50vw);
 }
 
+/* Carousel liquid-glass styles */
+.liquid-glass-card {
+  background: color-mix(in srgb, var(--surface) 62%, rgba(255,255,255,0.03));
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: 0 14px 40px rgba(10,10,12,0.08);
+  border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
+  transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+
+.liquid-glass-card::before {
+  content: "";
+  position: absolute;
+  left: -26%;
+  top: -36%;
+  width: 84%;
+  height: 125%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.34), rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03) 56%, transparent 80%);
+  transform: rotate(-8deg) translateY(0) translateX(-6px) scale(1.025);
+  filter: blur(16px) saturate(150%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.liquid-glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 90% 90%, rgba(0,0,0,0.14), transparent 32%);
+  transform: translate(6px,6px) scale(1.01);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.liquid-glass-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  /* apply SVG displacement first, then color adjustments */
+  filter: url(#glass-displacement) brightness(0.98) saturate(1.08) contrast(1.04);
+  transition: transform 280ms ease, filter 220ms ease;
+}
+
+.liquid-glass-card.active {
+  box-shadow: 0 26px 64px rgba(10,10,12,0.14);
+  transform: translateZ(24px) scale(1.03);
+}
+
+.liquid-glass-btn {
+  background: color-mix(in srgb, var(--surface) 85%, rgba(255,255,255,0.02));
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.liquid-glass-pill > div {
+  background: color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,0.02));
+}
+
 /* ── Eyebrow / tag labels ────────────────── */
 .eyebrow {
   display: flex;

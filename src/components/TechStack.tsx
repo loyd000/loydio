@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useReducer, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiFramer, SiVite,
@@ -45,39 +45,73 @@ const ALL_TECH: { name: string; Icon: IconType | null }[] = [
   { name: "Linux",         Icon: SiLinux },
 ];
 
+type StackPhase = "idle" | "typing" | "pausing" | "deleting";
+
+type StackTypewriterState = {
+  idx: number;
+  displayed: string;
+  phase: StackPhase;
+};
+
+type StackTypewriterAction =
+  | { type: "start" }
+  | { type: "pause" }
+  | { type: "delete" }
+  | { type: "advance" }
+  | { type: "setDisplayed"; payload: string };
+
+function stackTypewriterReducer(state: StackTypewriterState, action: StackTypewriterAction): StackTypewriterState {
+  switch (action.type) {
+    case "start":
+      return { ...state, phase: "typing" };
+    case "pause":
+      return { ...state, phase: "pausing" };
+    case "delete":
+      return { ...state, phase: "deleting" };
+    case "advance":
+      return { idx: (state.idx + 1) % SENTENCES.length, displayed: "", phase: "typing" };
+    case "setDisplayed":
+      return { ...state, displayed: action.payload };
+    default:
+      return state;
+  }
+}
+
 function StackTypewriter({ inView }: { inView: boolean }) {
-  const [idx,       setIdx]       = useState(0);
-  const [displayed, setDisplayed] = useState("");
-  const [phase,     setPhase]     = useState<"idle" | "typing" | "pausing" | "deleting">("idle");
+  const [state, dispatch] = useReducer(stackTypewriterReducer, {
+    idx: 0,
+    displayed: "",
+    phase: inView ? "typing" : "idle",
+  });
+  const { idx, displayed, phase } = state;
 
   useEffect(() => {
-    if (inView) setPhase("typing");
-  }, [inView]);
+    if (inView && phase === "idle") {
+      dispatch({ type: "start" });
+    }
+  }, [inView, phase]);
 
   useEffect(() => {
     const full = SENTENCES[idx].phrase;
 
     if (phase === "typing") {
       if (displayed.length < full.length) {
-        const t = setTimeout(() => setDisplayed(full.slice(0, displayed.length + 1)), 28);
+        const t = setTimeout(() => dispatch({ type: "setDisplayed", payload: full.slice(0, displayed.length + 1) }), 28);
         return () => clearTimeout(t);
       }
-      const t = setTimeout(() => setPhase("pausing"), 2400);
+      const t = setTimeout(() => dispatch({ type: "pause" }), 2400);
       return () => clearTimeout(t);
     }
     if (phase === "pausing") {
-      const t = setTimeout(() => setPhase("deleting"), 0);
+      const t = setTimeout(() => dispatch({ type: "delete" }), 0);
       return () => clearTimeout(t);
     }
     if (phase === "deleting") {
       if (displayed.length > 0) {
-        const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 14);
+        const t = setTimeout(() => dispatch({ type: "setDisplayed", payload: displayed.slice(0, -1) }), 14);
         return () => clearTimeout(t);
       }
-      const t = setTimeout(() => {
-        setIdx((i) => (i + 1) % SENTENCES.length);
-        setPhase("typing");
-      }, 240);
+      const t = setTimeout(() => dispatch({ type: "advance" }), 240);
       return () => clearTimeout(t);
     }
   }, [phase, displayed, idx]);
