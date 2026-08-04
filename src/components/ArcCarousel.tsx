@@ -174,13 +174,11 @@ export default function ArcCarousel({
       const y = centerY + radius * Math.sin(angleRad);
 
       const closeness = 1 - Math.min(Math.abs(diff) / MAX_VISIBLE_DIFF, 1);
-      // Active card is larger, inactive ones shrink faster
-      const scale = 0.8 + closeness * 0.4;
-      // Inactive cards fade out more aggressively
-      const opacity = Math.pow(closeness, 1.5);
+      const scale = 0.82 + closeness * 0.34;
+      const opacity = 0.22 + closeness * 0.78;
       const rot = diff * 0.32;
 
-      card.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale})`;
+      card.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rot}deg) scale(${scale})`;
       card.style.opacity = String(opacity);
       card.style.zIndex = String(Math.round(closeness * 1000));
       card.style.pointerEvents = "auto";
@@ -453,11 +451,21 @@ export default function ArcCarousel({
                 flexDirection: "column",
                 justifyContent: "space-between",
                 overflow: "hidden",
+                willChange: "transform, opacity",
                 pointerEvents: "auto",
                 cursor: "pointer",
               }}
             >
-
+              {/* Liquid specular reflection highlight */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.03) 40%, transparent 100%)",
+                  pointerEvents: "none",
+                  zIndex: 2,
+                }}
+              />
               {/* Image Screenshot Header */}
               <div
                 style={{
