@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import GitHubContributions from "./GitHubContributions";
 
 const skills = [
   { name: "Next.js", icon: "nextdotjs" },
@@ -101,6 +102,7 @@ export default function SkillsExperience() {
               </div>
             ))}
           </div>
+          <GitHubContributions />
         </motion.div>
 
         {/* ── Experience timeline ── */}

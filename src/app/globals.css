@@ -396,6 +396,150 @@ p {
   }
 }
 
+/* ── GitHub contribution calendar ────────── */
+.github-contributions {
+  margin-top: 3rem;
+}
+
+.github-contributions-heading {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.github-contributions-heading p,
+.github-contributions-heading a,
+.github-contributions-heading strong {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.github-contributions-heading p {
+  color: var(--muted);
+  letter-spacing: 0.3em;
+  margin-bottom: 0.45rem;
+}
+
+.github-contributions-heading a {
+  color: var(--fg);
+  opacity: 0.6;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.github-contributions-heading a:hover {
+  opacity: 1;
+}
+
+.github-contributions-heading strong {
+  color: var(--fg);
+  font-weight: 500;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.github-calendar-glass {
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow:
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+    0 8px 28px rgba(0, 0, 0, 0.06);
+  min-height: 122px;
+  padding: 1.4rem;
+}
+
+.github-calendar-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.github-calendar-grid {
+  display: grid;
+  gap: 4px;
+  min-width: max-content;
+}
+
+.github-calendar-week {
+  display: grid;
+  gap: 4px;
+  grid-template-rows: repeat(7, 12px);
+}
+
+.github-calendar-day {
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.045);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.55);
+  height: 12px;
+  transition: transform 0.16s ease, filter 0.16s ease;
+  width: 12px;
+}
+
+.github-calendar-day:hover {
+  filter: brightness(1.12);
+  transform: scale(1.22);
+}
+
+.github-calendar-day.level-1 { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+.github-calendar-day.level-2 { background: color-mix(in srgb, var(--accent) 48%, transparent); }
+.github-calendar-day.level-3 { background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.github-calendar-day.level-4 { background: var(--accent); }
+
+.github-calendar-message {
+  color: var(--muted);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  margin: 0;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.github-calendar-loading {
+  border-radius: 10px;
+  height: 88px;
+  background: linear-gradient(90deg, transparent, rgba(127, 127, 127, 0.12), transparent);
+  background-size: 200% 100%;
+  animation: github-calendar-loading 1.3s ease infinite;
+}
+
+[data-theme="dark"] .github-calendar-glass {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.35),
+    0 8px 28px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .github-calendar-day {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes github-calendar-loading {
+  to { background-position: -200% 0; }
+}
+
+@media (max-width: 600px) {
+  .github-contributions-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .github-calendar-glass {
+    padding: 1rem;
+  }
+}
+
 /* .about-grid removed — merged into HeroAbout component */
 
 /* clamp() handles tablet sizing — no override needed */
