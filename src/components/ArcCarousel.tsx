@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 
 export interface ProjectItem {
   id?: string | number;
@@ -18,58 +19,11 @@ export interface ProjectItem {
 
 export interface ArcCarouselProps {
   projects: ProjectItem[];
-  title?: string;
-  subtitle?: string;
 }
 
-const DEFAULT_PROJECTS: ProjectItem[] = [
-  {
-    title: "CATOK",
-    status: "Shipped",
-    shipped: true,
-    description:
-      "A young coconut maturity detector that listens instead of cutting. Acoustic signal analysis feeds a cascaded binary CNN running on an ESP32-S3.",
-    tags: ["TinyML", "ESP32-S3", "CNN"],
-  },
-  {
-    title: "AMTEC Catalogue",
-    status: "Shipped",
-    shipped: true,
-    description:
-      "A WordPress plugin built during my OJT at AMTEC, UPLB, pulling live equipment data straight from Google Sheets so the catalogue updates itself.",
-    tags: ["WordPress", "Sheets API", "PHP"],
-  },
-  {
-    title: "Attendance System",
-    status: "In progress",
-    shipped: false,
-    description:
-      "A web attendance app with facial recognition sign-in, mandatory daily accomplishment reports, role-based access, and auto-generated email reports.",
-    tags: ["Next.js", "Supabase", "face-api.js"],
-  },
-  {
-    title: "Dynaflow Quoting Tool",
-    status: "In progress",
-    shipped: false,
-    description:
-      "Turning a sprawling Excel price book into a proper web app, with cleaned pricing data and resolved cost codes for faster quoting.",
-    tags: ["Data Cleaning", "Web App"],
-  },
-  {
-    title: "AI Photo Sorter",
-    status: "Shipped",
-    shipped: true,
-    description:
-      "A desktop tool built with PySide6 that finds and groups wedding photos by face, saving hours of manual sorting for the family photography business.",
-    tags: ["Python", "PySide6", "Face Recognition"],
-  },
-];
-
-export default function ArcCarousel({
-  projects = DEFAULT_PROJECTS,
-}: ArcCarouselProps) {
-  const items = projects && projects.length > 0 ? projects : DEFAULT_PROJECTS;
-  const N = items.length;
+export default function ArcCarousel({ projects }: ArcCarouselProps) {
+  const items = projects;
+  const N = Math.max(items.length, 1);
 
   const ANGLE_STEP = 15; // degrees between adjacent cards (tight spacing default)
   const HALF_TOTAL = (N * ANGLE_STEP) / 2;
@@ -80,8 +34,6 @@ export default function ArcCarousel({
 
   // States
   const [activeIndex, setActiveIndex] = useState(0);
-  const [detailItem, setDetailItem] = useState<ProjectItem>(items[0]);
-  const [detailOpacity, setDetailOpacity] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -90,14 +42,13 @@ export default function ArcCarousel({
 
   // Refs for animation & drag state
   const offsetRef = useRef(0);
-  const targetOffsetRef = useRef(0);
   const draggingRef = useRef(false);
   const hasDraggedRef = useRef(false);
   const dragStartXRef = useRef(0);
-  const dragStartTimeRef = useRef(0);
   const dragStartOffsetRef = useRef(0);
   const animRafRef = useRef<number | null>(null);
   const activeIndexRef = useRef(0);
+  const detailItem = items[Math.min(activeIndex, N - 1)];
 
   // Detect prefers-reduced-motion
   useEffect(() => {
@@ -131,20 +82,6 @@ export default function ArcCarousel({
     const centerY = radius + 165;
     return { w, h, radius, centerX, centerY };
   }, []);
-
-  // Crossfade detail text when active card changes
-  const updateDetail = useCallback(
-    (idx: number) => {
-      const nextItem = items[idx];
-      if (!nextItem) return;
-      setDetailOpacity(0);
-      setTimeout(() => {
-        setDetailItem(nextItem);
-        setDetailOpacity(1);
-      }, 120);
-    },
-    [items]
-  );
 
   // Render cards onto arc
   const renderArc = useCallback(() => {
@@ -197,9 +134,8 @@ export default function ArcCarousel({
     if (idx !== activeIndexRef.current) {
       activeIndexRef.current = idx;
       setActiveIndex(idx);
-      updateDetail(idx);
     }
-  }, [N, ANGLE_STEP, MAX_VISIBLE_DIFF, wrapDiff, getGeometry, updateDetail, reducedMotion]);
+  }, [N, ANGLE_STEP, MAX_VISIBLE_DIFF, wrapDiff, getGeometry, reducedMotion]);
 
   // Smooth animation to target offset
   const animateTo = useCallback(
@@ -232,17 +168,10 @@ export default function ArcCarousel({
       if (deltaIdx > N / 2) deltaIdx -= N;
       if (deltaIdx < -N / 2) deltaIdx += N;
       const target = (nearestRaw + deltaIdx) * ANGLE_STEP;
-      targetOffsetRef.current = target;
       animateTo(target);
     },
     [N, ANGLE_STEP, animateTo]
   );
-
-  // Snap to nearest card
-  const snapToNearest = useCallback(() => {
-    const nearestRaw = Math.round(offsetRef.current / ANGLE_STEP);
-    animateTo(nearestRaw * ANGLE_STEP, 380);
-  }, [ANGLE_STEP, animateTo]);
 
   // Initialize and resize listener
   useEffect(() => {
@@ -261,7 +190,6 @@ export default function ArcCarousel({
     draggingRef.current = true;
     hasDraggedRef.current = false;
     dragStartXRef.current = e.clientX;
-    dragStartTimeRef.current = performance.now();
     dragStartOffsetRef.current = offsetRef.current;
     if (animRafRef.current) cancelAnimationFrame(animRafRef.current);
   };
@@ -275,7 +203,7 @@ export default function ArcCarousel({
         setIsDragging(true);
         try {
           e.currentTarget.setPointerCapture(e.pointerId);
-        } catch (_) {}
+        } catch {}
       }
     }
     if (hasDraggedRef.current) {
@@ -294,7 +222,7 @@ export default function ArcCarousel({
       if (e.currentTarget.hasPointerCapture(e.pointerId)) {
         e.currentTarget.releasePointerCapture(e.pointerId);
       }
-    } catch (_) {}
+    } catch {}
 
     if (hasDraggedRef.current) {
       const dx = e.clientX - dragStartXRef.current;
@@ -309,25 +237,9 @@ export default function ArcCarousel({
       }
 
       const target = (startNearest + stepShift) * ANGLE_STEP;
-      targetOffsetRef.current = target;
       animateTo(target, 420);
     }
   };
-
-
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        goToIndex(((activeIndexRef.current - 1) % N + N) % N);
-      } else if (e.key === "ArrowRight") {
-        goToIndex((activeIndexRef.current + 1) % N);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [N, goToIndex]);
 
   // Status helper
   const getStatusText = (p: ProjectItem) => {
@@ -339,6 +251,8 @@ export default function ArcCarousel({
     if (p.shipped !== undefined) return p.shipped;
     return p.status?.toLowerCase() === "shipped";
   };
+
+  if (items.length === 0) return null;
 
   // Reduced motion fallback UI
   if (reducedMotion) {
@@ -414,6 +328,19 @@ export default function ArcCarousel({
       {/* ── Arc Wrap Container ── */}
       <div
         ref={wrapRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Development projects"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            goToIndex(((activeIndexRef.current - 1) % N + N) % N);
+          } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            goToIndex((activeIndexRef.current + 1) % N);
+          }
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -476,12 +403,12 @@ export default function ArcCarousel({
                 }}
               >
                 {p.image_url ? (
-                  <img
+                  <Image
                     src={p.image_url}
                     alt={p.title}
+                    fill
+                    sizes="250px"
                     style={{
-                      width: "100%",
-                      height: "100%",
                       objectFit: "cover",
                       display: "block",
                     }}
@@ -667,8 +594,6 @@ export default function ArcCarousel({
             fontWeight: 400,
             fontSize: "clamp(22px, 3.5vw, 32px)",
             marginBottom: "0.75rem",
-            opacity: detailOpacity,
-            transition: "opacity 0.15s ease",
           }}
         >
           {detailItem.title}
@@ -680,8 +605,6 @@ export default function ArcCarousel({
             fontSize: 14,
             lineHeight: 1.7,
             fontWeight: 500,
-            opacity: detailOpacity,
-            transition: "opacity 0.15s ease",
           }}
         >
           {detailItem.description || detailItem.desc}
@@ -694,8 +617,6 @@ export default function ArcCarousel({
             justifyContent: "center",
             gap: "0.5rem",
             marginTop: "1.25rem",
-            opacity: detailOpacity,
-            transition: "opacity 0.15s ease",
           }}
         >
           {detailItem.tags.map((t) => (

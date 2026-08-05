@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 
 const socials = [
   {
@@ -41,11 +40,7 @@ const socials = [
 ];
 
 export default function Footer() {
-  const [year, setYear] = useState(new Date().getFullYear());
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const year = new Date().getFullYear();
 
   return (
     <footer
