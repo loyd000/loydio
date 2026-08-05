@@ -1,4 +1,5 @@
 "use client";
+
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import GitHubContributions from "./GitHubContributions";
@@ -24,24 +25,34 @@ const skills = [
 
 const skillRows = [skills.slice(0, 8), skills.slice(8)];
 
-const experience = [
+const journey = [
   {
-    role: "Full-Stack Developer",
-    company: "Freelance / Self-Employed",
-    period: "2022 — Present",
-    desc: "Building web platforms and mobile apps for clients, from landing pages to full-stack SaaS products.",
+    label: "2022",
+    description: "Jumped into Computer Engineering and started coding in C++, then leveled up to VB.NET where I built a Library System and Student Portal.",
   },
   {
-    role: "UI/UX Designer",
-    company: "Various Clients",
-    period: "2021 — Present",
-    desc: "Creating interfaces, design systems, and prototypes in Figma focused on clean, functional design.",
+    label: "2023",
+    description: "Spent the year grinding through Data Structures, messing around with website design, and joining programming competitions for fun (and pressure).",
   },
   {
-    role: "Web Developer Intern",
-    company: "Local Tech Startup",
-    period: "2021",
-    desc: "Built client-facing web pages in a team, learned agile workflows and REST API integration.",
+    label: "2024",
+    description: "Started taking freelance gigs, got way better at building websites, and picked up Arduino/ESP32 projects for clients.",
+  },
+  {
+    label: "2025 – 2026",
+    description: "Graduated Computer Engineering, snagged Best Thesis Awardee, and kept coding, building sites, and taking commissions on the side.",
+  },
+  {
+    label: "Thesis",
+    description: 'Built CATOK — a gadget that "listens" to young coconuts using TinyML and acoustic signals on an ESP32-S3 to tell if they\'re ripe — and it won Best Thesis.',
+  },
+  {
+    label: "Intern — AMTEC, UPLB",
+    description: "Built a WordPress catalogue that pulls live data from Google Sheets, plus a Python app that auto-generates Word reports from Excel files.",
+  },
+  {
+    label: "Current",
+    description: "Working WFH as a Claims Assessor for an Australian business solutions company, still open for commissions, figuring out life one day at a time.",
   },
 ];
 
@@ -50,32 +61,15 @@ export default function SkillsExperience() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section
-      id="stack"
-      ref={ref}
-      className="lean-section"
-      style={{ background: "var(--bg)" }}
-    >
+    <section id="stack" ref={ref} className="lean-section" style={{ background: "var(--bg)" }}>
       <div className="section-container">
-        {/* ── Technologies & Tools ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{ marginBottom: "4rem" }}
         >
-          <p
-            style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 10,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "var(--muted)",
-              marginBottom: "1rem",
-            }}
-          >
-            — Technologies &amp; Tools
-          </p>
+          <p className="section-kicker">— Technologies &amp; Tools</p>
           <div className="tech-logo-loops" aria-label="Technologies and tools">
             {skillRows.map((row, rowIndex) => (
               <div className="tech-logo-loop" key={rowIndex}>
@@ -105,50 +99,23 @@ export default function SkillsExperience() {
           <GitHubContributions />
         </motion.div>
 
-        {/* ── Experience timeline ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <p
-            style={{
-              fontFamily: "var(--font-mono), monospace",
-              fontSize: 10,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "var(--muted)",
-              marginBottom: "1.5rem",
-            }}
-          >
-            — Experience
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {experience.map((exp, i) => (
+          <p className="section-kicker journey-kicker">— Journey</p>
+          <div className="journey-list">
+            {journey.map((entry, index) => (
               <motion.div
-                key={i}
+                key={entry.label}
                 initial={{ opacity: 0, y: 14 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                className="exp-glass-card"
+                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                className="journey-item"
               >
-                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "0.5rem" }}>
-                  <div style={{ flex: 1, minWidth: 200 }}>
-                    <h3 style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontWeight: 400, fontSize: 16, lineHeight: 1.2, marginBottom: 4 }}>
-                      {exp.role}
-                    </h3>
-                    <p style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "var(--muted)", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>
-                      {exp.company}
-                    </p>
-                    <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.7, maxWidth: 460 }}>
-                      {exp.desc}
-                    </p>
-                  </div>
-                  <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap", paddingTop: 2 }}>
-                    {exp.period}
-                  </span>
-                </div>
+                <span className="journey-label">{entry.label}</span>
+                <p>{entry.description}</p>
               </motion.div>
             ))}
           </div>
