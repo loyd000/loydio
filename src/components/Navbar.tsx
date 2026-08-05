@@ -57,7 +57,7 @@ export default function Navbar() {
         </div>
       </a>
 
-      {/* PILL NAVBAR - always visible, smaller on mobile */}
+      {/* PILL NAVBAR - top on desktop, docked at the bottom on mobile */}
       <nav className={`pill-nav${scrolled ? " pill-nav-scrolled" : ""}`} aria-label="Main navigation">
         <div className="pill-nav-inner">
           {links.map((l) => {
@@ -220,7 +220,7 @@ export default function Navbar() {
           flex-shrink: 0;
         }
 
-        /* MOBILE - same pill, just tighter */
+        /* MOBILE - dock the pill above the device safe area */
         @media (max-width: 640px) {
           .logo-corner {
             top: 14px;
@@ -234,7 +234,8 @@ export default function Navbar() {
             font-size: 10px;
           }
           .pill-nav {
-            top: 14px;
+            top: auto;
+            bottom: max(14px, env(safe-area-inset-bottom));
           }
           .pill-nav-inner {
             padding: 4px 5px;
