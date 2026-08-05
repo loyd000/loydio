@@ -3,11 +3,25 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const skills = [
-  "Next.js", "React", "TypeScript", "Node.js", "Supabase",
-  "PostgreSQL", "TailwindCSS", "Framer Motion", "Figma",
-  "Android (Java)", "ESP32 / IoT", "Adobe Illustrator",
-  "Adobe Photoshop", "REST APIs", "Git",
+  { name: "Next.js", icon: "nextdotjs" },
+  { name: "React", icon: "react" },
+  { name: "Supabase", icon: "supabase" },
+  { name: "Vercel", icon: "vercel" },
+  { name: "HTML", icon: "html5" },
+  { name: "CSS", icon: "css" },
+  { name: "JavaScript", icon: "javascript" },
+  { name: "TypeScript", icon: "typescript" },
+  { name: "Flutter", icon: "flutter" },
+  { name: "TinyML", icon: "edgeimpulse" },
+  { name: "TensorFlow Lite", icon: "tensorflow" },
+  { name: "Python", icon: "python" },
+  { name: "C++", icon: "cplusplus" },
+  { name: "Java", icon: "openjdk" },
+  { name: "Arduino", icon: "arduino" },
+  { name: "GitHub", icon: "github" },
 ];
+
+const skillRows = [skills.slice(0, 8), skills.slice(8)];
 
 const experience = [
   {
@@ -61,9 +75,30 @@ export default function SkillsExperience() {
           >
             — Technologies &amp; Tools
           </p>
-          <div className="skills-grid">
-            {skills.map((s) => (
-              <span key={s} className="tag">{s}</span>
+          <div className="tech-logo-loops" aria-label="Technologies and tools">
+            {skillRows.map((row, rowIndex) => (
+              <div className="tech-logo-loop" key={rowIndex}>
+                <div className={`tech-logo-track${rowIndex === 1 ? " tech-logo-track-reverse" : ""}`}>
+                  {Array.from({ length: 4 }, () => row).flat().map((skill, index) => (
+                    <div
+                      className="tech-logo-item"
+                      key={`${skill.name}-${index}`}
+                      data-name={skill.name}
+                      aria-label={index < row.length ? skill.name : undefined}
+                      aria-hidden={index >= row.length}
+                      role={index < row.length ? "img" : undefined}
+                    >
+                      <span
+                        className="tech-logo-mark"
+                        style={{
+                          WebkitMaskImage: `url(https://cdn.simpleicons.org/${skill.icon})`,
+                          maskImage: `url(https://cdn.simpleicons.org/${skill.icon})`,
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </motion.div>
