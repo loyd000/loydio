@@ -465,13 +465,14 @@ p {
 .github-calendar-grid {
   display: grid;
   gap: 3px;
-  min-width: max-content;
+  width: 100%;
 }
 
 .github-calendar-week {
+  aspect-ratio: 1 / 7;
   display: grid;
   gap: 3px;
-  grid-template-rows: repeat(7, 10px);
+  grid-template-rows: repeat(7, 1fr);
 }
 
 .github-calendar-day {
@@ -479,9 +480,10 @@ p {
   border-radius: 2px;
   background: rgba(0, 0, 0, 0.045);
   box-shadow: none;
-  height: 10px;
+  aspect-ratio: 1;
+  height: auto;
   transition: transform 0.16s ease, filter 0.16s ease;
-  width: 10px;
+  width: 100%;
 }
 
 .github-calendar-day:hover {
@@ -520,7 +522,7 @@ p {
     0 8px 28px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme="dark"] .github-calendar-day {
+[data-theme="dark"] .github-calendar-day.level-0 {
   background: rgba(255, 255, 255, 0.055);
 }
 

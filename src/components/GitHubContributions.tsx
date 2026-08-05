@@ -53,7 +53,10 @@ export default function GitHubContributions() {
           <div className="github-calendar-scroll">
             <div
               className="github-calendar-grid"
-              style={{ gridTemplateColumns: `repeat(${calendar.weeks.length}, 10px)` }}
+              style={{
+                gridTemplateColumns: `repeat(${calendar.weeks.length}, minmax(10px, 1fr))`,
+                minWidth: `${calendar.weeks.length * 13 - 3}px`,
+              }}
               aria-label={`${calendar.totalContributions} GitHub contributions in the last year`}
             >
               {calendar.weeks.map((week, weekIndex) => (
