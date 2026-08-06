@@ -1,19 +1,27 @@
 "use client";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
-  { label: "About",    href: "#about"    },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact",  href: "#contact"  },
+  { label: "About",    href: "#about",    route: false },
+  { label: "Projects", href: "/projects", route: true  },
+  { label: "Contact",  href: "#contact",  route: false },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [activeSection, setActiveSection] = useState("");
   const [scrolled,      setScrolled]      = useState(false);
 
   useEffect(() => {
+    // On the /projects page, always mark projects as active — no scrolling needed.
+    if (pathname === "/projects") {
+      setActiveSection("projects");
+      setScrolled(true);
+      return;
+    }
     const allSections = ["about", "credentials", "projects", "social", "contact"];
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -34,10 +42,16 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isRoute: boolean) => {
+    if (isRoute) return; // let the browser follow the <a> href normally
     e.preventDefault();
+    // If we're not on the home page, go home first then let the hash resolve
+    if (pathname !== "/") {
+      window.location.href = `/${href}`;
+      return;
+    }
     const target = document.querySelector(href);
     if (!target) return;
     target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -61,12 +75,15 @@ export default function Navbar() {
       <nav className={`pill-nav${scrolled ? " pill-nav-scrolled" : ""}`} aria-label="Main navigation">
         <div className="pill-nav-inner">
           {links.map((l) => {
-            const isActive = activeSection === l.href.slice(1);
+            // For route links, match by pathname; for hash links, match by scroll section.
+            const isActive = l.route
+              ? pathname === l.href || pathname.startsWith(l.href + "/")
+              : activeSection === l.href.slice(1);
             return (
               <a
                 key={l.href}
                 href={l.href}
-                onClick={(e) => handleNavClick(e, l.href)}
+                onClick={(e) => handleNavClick(e, l.href, l.route)}
                 className={`pill-link${isActive ? " active" : ""}`}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -132,40 +149,48 @@ export default function Navbar() {
           left: 50%;
           transform: translateX(-50%);
           z-index: 10060;
-          background: rgba(255, 255, 255, 0.55);
+          background: rgba(255, 255, 255, 0.14);
           backdrop-filter: blur(22px) saturate(190%);
           -webkit-backdrop-filter: blur(22px) saturate(190%);
-          border: 1px solid rgba(255, 255, 255, 0.55);
+          border: 1px solid rgba(255, 255, 255, 0.52);
           border-radius: 999px;
           box-shadow:
-            inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.04),
-            0 4px 24px 0 rgba(0, 0, 0, 0.08),
-            0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            inset 0 1.5px 0 0 rgba(255, 255, 255, 0.9),
+            inset 1.5px 0 0 0 rgba(255, 255, 255, 0.38),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+            inset -1px 0 0 0 rgba(0, 0, 0, 0.02),
+            0 0 0 0.5px rgba(255, 255, 255, 0.26),
+            0 4px 24px 0 rgba(0, 0, 0, 0.06);
           transition: box-shadow 0.3s ease;
         }
         [data-theme="dark"] .pill-nav {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.18);
           box-shadow:
-            inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.22),
-            inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5),
-            0 4px 24px 0 rgba(0, 0, 0, 0.3),
-            0 1px 3px 0 rgba(0, 0, 0, 0.2);
+            inset 0 1.5px 0 0 rgba(255, 255, 255, 0.48),
+            inset 1.5px 0 0 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.52),
+            inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
+            0 0 0 0.5px rgba(255, 255, 255, 0.1),
+            0 4px 24px 0 rgba(0, 0, 0, 0.3);
         }
         .pill-nav-scrolled {
           box-shadow:
-            inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.04),
-            0 8px 32px 0 rgba(0, 0, 0, 0.12),
-            0 2px 6px 0 rgba(0, 0, 0, 0.06);
+            inset 0 1.5px 0 0 rgba(255, 255, 255, 0.95),
+            inset 1.5px 0 0 0 rgba(255, 255, 255, 0.4),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
+            inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
+            0 0 0 0.5px rgba(255, 255, 255, 0.3),
+            0 8px 32px 0 rgba(0, 0, 0, 0.12);
         }
         [data-theme="dark"] .pill-nav-scrolled {
           box-shadow:
-            inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.22),
-            inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5),
-            0 8px 32px 0 rgba(0, 0, 0, 0.5),
-            0 2px 6px 0 rgba(0, 0, 0, 0.3);
+            inset 0 1.5px 0 0 rgba(255, 255, 255, 0.52),
+            inset 1.5px 0 0 0 rgba(255, 255, 255, 0.24),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.6),
+            inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+            0 0 0 0.5px rgba(255, 255, 255, 0.15),
+            0 8px 32px 0 rgba(0, 0, 0, 0.45);
         }
 
         .pill-nav-inner {

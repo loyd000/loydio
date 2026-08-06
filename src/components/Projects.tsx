@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
@@ -315,11 +316,27 @@ export default function Projects() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          style={{ marginBottom: "1rem" }}
+          style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
           <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)" }}>
-            â€” Projects
+            – Projects
           </p>
+          <Link
+            href="/projects"
+            style={{
+              fontFamily: MONO,
+              fontSize: 10,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+            }}
+            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--fg)")}
+            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--muted)")}         
+          >
+            View all projects →
+          </Link>
         </motion.div>
 
         {loading ? (

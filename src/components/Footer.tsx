@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 const socials = [
   {
@@ -127,23 +128,43 @@ export default function Footer() {
           {/* Nav links */}
           <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
             {["About", "Projects", "Contact"].map((link) => (
-              <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "rgba(244,244,245,0.3)",
-                  textDecoration: "none",
-                  transition: "color 0.2s ease",
-                }}
-                onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
-                onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
-              >
-                {link}
-              </a>
+              link === "Projects" ? (
+                <Link
+                  key={link}
+                  href="/projects"
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "rgba(244,244,245,0.3)",
+                    textDecoration: "none",
+                    transition: "color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
+                  onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
+                >
+                  {link}
+                </Link>
+              ) : (
+                <a
+                  key={link}
+                  href={`#${link.toLowerCase()}`}
+                  style={{
+                    fontFamily: "var(--font-mono), monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "rgba(244,244,245,0.3)",
+                    textDecoration: "none",
+                    transition: "color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
+                  onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
+                >
+                  {link}
+                </a>
+              )
             ))}
           </div>
         </div>
