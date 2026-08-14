@@ -28,7 +28,7 @@ export default function Contact() {
       id="contact"
       ref={ref}
       className="lean-section"
-      style={{ background: "var(--bg)", textAlign: "center" }}
+      style={{ textAlign: "center" }}
     >
       <div className="section-container">
         <motion.div

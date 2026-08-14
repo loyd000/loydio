@@ -176,14 +176,14 @@ const Grainient: React.FC<GrainientProps> = ({
   centerX       = 0.0,
   centerY       = 0.0,
   zoom          = 0.9,
-  // Light mode — soft white-to-light-gray tones
-  lightColor1   = "#ebebeb",
-  lightColor2   = "#d4d4d4",
-  lightColor3   = "#f5f5f5",
-  // Dark mode — deep black-to-dark-gray tones
-  darkColor1    = "#1c1c1c",
-  darkColor2    = "#0a0a0a",
-  darkColor3    = "#2a2a2a",
+  // Light mode — darker base tones so high contrast doesn't blow them out to pure white
+  lightColor1   = "#c2c2c2",
+  lightColor2   = "#a3a3a3",
+  lightColor3   = "#d1d1d1",
+  // Dark mode — softer, lighter grays (not so black)
+  darkColor1    = "#2c2c2c",
+  darkColor2    = "#1f1f1f",
+  darkColor3    = "#3a3a3a",
   style,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
