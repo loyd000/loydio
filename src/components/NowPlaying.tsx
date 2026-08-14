@@ -198,9 +198,55 @@ export default function NowPlaying() {
         .np-bar:nth-child(3) { height: 5px; animation-delay: -0.4s; }
 
         @media (max-width: 480px) {
+          .now-playing-container {
+            margin-top: 0.5rem;
+            min-height: 36px;
+          }
+
           .now-playing-idle,
           .now-playing-active {
-            width: 230px;
+            width: 210px;
+            height: 36px;
+          }
+
+          .now-playing-idle {
+            gap: 0.375rem;
+            padding: 6px 12px;
+            font-size: 12px;
+          }
+
+          .now-playing-active {
+            gap: 0.5rem;
+            padding: 4px 10px 4px 4px;
+          }
+
+          .np-album-art {
+            width: 28px;
+            height: 28px;
+          }
+
+          .np-album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .np-info {
+            padding-right: 0;
+          }
+
+          .np-title-row {
+            gap: 4px;
+          }
+
+          .np-title {
+            font-size: 12px;
+            max-width: 120px;
+          }
+
+          .np-artist {
+            font-size: 10px;
+            max-width: 120px;
           }
         }
 
