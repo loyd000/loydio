@@ -119,7 +119,6 @@ export default function HeroAbout() {
         
         .hero-about-content {
           width: 100%;
-          max-width: 800px;
           display: flex;
           flex-direction: column;
         }

@@ -415,15 +415,15 @@ p {
 .github-contributions-heading p,
 .github-contributions-heading a,
 .github-contributions-heading strong {
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  font-family: var(--font-display), 'Syne', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
 }
 
 .github-contributions-heading p {
   color: var(--muted);
-  letter-spacing: 0.3em;
+  letter-spacing: 0.1em;
   margin-bottom: 0.45rem;
 }
 

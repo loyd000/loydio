@@ -41,7 +41,7 @@ export default function PhotoGallery() {
 
   return (
     <section id="photos" className="lean-section">
-      <div className="section-container" style={{ maxWidth: 800, margin: "0 auto" }}>
+      <div className="section-container">
 
         {/* Section header — CSS fade-in on mount (no inView needed, section only renders post-fetch) */}
         <div style={{ marginBottom: "2.5rem", animation: "pgFadeUp 0.5s ease forwards" }}>

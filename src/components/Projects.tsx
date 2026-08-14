@@ -318,16 +318,16 @@ export default function Projects() {
           transition={{ duration: 0.5 }}
           style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
-          <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)" }}>
-            – Projects
+          <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)" }}>
+            — Projects
           </p>
           <Link
             href="/projects"
             style={{
               fontFamily: MONO,
-              fontSize: 10,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
+              fontSize: 11,
+              letterSpacing: "0.05em",
+              textTransform: "lowercase",
               color: "var(--muted)",
               textDecoration: "none",
               transition: "color 0.2s ease",
@@ -350,8 +350,8 @@ export default function Projects() {
         )}
 
         <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>
-          <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
-            â€” Graphic Design
+          <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
+            — Graphic Design
           </p>
 
           {loading ? (
