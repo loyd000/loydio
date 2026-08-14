@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 
+const FONT = "var(--font-display), 'Syne', sans-serif";
+
 const socials = [
   {
     label: "GitHub",
@@ -46,9 +48,9 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: "#09090b",
-        color: "#f4f4f5",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--fg)",
+        color: "var(--bg)",
+        borderTop: "1px solid var(--border-strong)",
         padding: "3rem 0 2rem",
       }}
     >
@@ -65,25 +67,17 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={s.label}
+              className="footer-social-link"
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 width: 40,
                 height: 40,
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "rgba(244,244,245,0.45)",
                 textDecoration: "none",
                 borderRadius: 2,
+                border: "1px solid",
                 transition: "color 0.2s ease, border-color 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = "#ffffff";
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.4)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.color = "rgba(244,244,245,0.45)";
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,0.1)";
               }}
             >
               {s.icon}
@@ -100,7 +94,7 @@ export default function Footer() {
             justifyContent: "space-between",
             gap: "1rem",
             paddingTop: "1.5rem",
-            borderTop: "1px solid rgba(255,255,255,0.05)",
+            borderTop: "1px solid color-mix(in srgb, var(--bg) 12%, transparent)",
           }}
         >
           {/* Logo + copyright */}
@@ -109,18 +103,18 @@ export default function Footer() {
               style={{
                 width: 24,
                 height: 24,
-                border: "1px solid rgba(255,255,255,0.15)",
+                border: "1px solid color-mix(in srgb, var(--bg) 25%, transparent)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 transform: "rotate(12deg)",
               }}
             >
-              <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
+              <span style={{ fontFamily: FONT, fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block", color: "var(--bg)" }}>
                 L
               </span>
             </div>
-            <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 11, color: "rgba(244,244,245,0.3)" }}>
+            <span style={{ fontFamily: FONT, fontSize: 11, color: "color-mix(in srgb, var(--bg) 45%, transparent)" }}>
               © {year} John Lloyd De Guzman
             </span>
           </div>
@@ -132,17 +126,15 @@ export default function Footer() {
                 <Link
                   key={link}
                   href="/projects"
+                  className="footer-nav-link"
                   style={{
-                    fontFamily: "var(--font-display), 'Syne', sans-serif",
+                    fontFamily: FONT,
                     fontSize: 10,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    color: "rgba(244,244,245,0.3)",
                     textDecoration: "none",
                     transition: "color 0.2s ease",
                   }}
-                  onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
-                  onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
                 >
                   {link}
                 </Link>
@@ -150,17 +142,15 @@ export default function Footer() {
                 <a
                   key={link}
                   href={`#${link.toLowerCase()}`}
+                  className="footer-nav-link"
                   style={{
-                    fontFamily: "var(--font-display), 'Syne', sans-serif",
+                    fontFamily: FONT,
                     fontSize: 10,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
-                    color: "rgba(244,244,245,0.3)",
                     textDecoration: "none",
                     transition: "color 0.2s ease",
                   }}
-                  onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#ffffff")}
-                  onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(244,244,245,0.3)")}
                 >
                   {link}
                 </a>

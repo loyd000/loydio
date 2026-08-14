@@ -2,6 +2,7 @@
 import Image from "next/image";
 import TiltedCard from "./TiltedCard";
 import { motion } from "framer-motion";
+import NowPlaying from "./NowPlaying";
 
 export default function HeroAbout() {
   return (
@@ -71,6 +72,7 @@ export default function HeroAbout() {
                   </svg>
                 </a>
               </div>
+              <NowPlaying />
             </div>
           </motion.div>
 
@@ -107,114 +109,6 @@ export default function HeroAbout() {
 
         </div>
       </div>
-
-      <style>{`
-        .hero-about-section { display: block; }
-        .hero-about-container {
-          padding-top: 8rem;
-          padding-bottom: 5rem;
-          display: flex;
-          justify-content: center;
-        }
-        
-        .hero-about-content {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .hero-header-row {
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-          margin-bottom: 2.5rem;
-          flex-wrap: wrap;
-        }
-        
-        .hero-avatar {
-          width: 240px;
-          height: 240px;
-          flex-shrink: 0;
-        }
-        
-        .hero-name-socials {
-          display: flex;
-          flex-direction: column;
-          gap: 1.25rem;
-        }
-
-        .hero-name-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        
-        .hero-name {
-          font-family: var(--font-sans);
-          font-size: clamp(28px, 5vw, 40px);
-          font-weight: 700;
-          line-height: 1;
-          margin: 0;
-          color: var(--fg);
-        }
-
-        
-        .hero-socials {
-          display: flex;
-          gap: 1rem;
-        }
-
-        .hero-socials a {
-          color: var(--muted);
-          transition: color 0.2s ease, transform 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .hero-socials a:hover {
-          color: var(--fg);
-          transform: translateY(-2px);
-        }
-
-        /* Role */
-        .hero-role {
-          font-family: var(--font-sans);
-          font-size: clamp(18px, 3vw, 24px);
-          font-weight: 500;
-          color: var(--fg);
-          margin-bottom: 1.25rem;
-          line-height: 1.3;
-        }
-        .hero-role-divider {
-          color: var(--muted);
-          font-weight: 300;
-        }
-
-        /* Description */
-        .hero-description {
-          font-family: var(--font-sans);
-          font-size: 15px;
-          line-height: 1.8;
-          color: var(--muted);
-          margin-bottom: 2.5rem;
-        }
-
-
-        @media (max-width: 600px) {
-          .hero-header-row {
-            gap: 1rem;
-            flex-wrap: nowrap;
-          }
-          .hero-avatar {
-            width: 100px;
-            height: 100px;
-          }
-          .hero-about-container {
-            padding-top: 6rem;
-            padding-bottom: 4rem;
-          }
-        }
-      `}</style>
     </section>
   );
 }

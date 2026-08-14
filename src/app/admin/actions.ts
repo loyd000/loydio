@@ -271,6 +271,20 @@ export async function uploadGalleryPhoto(formData: FormData) {
   if (error) throw new Error(error.message);
 }
 
+export async function savePhotoOrder(updates: { id: string; sort_order: number }[]) {
+  await requireAdmin();
+  const db = adminSupabase();
+
+  const results = await Promise.all(
+    updates.map((item) =>
+      db.from("gallery_photos").update({ sort_order: item.sort_order }).eq("id", item.id)
+    )
+  );
+
+  const errors = results.filter((r) => r.error).map((r) => r.error!.message);
+  if (errors.length) throw new Error(errors.join("; "));
+}
+
 export async function deleteGalleryPhoto(id: string) {
   await requireAdmin();
   const { error } = await adminSupabase().from("gallery_photos").delete().eq("id", id);

@@ -153,15 +153,22 @@ export default function Stack({
     });
   };
 
+  const sendToBackRef = useRef(sendToBack);
+  useEffect(() => { sendToBackRef.current = sendToBack; });
+
   useEffect(() => {
-    if (autoplay && stack.length > 1 && !isPaused) {
-      const interval = setInterval(() => {
-        const topCardId = stack[stack.length - 1].id;
-        sendToBack(topCardId);
-      }, autoplayDelay);
-      return () => clearInterval(interval);
-    }
-  }, [autoplay, autoplayDelay, stack, isPaused]);
+    if (!autoplay || stack.length <= 1) return;
+    const interval = setInterval(() => {
+      setStack((prev) => {
+        const newStack = [...prev];
+        const [card] = newStack.splice(newStack.length - 1, 1);
+        newStack.unshift(card);
+        return newStack;
+      });
+    }, autoplayDelay);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplay, autoplayDelay, isPaused, stack.length]);
 
   if (stack.length === 0) return null;
 

@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { supabase, type GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
-const MONO = "var(--font-display), 'Syne', sans-serif";
+const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 
 export default function PhotoGallery() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     supabase
@@ -16,12 +17,16 @@ export default function PhotoGallery() {
       .select("*")
       .order("sort_order", { ascending: true })
       .then(({ data, error }) => {
-        if (!error && data) setPhotos(data);
+        if (error) {
+          setFetchError(true);
+        } else if (data) {
+          setPhotos(data);
+        }
         setLoading(false);
       });
   }, []);
 
-  if (loading || photos.length === 0) return null;
+  if (loading || (photos.length === 0 && !fetchError)) return null;
 
   const cards = photos.map((photo) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -47,10 +52,10 @@ export default function PhotoGallery() {
         <div style={{ marginBottom: "2.5rem", animation: "pgFadeUp 0.5s ease forwards" }}>
           <p
             style={{
-              fontFamily: MONO,
-              fontSize: 10,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
+              fontFamily: DISPLAY_FONT,
+              fontSize: 11,
+              letterSpacing: "0.1em",
+              textTransform: "lowercase",
               color: "var(--muted)",
               marginBottom: "1rem",
             }}
@@ -65,7 +70,7 @@ export default function PhotoGallery() {
           </h2>
           <p
             style={{
-              fontFamily: MONO,
+              fontFamily: DISPLAY_FONT,
               fontSize: 11,
               color: "var(--muted)",
               letterSpacing: "0.05em",
@@ -75,53 +80,63 @@ export default function PhotoGallery() {
           </p>
         </div>
 
-        {/* Stack */}
-        <div style={{ display: "flex", justifyContent: "center", animation: "pgFadeUp 0.6s 0.1s ease both" }}>
-          <div
+        {fetchError ? (
+          <p
             style={{
-              position: "relative",
-              width: "min(320px, 80vw)",
-              height: "min(320px, 80vw)",
-            }}
-          >
-            <Stack
-              cards={cards}
-              randomRotation
-              sensitivity={150}
-              sendToBackOnClick
-              autoplay
-              autoplayDelay={4000}
-              pauseOnHover
-            />
-          </div>
-        </div>
-
-        {/* Count pill */}
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "3rem", animation: "pgFadeUp 0.4s 0.3s ease both" }}>
-          <span
-            style={{
-              fontFamily: MONO,
-              fontSize: 10,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
+              fontFamily: DISPLAY_FONT,
+              fontSize: 11,
               color: "var(--muted)",
-              border: "1px solid var(--border)",
-              padding: "4px 12px",
-              borderRadius: 4,
+              letterSpacing: "0.1em",
+              padding: "2rem 0",
             }}
           >
-            {photos.length} photo{photos.length !== 1 ? "s" : ""}
-          </span>
-        </div>
+            Unable to load gallery photos.
+          </p>
+        ) : (
+          <>
+            {/* Stack */}
+            <div style={{ display: "flex", justifyContent: "center", animation: "pgFadeUp 0.6s 0.1s ease both" }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: "min(320px, 80vw)",
+                  height: "min(320px, 80vw)",
+                }}
+              >
+                <Stack
+                  cards={cards}
+                  randomRotation
+                  sensitivity={150}
+                  sendToBackOnClick
+                  autoplay
+                  autoplayDelay={4000}
+                  pauseOnHover
+                />
+              </div>
+            </div>
+
+            {/* Count pill */}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "3rem", animation: "pgFadeUp 0.4s 0.3s ease both" }}>
+              <span
+                style={{
+                  fontFamily: DISPLAY_FONT,
+                  fontSize: 10,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)",
+                  border: "1px solid var(--border)",
+                  padding: "4px 12px",
+                  borderRadius: 4,
+                }}
+              >
+                {photos.length} photo{photos.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </>
+        )}
 
       </div>
 
-      <style>{`
-        @keyframes pgFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 }

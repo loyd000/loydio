@@ -11,6 +11,7 @@ import {
   removeStoredImage,
   saveProject,
   saveProjectOrder,
+  savePhotoOrder,
   uploadGalleryPhoto,
   uploadImage,
 } from "./actions";
@@ -84,6 +85,10 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
   // Drag and drop state for projects
   const [draggedProjectIdx, setDraggedProjectIdx] = useState<number | null>(null);
   const [hasProjectOrderChanged, setHasProjectOrderChanged] = useState(false);
+
+  // Drag and drop state for photos
+  const [draggedPhotoIdx, setDraggedPhotoIdx] = useState<number | null>(null);
+  const [hasPhotoOrderChanged, setHasPhotoOrderChanged] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -215,6 +220,20 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     }
   };
 
+  const handleSavePhotoOrder = async () => {
+    setSaving(true);
+    const updates = photos.map((p, idx) => ({ id: p.id, sort_order: idx }));
+    try {
+      await savePhotoOrder(updates);
+      setHasPhotoOrderChanged(false);
+      await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   return (
     <div style={{ fontFamily: MONO, minHeight: "100vh", background: "#fff", color: "#000" }}>
@@ -253,9 +272,16 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
         {tab === "photos" ? (
           <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-              <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Gallery Photos</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Gallery Photos</div>
+                {hasPhotoOrderChanged && (
+                  <button onClick={handleSavePhotoOrder} disabled={saving} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "6px 14px", background: "#f0f0f0", color: "#000", cursor: "pointer", fontWeight: 700 }}>
+                    {saving ? "SAVING..." : "SAVE NEW ORDER"}
+                  </button>
+                )}
+              </div>
               <div>
-                <input type="file" accept="image/*,.heic,.heif" ref={credImgRef} style={{ display: "none" }} onChange={(e) => { if (e.target.files?.[0]) handlePhotoUpload(e.target.files[0]); }} />
+                <input type="file" accept="image/*,.heic,.heif" ref={credImgRef} style={{ display: "none" }} onChange={(e) => { if (e.target.files?.[0]) handlePhotoUpload(e.target.files[0]); e.target.value = ""; }} />
                 <button onClick={() => credImgRef.current?.click()} disabled={uploading === "credImg"} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#000", color: "#fff", cursor: "pointer" }}>
                   {uploading === "credImg" ? "UPLOADING..." : "+ UPLOAD PHOTO"}
                 </button>
@@ -268,10 +294,29 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
               <div style={{ fontSize: 11, opacity: 0.35, letterSpacing: "0.2em" }}>NO PHOTOS YET</div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "1rem" }}>
-                {photos.map((p) => (
-                  <div key={p.id} style={{ position: "relative", border: "1px solid #ccc", aspectRatio: "1/1" }}>
-                    <Image src={p.image_url} alt="" fill sizes="150px" style={{ objectFit: "cover" }} />
-                    <button onClick={() => handleDeletePhoto(p.id)} style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
+                {photos.map((p, i) => (
+                  <div 
+                    key={p.id} 
+                    draggable
+                    onDragStart={(e) => {
+                      setDraggedPhotoIdx(i);
+                      e.dataTransfer.effectAllowed = "move";
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (draggedPhotoIdx === null || draggedPhotoIdx === i) return;
+                      const reordered = [...photos];
+                      const [moved] = reordered.splice(draggedPhotoIdx, 1);
+                      reordered.splice(i, 0, moved);
+                      setPhotos(reordered);
+                      setDraggedPhotoIdx(null);
+                      setHasPhotoOrderChanged(true);
+                    }}
+                    style={{ position: "relative", border: "1px solid #ccc", aspectRatio: "1/1", cursor: "grab", opacity: draggedPhotoIdx === i ? 0.5 : 1 }}
+                  >
+                    <Image src={p.image_url} alt="" fill sizes="150px" style={{ objectFit: "cover", pointerEvents: "none" }} />
+                    <button onClick={() => handleDeletePhoto(p.id)} style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>✕</button>
                   </div>
                 ))}
               </div>

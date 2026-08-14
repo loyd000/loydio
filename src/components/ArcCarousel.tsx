@@ -372,7 +372,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
                 height: 250,
                 marginLeft: -125,
                 marginTop: -125,
-                borderRadius: 18,
+                borderRadius: 16,
                 overflow: "hidden",
                 willChange: "transform, opacity",
                 pointerEvents: "auto",

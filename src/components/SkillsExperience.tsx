@@ -114,8 +114,12 @@ export default function SkillsExperience() {
                 transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                 className="journey-item"
               >
-                <span className="journey-label">{entry.label}</span>
-                <p>{entry.description}</p>
+                <details>
+                  <summary>
+                    <span className="journey-label">{entry.label}</span>
+                  </summary>
+                  <p>{entry.description}</p>
+                </details>
               </motion.div>
             ))}
           </div>

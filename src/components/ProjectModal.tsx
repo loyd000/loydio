@@ -5,8 +5,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
 
-const MONO = "var(--font-display), 'Syne', sans-serif";
-const DISPLAY = "var(--font-display), sans-serif";
+const MONO = "var(--font-mono), monospace";
+const DISPLAY = "var(--font-display), 'Syne', sans-serif";
 
 export default function ProjectModal({
   project,
@@ -595,7 +595,7 @@ const STYLES = `
   }
 `;
 
-// Inject styles once into <head>
+// Inject styles once into <head> when the modal first mounts
 if (typeof document !== "undefined") {
   const id = "pm-styles";
   if (!document.getElementById(id)) {

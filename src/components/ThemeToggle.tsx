@@ -1,14 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const id = window.setTimeout(() => {
-      setDark(localStorage.getItem("theme") === "dark");
-    }, 0);
-    return () => window.clearTimeout(id);
+    setDark(localStorage.getItem("theme") === "dark");
+    setMounted(true);
   }, []);
 
   const toggle = () => {
@@ -45,7 +44,9 @@ export default function ThemeToggle() {
       onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
       onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
     >
-      {dark ? (
+      {!mounted ? (
+        <div style={{ width: 16, height: 16 }} />
+      ) : dark ? (
         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z" />
         </svg>

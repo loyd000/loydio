@@ -7,7 +7,7 @@ import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
 
-const MONO = "var(--font-display), 'Syne', sans-serif";
+const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 
 function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (p: Project) => void }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -259,7 +259,7 @@ function SkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Main section Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 function ProjectMessage({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: MONO, fontSize: 11, color: "var(--muted)", padding: "2rem 0", letterSpacing: "0.12em" }}>
+    <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, color: "var(--muted)", padding: "2rem 0", letterSpacing: "0.12em" }}>
       {children}
     </p>
   );
@@ -318,22 +318,20 @@ export default function Projects() {
           transition={{ duration: 0.5 }}
           style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
-          <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)" }}>
+          <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)" }}>
             — Projects
           </p>
           <Link
             href="/projects"
+            className="proj-view-all-link"
             style={{
-              fontFamily: MONO,
+              fontFamily: DISPLAY_FONT,
               fontSize: 11,
               letterSpacing: "0.05em",
               textTransform: "lowercase",
-              color: "var(--muted)",
               textDecoration: "none",
               transition: "color 0.2s ease",
             }}
-            onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--fg)")}
-            onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--muted)")}         
           >
             View all projects →
           </Link>
@@ -350,7 +348,7 @@ export default function Projects() {
         )}
 
         <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>
-          <p style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
+          <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
             — Graphic Design
           </p>
 
@@ -399,11 +397,11 @@ export default function Projects() {
         }
         .design-carousel-shell::before {
           left: 0;
-          background: linear-gradient(to right, var(--bg) 10%, rgba(250, 250, 250, 0));
+          background: linear-gradient(to right, var(--bg) 10%, transparent);
         }
         .design-carousel-shell::after {
           right: 0;
-          background: linear-gradient(to left, var(--bg) 10%, rgba(250, 250, 250, 0));
+          background: linear-gradient(to left, var(--bg) 10%, transparent);
         }
         .design-carousel-stage {
           position: relative;
@@ -416,7 +414,7 @@ export default function Projects() {
           top: 50%;
           width: clamp(300px, 68vw, 700px);
           min-height: clamp(430px, 56vw, 585px);
-          border-radius: 8px;
+          border-radius: 16px;
           padding: clamp(0.95rem, 1.5vw, 1.15rem);
           display: flex;
           flex-direction: column;

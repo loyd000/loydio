@@ -7,10 +7,10 @@ const MONO = "var(--font-mono), monospace";
 
 export default function GlobalError({
   error,
-  unstable_retry,
+  reset,
 }: {
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  reset: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -39,7 +39,7 @@ export default function GlobalError({
             <p style={{ fontSize: 13, opacity: 0.55, lineHeight: 1.8, marginBottom: "2rem" }}>
               Reload the app shell and try again.
             </p>
-            <button onClick={() => unstable_retry()} className="btn btn-primary">
+            <button onClick={() => reset()} className="btn btn-primary">
               Try Again
             </button>
           </div>
