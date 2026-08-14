@@ -90,7 +90,7 @@ export default function NowPlaying() {
 
       <style>{`
         .now-playing-container {
-          margin-top: 1rem;
+          margin-top: 0;
           min-height: 48px;
           display: flex;
           align-items: center;
@@ -199,30 +199,30 @@ export default function NowPlaying() {
 
         @media (max-width: 480px) {
           .now-playing-container {
-            margin-top: 0.5rem;
-            min-height: 36px;
+            margin-top: 0;
+            min-height: 32px;
           }
 
           .now-playing-idle,
           .now-playing-active {
-            width: 210px;
-            height: 36px;
+            width: 190px;
+            height: 32px;
           }
 
           .now-playing-idle {
-            gap: 0.375rem;
-            padding: 6px 12px;
-            font-size: 12px;
+            gap: 0.25rem;
+            padding: 4px 8px;
+            font-size: 11px;
           }
 
           .now-playing-active {
-            gap: 0.5rem;
-            padding: 4px 10px 4px 4px;
+            gap: 0.375rem;
+            padding: 3px 8px 3px 3px;
           }
 
           .np-album-art {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
           }
 
           .np-album-art img {
@@ -240,13 +240,19 @@ export default function NowPlaying() {
           }
 
           .np-title {
-            font-size: 12px;
-            max-width: 120px;
+            font-size: 11px;
+            max-width: 108px;
           }
 
           .np-artist {
-            font-size: 10px;
-            max-width: 120px;
+            font-size: 9px;
+            max-width: 108px;
+          }
+
+          .np-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
 
