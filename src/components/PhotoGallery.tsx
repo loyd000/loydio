@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase, type GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-display), 'Syne', sans-serif";
 
 export default function PhotoGallery() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);

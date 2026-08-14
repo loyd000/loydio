@@ -40,7 +40,7 @@ export default function Contact() {
           {/* Eyebrow */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: "1.5rem" }}>
             <div style={{ width: 28, height: 1, background: "var(--accent)", opacity: 0.5 }} />
-            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)" }}>
+            <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 10, letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--muted)" }}>
               Let&apos;s Work Together
             </span>
             <div style={{ width: 28, height: 1, background: "var(--accent)", opacity: 0.5 }} />

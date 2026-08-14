@@ -521,11 +521,11 @@ p {
 
 .section-kicker {
   color: var(--muted);
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.3em;
+  font-family: var(--font-display), 'Syne', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
   margin-bottom: 1rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
 }
 
 .journey-kicker {
@@ -581,7 +581,7 @@ p {
   color: var(--muted);
   content: "+";
   display: flex;
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-display), 'Syne', sans-serif;
   font-size: 1rem;
   height: 26px;
   justify-content: center;

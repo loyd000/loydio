@@ -7,7 +7,7 @@ import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-display), 'Syne', sans-serif";
 
 function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (p: Project) => void }) {
   const [activeIndex, setActiveIndex] = useState(0);

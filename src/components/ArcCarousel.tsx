@@ -282,12 +282,12 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-                  <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "var(--muted)" }}>
+                  <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 11, color: "var(--muted)" }}>
                     0{i + 1}
                   </span>
                   <span
                     style={{
-                      fontFamily: "var(--font-mono), monospace",
+                      fontFamily: "var(--font-display), 'Syne', sans-serif",
                       fontSize: 10,
                       textTransform: "uppercase",
                       color: isShipped(p) ? "var(--fg)" : "var(--muted)",
@@ -423,7 +423,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
                       justifyContent: "center",
                       background: "linear-gradient(135deg, var(--hover-bg) 0%, var(--border) 100%)",
                       color: "var(--fg)",
-                      fontFamily: "var(--font-mono), monospace",
+                      fontFamily: "var(--font-display), 'Syne', sans-serif",
                       fontSize: 11,
                       letterSpacing: "0.1em",
                       opacity: 0.7,
@@ -438,7 +438,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
                     position: "absolute",
                     top: 6,
                     left: 6,
-                    fontFamily: "var(--font-mono), monospace",
+                    fontFamily: "var(--font-display), 'Syne', sans-serif",
                     fontSize: 10,
                     color: "var(--bg)",
                     background: "var(--fg)",
@@ -472,7 +472,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span
                     style={{
-                      fontFamily: "var(--font-mono), monospace",
+                      fontFamily: "var(--font-display), 'Syne', sans-serif",
                       fontSize: 10,
                       color: "var(--muted)",
                     }}
@@ -517,7 +517,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
             height: 42,
             borderRadius: "50%",
             fontSize: 14,
-            fontFamily: "var(--font-mono), monospace",
+            fontFamily: "var(--font-display), 'Syne', sans-serif",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -555,7 +555,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
             height: 42,
             borderRadius: "50%",
             fontSize: 14,
-            fontFamily: "var(--font-mono), monospace",
+            fontFamily: "var(--font-display), 'Syne', sans-serif",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -577,7 +577,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
       >
         <div
           style={{
-            fontFamily: "var(--font-mono), monospace",
+            fontFamily: "var(--font-display), 'Syne', sans-serif",
             fontSize: 10,
             letterSpacing: "0.15em",
             textTransform: "uppercase",
@@ -623,7 +623,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
             <span
               key={t}
               style={{
-                fontFamily: "var(--font-mono), monospace",
+                fontFamily: "var(--font-display), 'Syne', sans-serif",
                 fontSize: 10,
                 color: "var(--fg)",
                 border: "1px solid var(--border-strong)",

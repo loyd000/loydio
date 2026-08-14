@@ -40,7 +40,7 @@ export default function ScrollToTop() {
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            fontFamily: "var(--font-mono), monospace",
+            fontFamily: "var(--font-display), 'Syne', sans-serif",
             fontSize: 16,
             boxShadow: "inset 0 1px 1px 0 rgba(255,255,255,0.7), 0 6px 20px rgba(0,0,0,0.1)",
             transition: "border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease",

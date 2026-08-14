@@ -116,11 +116,11 @@ export default function Footer() {
                 transform: "rotate(12deg)",
               }}
             >
-              <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
+              <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 10, fontWeight: 700, transform: "rotate(-12deg)", display: "block" }}>
                 L
               </span>
             </div>
-            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "rgba(244,244,245,0.3)" }}>
+            <span style={{ fontFamily: "var(--font-display), 'Syne', sans-serif", fontSize: 11, color: "rgba(244,244,245,0.3)" }}>
               © {year} John Lloyd De Guzman
             </span>
           </div>
@@ -133,7 +133,7 @@ export default function Footer() {
                   key={link}
                   href="/projects"
                   style={{
-                    fontFamily: "var(--font-mono), monospace",
+                    fontFamily: "var(--font-display), 'Syne', sans-serif",
                     fontSize: 10,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",
@@ -151,7 +151,7 @@ export default function Footer() {
                   key={link}
                   href={`#${link.toLowerCase()}`}
                   style={{
-                    fontFamily: "var(--font-mono), monospace",
+                    fontFamily: "var(--font-display), 'Syne', sans-serif",
                     fontSize: 10,
                     letterSpacing: "0.2em",
                     textTransform: "uppercase",

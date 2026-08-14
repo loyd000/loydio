@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-display), 'Syne', sans-serif";
 const DISPLAY = "var(--font-display), sans-serif";
 
 export default function ProjectModal({
