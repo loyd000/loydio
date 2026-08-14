@@ -98,6 +98,8 @@ export default function NowPlaying() {
 
         .now-playing-idle {
           display: inline-flex;
+          box-sizing: border-box;
+          width: 280px;
           align-items: center;
           gap: 0.5rem;
           padding: 8px 16px;
@@ -115,6 +117,8 @@ export default function NowPlaying() {
 
         .now-playing-active {
           display: inline-flex;
+          box-sizing: border-box;
+          width: 280px;
           align-items: center;
           gap: 0.75rem;
           padding: 6px 16px 6px 6px;
@@ -140,6 +144,7 @@ export default function NowPlaying() {
 
         .np-info {
           display: flex;
+          min-width: 0;
           flex-direction: column;
           justify-content: center;
           padding-right: 4px;
