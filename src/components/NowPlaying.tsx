@@ -160,6 +160,7 @@ export default function NowPlaying() {
           font-family: var(--font-sans);
           font-size: 13px;
           font-weight: 600;
+          line-height: 1.1;
           color: var(--fg);
           white-space: nowrap;
           overflow: hidden;
@@ -170,6 +171,7 @@ export default function NowPlaying() {
         .np-artist {
           font-family: var(--font-sans);
           font-size: 11px;
+          line-height: 1.1;
           color: var(--muted);
           white-space: nowrap;
           overflow: hidden;
