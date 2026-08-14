@@ -42,9 +42,6 @@ export default function HeroAbout() {
             <div className="hero-name-socials">
               <div className="hero-name-wrapper">
                 <h1 className="hero-name">Loyd De Guzman</h1>
-                <svg className="verified-badge" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm-1.81 14.71L5.94 12.5l1.42-1.42 2.82 2.81 6.58-6.58 1.42 1.41-8.01 7.99z"/>
-                </svg>
               </div>
               
               <div className="hero-socials">
@@ -167,11 +164,6 @@ export default function HeroAbout() {
           color: var(--fg);
         }
 
-        .verified-badge {
-          width: 22px;
-          height: 22px;
-          color: #1d9bf0; /* Twitter/verified blue */
-        }
         
         .hero-socials {
           display: flex;
