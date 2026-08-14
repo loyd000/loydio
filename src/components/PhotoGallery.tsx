@@ -80,8 +80,8 @@ export default function PhotoGallery() {
           <div
             style={{
               position: "relative",
-              width: "min(400px, 90vw)",
-              height: "min(400px, 90vw)",
+              width: "min(320px, 80vw)",
+              height: "min(320px, 80vw)",
             }}
           >
             <Stack
@@ -92,7 +92,6 @@ export default function PhotoGallery() {
               autoplay
               autoplayDelay={4000}
               pauseOnHover
-              mobileClickOnly
             />
           </div>
         </div>

@@ -191,6 +191,7 @@ export default function Stack({
                 overflow: "hidden",
                 width: "100%",
                 height: "100%",
+                boxShadow: "0 10px 30px -10px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)",
               }}
               onClick={() => shouldEnableClick && sendToBack(card.id)}
               animate={{
