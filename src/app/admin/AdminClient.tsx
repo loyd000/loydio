@@ -255,7 +255,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Gallery Photos</div>
               <div>
-                <input type="file" accept="image/*" ref={credImgRef} style={{ display: "none" }} onChange={(e) => { if (e.target.files?.[0]) handlePhotoUpload(e.target.files[0]); }} />
+                <input type="file" accept="image/*,.heic,.heif" ref={credImgRef} style={{ display: "none" }} onChange={(e) => { if (e.target.files?.[0]) handlePhotoUpload(e.target.files[0]); }} />
                 <button onClick={() => credImgRef.current?.click()} disabled={uploading === "credImg"} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#000", color: "#fff", cursor: "pointer" }}>
                   {uploading === "credImg" ? "UPLOADING..." : "+ UPLOAD PHOTO"}
                 </button>
@@ -359,7 +359,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                     {uploading === "cover" ? "UPLOADING..." : "+ UPLOAD COVER"}
                   </button>
                 )}
-                <input ref={coverRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); e.target.value = ""; }} />
+                <input ref={coverRef} type="file" accept="image/*,.heic,.heif" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); e.target.value = ""; }} />
               </div>
 
               {/* Screenshots */}
@@ -383,7 +383,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                     {uploading === "screenshot" ? "..." : "+ ADD"}
                   </button>
                 </div>
-                <input ref={screenshotRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleScreenshotUpload(f); e.target.value = ""; }} />
+                <input ref={screenshotRef} type="file" accept="image/*,.heic,.heif" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleScreenshotUpload(f); e.target.value = ""; }} />
               </div>
             </div>
 

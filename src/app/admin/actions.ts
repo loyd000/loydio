@@ -4,6 +4,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
+import convert from "heic-convert";
 import type { GalleryPhoto, Project } from "@/lib/supabase";
 
 const AUTH_COOKIE = "admin_auth";
@@ -106,10 +107,19 @@ function imageExtension(file: File) {
     "image/jpeg": "jpg",
     "image/png": "png",
     "image/webp": "webp",
+    "image/heic": "heic",
+    "image/heif": "heif",
   };
 
   if (byType[file.type]) return byType[file.type];
   return file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
+}
+
+function isHeic(file: File) {
+  const type = file.type.toLowerCase();
+  if (type === "image/heic" || type === "image/heif") return true;
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  return ext === "heic" || ext === "heif";
 }
 
 export async function isAdminAuthenticated() {
@@ -224,12 +234,28 @@ export async function uploadImage(formData: FormData) {
     throw new Error("Images must be 10 MB or smaller.");
   }
 
-  const path = `${Date.now()}-${randomBytes(8).toString("hex")}.${imageExtension(file)}`;
+  let buffer = Buffer.from(await file.arrayBuffer());
+  let contentType = file.type;
+  let ext = imageExtension(file);
+
+  // Convert HEIC/HEIF (iPhone photos) to JPEG for universal browser support
+  if (isHeic(file)) {
+    const converted = await convert({
+      buffer: new Uint8Array(buffer),
+      format: "JPEG",
+      quality: 0.9,
+    });
+    buffer = Buffer.from(converted);
+    contentType = "image/jpeg";
+    ext = "jpg";
+  }
+
+  const path = `${Date.now()}-${randomBytes(8).toString("hex")}.${ext}`;
   const { error } = await adminSupabase()
     .storage
     .from(BUCKET)
-    .upload(path, Buffer.from(await file.arrayBuffer()), {
-      contentType: file.type,
+    .upload(path, buffer, {
+      contentType,
       upsert: false,
     });
 
