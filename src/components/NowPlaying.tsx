@@ -197,6 +197,13 @@ export default function NowPlaying() {
         .np-bar:nth-child(2) { height: 8px; animation-delay: -0.2s; }
         .np-bar:nth-child(3) { height: 5px; animation-delay: -0.4s; }
 
+        @media (max-width: 480px) {
+          .now-playing-idle,
+          .now-playing-active {
+            width: 230px;
+          }
+        }
+
         @keyframes eq-bounce {
           0% { transform: scaleY(0.3); }
           100% { transform: scaleY(1); }
