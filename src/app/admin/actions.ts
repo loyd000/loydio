@@ -4,7 +4,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import type { Credential, GalleryPhoto, Project } from "@/lib/supabase";
+import type { GalleryPhoto, Project } from "@/lib/supabase";
 
 const AUTH_COOKIE = "admin_auth";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
@@ -23,15 +23,6 @@ type ProjectPayload = {
   type: "dev" | "design";
 };
 
-type CredentialPayload = {
-  id?: string;
-  title: string;
-  org: string;
-  year: string;
-  link: string | null;
-  description: string;
-  type: "certification" | "seminar" | "achievement";
-};
 
 function requireEnv(name: string) {
   const value = process.env[name];
