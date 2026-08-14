@@ -15,18 +15,7 @@ export type Project = {
   created_at: string;
 };
 
-export type Credential = {
-  id: string;
-  title: string;
-  org: string;
-  year: string;
-  link: string | null;
-  image_url: string | null;
-  description: string;
-  type: "certification" | "seminar" | "achievement";
-  sort_order: number;
-  created_at: string;
-};
+
 
 export type CredentialPhoto = {
   id: string;

@@ -155,24 +155,20 @@ export async function logout() {
 
 export async function fetchAdminData(): Promise<{
   projects: Project[];
-  credentials: Credential[];
   photos: GalleryPhoto[];
 }> {
   await requireAdmin();
   const db = adminSupabase();
-  const [projectRes, credentialRes, photoRes] = await Promise.all([
+  const [projectRes, photoRes] = await Promise.all([
     db.from("projects").select("*").order("sort_order", { ascending: true }),
-    db.from("credentials").select("*").order("sort_order", { ascending: true }),
     db.from("gallery_photos").select("*").order("sort_order", { ascending: true }),
   ]);
 
   if (projectRes.error) throw new Error(projectRes.error.message);
-  if (credentialRes.error) throw new Error(credentialRes.error.message);
   if (photoRes.error) throw new Error(photoRes.error.message);
 
   return {
     projects: projectRes.data ?? [],
-    credentials: credentialRes.data ?? [],
     photos: photoRes.data ?? [],
   };
 }
@@ -206,31 +202,7 @@ export async function deleteProject(id: string) {
   if (error) throw new Error(error.message);
 }
 
-export async function saveCredential(payload: CredentialPayload) {
-  await requireAdmin();
 
-  const db = adminSupabase();
-  const data = {
-    title: cleanText(payload.title, "Title"),
-    org: cleanText(payload.org, "Organization"),
-    year: cleanText(payload.year, "Year"),
-    link: cleanOptionalUrl(payload.link),
-    description: payload.description.trim(),
-    type: payload.type,
-  };
-
-  const result = payload.id
-    ? await db.from("credentials").update(data).eq("id", payload.id)
-    : await db.from("credentials").insert(data);
-
-  if (result.error) throw new Error(result.error.message);
-}
-
-export async function deleteCredential(id: string) {
-  await requireAdmin();
-  const { error } = await adminSupabase().from("credentials").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-}
 
 export async function saveProjectOrder(updates: { id: string; sort_order: number }[]) {
   await requireAdmin();
@@ -246,19 +218,6 @@ export async function saveProjectOrder(updates: { id: string; sort_order: number
   if (errors.length) throw new Error(errors.join("; "));
 }
 
-export async function saveCredentialOrder(updates: { id: string; sort_order: number }[]) {
-  await requireAdmin();
-  const db = adminSupabase();
-
-  const results = await Promise.all(
-    updates.map((item) =>
-      db.from("credentials").update({ sort_order: item.sort_order }).eq("id", item.id)
-    )
-  );
-
-  const errors = results.filter((r) => r.error).map((r) => r.error!.message);
-  if (errors.length) throw new Error(errors.join("; "));
-}
 
 export async function uploadImage(formData: FormData) {
   await requireAdmin();

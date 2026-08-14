@@ -63,6 +63,7 @@ function CardRotate({
         position: "absolute",
         inset: 0,
         cursor: "grab",
+        touchAction: "none",
         x,
         y,
         rotateX,

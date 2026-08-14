@@ -2,16 +2,13 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Credential, GalleryPhoto, Project } from "@/lib/supabase";
+import type { GalleryPhoto, Project } from "@/lib/supabase";
 import {
-  deleteCredential,
   deleteGalleryPhoto,
   deleteProject,
   fetchAdminData,
   logout,
   removeStoredImage,
-  saveCredential,
-  saveCredentialOrder,
   saveProject,
   saveProjectOrder,
   uploadGalleryPhoto,
@@ -36,19 +33,11 @@ type FormState = {
   type: "dev" | "design";
 };
 
-type CredentialFormState = {
-  id?: string;
-  title: string;
-  org: string;
-  year: string;
-  link: string;
-  description: string;
-  type: "certification" | "seminar" | "achievement";
-};
+
 
 type AdminData = {
   projects: Project[];
-  credentials: Credential[];
+
   photos: GalleryPhoto[];
 };
 
@@ -60,13 +49,6 @@ function projectToForm(p: Project): FormState {
   return { id: p.id, title: p.title, description: p.description, category: p.category ? p.category.split(",").map(c => c.trim()) : [], tagsInput: p.tags.join(", "), year: p.year, link: p.link ?? "", image_url: p.image_url ?? "", images: p.images ?? [], type: p.type };
 }
 
-function emptyCredentialForm(): CredentialFormState {
-  return { title: "", org: "", year: String(new Date().getFullYear()), link: "", description: "", type: "achievement" };
-}
-
-function credentialToForm(c: Credential): CredentialFormState {
-  return { id: c.id, title: c.title, org: c.org, year: c.year, link: c.link ?? "", description: c.description ?? "", type: c.type };
-}
 
 const inputStyle: React.CSSProperties = {
   fontFamily: MONO, fontSize: 12, border: "none", borderBottom: "1px solid #ccc",
@@ -85,12 +67,12 @@ function uploadFormData(file: File) {
 
 export default function AdminClient({ initialData, initialError = "" }: { initialData: AdminData; initialError?: string }) {
   const [projects, setProjects] = useState<Project[]>(initialData.projects);
-  const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials);
+
   const [photos, setPhotos] = useState<GalleryPhoto[]>(initialData.photos);
-  const [tab, setTab] = useState<"dev" | "design" | "credentials" | "photos">("dev");
+  const [tab, setTab] = useState<"dev" | "design" | "photos">("dev");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormState | null>(null);
-  const [credForm, setCredForm] = useState<CredentialFormState | null>(null);
+
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"cover" | "screenshot" | "credImg" | null>(null);
   const [error, setError] = useState(initialError);
@@ -98,9 +80,6 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
   const screenshotRef = useRef<HTMLInputElement>(null);
   const credImgRef = useRef<HTMLInputElement>(null);
 
-  // Drag and drop state for credentials
-  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
-  const [hasOrderChanged, setHasOrderChanged] = useState(false);
 
   // Drag and drop state for projects
   const [draggedProjectIdx, setDraggedProjectIdx] = useState<number | null>(null);
@@ -112,9 +91,9 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     try {
       const data = await fetchAdminData();
       setProjects(data.projects);
-      setCredentials(data.credentials);
+
       setPhotos(data.photos);
-      setHasOrderChanged(false);
+
       setHasProjectOrderChanged(false);
     } catch (e) {
       setError(errorMessage(e));
@@ -125,7 +104,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
 
   const filtered = projects.filter((p) => p.type === tab);
   const set = (k: keyof FormState, v: string) => setForm((f) => f ? { ...f, [k]: v } : f);
-  const setCred = (k: keyof CredentialFormState, v: string) => setCredForm((f) => f ? { ...f, [k]: v } : f);
+
 
   const handleCoverUpload = async (file: File) => {
     setUploading("cover");
@@ -198,33 +177,6 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     }
   };
 
-  const handleSaveCredential = async () => {
-    if (!credForm) return;
-    setSaving(true);
-    setError("");
-    const payload = {
-      title: credForm.title.trim(),
-      org: credForm.org.trim(),
-      year: credForm.year.trim(),
-      link: credForm.link.trim() || null,
-      description: credForm.description,
-      type: credForm.type,
-    };
-    if (!payload.title || !payload.org || !payload.year) {
-      setError("Title, organization, and year are required.");
-      setSaving(false);
-      return;
-    }
-    try {
-      await saveCredential({ id: credForm.id, ...payload });
-      setCredForm(null);
-      await fetchData();
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this project?")) return;
@@ -237,16 +189,6 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     }
   };
 
-  const handleDeleteCredential = async (id: string) => {
-    if (!confirm("Delete this credential?")) return;
-    setError("");
-    try {
-      await deleteCredential(id);
-      await fetchData();
-    } catch (e) {
-      setError(errorMessage(e));
-    }
-  };
 
   const handleDeletePhoto = async (id: string) => {
     if (!confirm("Delete this photo?")) return;
@@ -273,24 +215,6 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     }
   };
 
-  const handleSaveOrder = async () => {
-    setSaving(true);
-    // Prepare batch update payload mapping each id to its new sort_order
-    const updates = credentials.map((c, idx) => ({
-      id: c.id,
-      sort_order: idx
-    }));
-    
-    try {
-      await saveCredentialOrder(updates);
-      setHasOrderChanged(false);
-      await fetchData();
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setSaving(false);
-    }
-  };
 
   return (
     <div style={{ fontFamily: MONO, minHeight: "100vh", background: "#fff", color: "#000" }}>
@@ -313,9 +237,9 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
 
         {/* Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid #000", marginBottom: "2rem", overflowX: "auto" }}>
-          {(["dev", "design", "credentials", "photos"] as const).map((t) => (
-            <button key={t} onClick={() => { setTab(t); setForm(null); setCredForm(null); }} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 24px", border: "none", borderBottom: tab === t ? "2px solid #000" : "2px solid transparent", background: "none", cursor: "pointer", fontWeight: tab === t ? 700 : 400, marginBottom: -1, whiteSpace: "nowrap" }}>
-              {t === "dev" ? "Dev Projects" : t === "design" ? "Design Projects" : t === "credentials" ? "Credentials" : "Photo Gallery"}
+          {(["dev", "design", "photos"] as const).map((t) => (
+            <button key={t} onClick={() => { setTab(t); setForm(null); }} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", padding: "10px 24px", border: "none", borderBottom: tab === t ? "2px solid #000" : "2px solid transparent", background: "none", cursor: "pointer", fontWeight: tab === t ? 700 : 400, marginBottom: -1, whiteSpace: "nowrap" }}>
+              {t === "dev" ? "Dev Projects" : t === "design" ? "Design Projects" : "Photo Gallery"}
             </button>
           ))}
         </div>
@@ -326,114 +250,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
           </div>
         )}
 
-        {tab === "credentials" ? (
-          <>
-            {/* Credential Sub-Tabs */}
-            {/* Action Bar */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-              {hasOrderChanged ? (
-                <button onClick={handleSaveOrder} disabled={saving} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#f0f0f0", color: "#000", cursor: "pointer", fontWeight: 700 }}>
-                  {saving ? "SAVING..." : "SAVE NEW ORDER"}
-                </button>
-              ) : (
-                <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Drag items to reorder</div>
-              )}
-              <button onClick={() => setCredForm(emptyCredentialForm())} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "8px 20px", background: "#000", color: "#fff", cursor: "pointer" }}>
-                + ADD CREDENTIAL
-              </button>
-            </div>
-
-            {/* Form */}
-            {credForm && (
-              <div style={{ border: "1px solid #000", padding: "2rem", marginBottom: "2rem" }}>
-                <div style={{ fontSize: 11, letterSpacing: "0.2em", fontWeight: 700, marginBottom: "1.5rem" }}>
-                  {credForm.id ? "EDIT CREDENTIAL" : "NEW CREDENTIAL"}
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem 2rem" }}>
-                  {([
-                    ["title", "Title / Name *"],
-                    ["org", "Organization / Issuer *"],
-                    ["year", "Year *"],
-                    ["link", "Link (optional)"],
-                  ] as [keyof CredentialFormState, string][]).map(([k, label]) => (
-                    <div key={k}>
-                      <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 6 }}>{label}</label>
-                      <input type="text" value={credForm[k] as string} onChange={(e) => setCred(k, e.target.value)}
-                        placeholder={k === "link" ? "https://..." : ""}
-                        style={inputStyle} />
-                    </div>
-                  ))}
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <label style={{ display: "block", fontSize: 10, letterSpacing: "0.2em", opacity: 0.45, marginBottom: 6 }}>Description (optional)</label>
-                    <textarea value={credForm.description} onChange={(e) => setCred("description", e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", borderBottom: "1px solid #ccc" }} />
-                  </div>
-                </div>
-
-                {error && <div style={{ fontSize: 11, color: "red", marginTop: "1rem" }}>{error}</div>}
-
-                <div style={{ display: "flex", gap: 12, marginTop: "2rem" }}>
-                  <button onClick={handleSaveCredential} disabled={saving} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "9px 22px", background: "#000", color: "#fff", cursor: "pointer" }}>
-                    {saving ? "SAVING..." : "SAVE"}
-                  </button>
-                  <button onClick={() => { setCredForm(null); setError(""); }} style={{ fontFamily: MONO, fontSize: 11, letterSpacing: "0.15em", border: "1px solid #000", padding: "9px 22px", background: "none", cursor: "pointer" }}>
-                    CANCEL
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* List */}
-            {loading ? (
-              <div style={{ fontSize: 11, opacity: 0.35, letterSpacing: "0.2em" }}>LOADING...</div>
-            ) : credentials.length === 0 ? (
-              <div style={{ fontSize: 11, opacity: 0.35, letterSpacing: "0.2em" }}>NO CREDENTIALS YET</div>
-            ) : (
-              <div style={{ border: "1px solid #000" }}>
-                {credentials.map((c, i) => (
-                  <div 
-                    key={c.id} 
-                    draggable
-                    onDragStart={(e) => {
-                      setDraggedIdx(i);
-                      e.dataTransfer.effectAllowed = "move";
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      if (draggedIdx === null || draggedIdx === i) return;
-                      const newCreds = [...credentials];
-                      const [draggedItem] = newCreds.splice(draggedIdx, 1);
-                      newCreds.splice(i, 0, draggedItem);
-                      setCredentials(newCreds);
-                      setDraggedIdx(null);
-                      setHasOrderChanged(true);
-                    }}
-                    style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "center", gap: "1rem", padding: "1rem 1.5rem", borderBottom: i < credentials.length - 1 ? "1px solid #ebebeb" : "none", background: draggedIdx === i ? "#f9f9f9" : "transparent", cursor: "grab" }}
-                  >
-                    <div style={{ opacity: 0.5, cursor: "grab", WebkitTextStroke: "0.5px currentColor", paddingRight: "0.5rem" }}>⣿</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>{c.title}</div>
-                        <div style={{ fontSize: 10, opacity: 0.4, display: "flex", gap: 16, flexWrap: "wrap" }}>
-                          <span>{c.org}</span>
-                          <span>{c.year}</span>
-                          {c.link && <span>↗ link</span>}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                      <button onClick={() => setCredForm(credentialToForm(c))} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", border: "1px solid #000", padding: "5px 14px", background: "none", cursor: "pointer" }}>EDIT</button>
-                      <button onClick={() => handleDeleteCredential(c.id)} style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", border: "1px solid #ddd", padding: "5px 14px", background: "none", cursor: "pointer", opacity: 0.5 }}>DEL</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        ) : tab === "photos" ? (
+        {tab === "photos" ? (
           <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <div style={{ fontSize: 11, opacity: 0.5, fontFamily: MONO, letterSpacing: "0.1em" }}>Gallery Photos</div>
