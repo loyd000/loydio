@@ -19,6 +19,7 @@ export default function PhotoGallery() {
       .select("*")
       .order("sort_order", { ascending: true })
       .then(({ data, error }) => {
+        console.log("[PhotoGallery] data:", data, "error:", error);
         if (!error && data) setPhotos(data);
         setLoading(false);
       });
