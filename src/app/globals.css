@@ -1384,9 +1384,9 @@ p {
 }
 
 /* ── ScrollToTop mobile positioning ── */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .scroll-to-top-btn {
-    bottom: 20px !important;
+    bottom: calc(max(14px, env(safe-area-inset-bottom)) + 64px) !important;
     right: 20px !important;
     width: 36px !important;
     height: 36px !important;
