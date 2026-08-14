@@ -35,6 +35,13 @@ export type CredentialPhoto = {
   created_at: string;
 };
 
+export type GalleryPhoto = {
+  id: string;
+  image_url: string;
+  sort_order: number;
+  created_at: string;
+};
+
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!

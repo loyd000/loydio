@@ -4,7 +4,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import type { Credential, CredentialPhoto, Project } from "@/lib/supabase";
+import type { Credential, GalleryPhoto, Project } from "@/lib/supabase";
 
 const AUTH_COOKIE = "admin_auth";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
@@ -156,14 +156,14 @@ export async function logout() {
 export async function fetchAdminData(): Promise<{
   projects: Project[];
   credentials: Credential[];
-  photos: CredentialPhoto[];
+  photos: GalleryPhoto[];
 }> {
   await requireAdmin();
   const db = adminSupabase();
   const [projectRes, credentialRes, photoRes] = await Promise.all([
     db.from("projects").select("*").order("sort_order", { ascending: true }),
     db.from("credentials").select("*").order("sort_order", { ascending: true }),
-    db.from("credential_photos").select("*").order("created_at", { ascending: false }),
+    db.from("gallery_photos").select("*").order("sort_order", { ascending: true }),
   ]);
 
   if (projectRes.error) throw new Error(projectRes.error.message);
@@ -288,16 +288,16 @@ export async function uploadImage(formData: FormData) {
   return adminSupabase().storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
-export async function uploadCredentialPhoto(formData: FormData) {
+export async function uploadGalleryPhoto(formData: FormData) {
   await requireAdmin();
   const imageUrl = await uploadImage(formData);
-  const { error } = await adminSupabase().from("credential_photos").insert({ image_url: imageUrl });
+  const { error } = await adminSupabase().from("gallery_photos").insert({ image_url: imageUrl });
   if (error) throw new Error(error.message);
 }
 
-export async function deleteCredentialPhoto(id: string) {
+export async function deleteGalleryPhoto(id: string) {
   await requireAdmin();
-  const { error } = await adminSupabase().from("credential_photos").delete().eq("id", id);
+  const { error } = await adminSupabase().from("gallery_photos").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
 

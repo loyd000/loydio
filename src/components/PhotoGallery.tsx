@@ -2,21 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import Image from "next/image";
-import { supabase, type CredentialPhoto } from "@/lib/supabase";
+import { supabase, type GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
 const MONO = "var(--font-mono), monospace";
 
 export default function PhotoGallery() {
-  const [photos, setPhotos] = useState<CredentialPhoto[]>([]);
+  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   useEffect(() => {
     supabase
-      .from("credential_photos")
+      .from("gallery_photos")
       .select("*")
       .order("sort_order", { ascending: true })
       .then(({ data, error }) => {
@@ -28,21 +27,25 @@ export default function PhotoGallery() {
   if (loading || photos.length === 0) return null;
 
   const cards = photos.map((photo) => (
-    <div key={photo.id} className="relative w-full h-full">
-      <Image
-        src={photo.image_url}
-        alt="Photo"
-        fill
-        sizes="(max-width: 768px) 90vw, 400px"
-        className="object-cover pointer-events-none"
-        draggable={false}
-      />
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      key={photo.id}
+      src={photo.image_url}
+      alt="Gallery photo"
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        pointerEvents: "none",
+        display: "block",
+      }}
+    />
   ));
 
   return (
     <section id="photos" className="lean-section" ref={ref}>
       <div className="section-container" style={{ maxWidth: 800, margin: "0 auto" }}>
+
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -85,10 +88,7 @@ export default function PhotoGallery() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-          }}
+          style={{ display: "flex", justifyContent: "center" }}
         >
           <div
             style={{
@@ -115,11 +115,7 @@ export default function PhotoGallery() {
           initial={{ opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, delay: 0.3 }}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "3rem",
-          }}
+          style={{ display: "flex", justifyContent: "center", marginTop: "3rem" }}
         >
           <span
             style={{
@@ -136,6 +132,7 @@ export default function PhotoGallery() {
             {photos.length} photo{photos.length !== 1 ? "s" : ""}
           </span>
         </motion.div>
+
       </div>
     </section>
   );

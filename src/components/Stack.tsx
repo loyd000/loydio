@@ -6,7 +6,7 @@ import {
   useTransform,
   type PanInfo,
 } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CardRotateProps {
   children: React.ReactNode;
@@ -44,8 +44,13 @@ function CardRotate({
   if (disableDrag) {
     return (
       <motion.div
-        className="absolute inset-0 cursor-pointer"
-        style={{ x: 0, y: 0 }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          cursor: "pointer",
+          x: 0,
+          y: 0,
+        }}
       >
         {children}
       </motion.div>
@@ -54,8 +59,15 @@ function CardRotate({
 
   return (
     <motion.div
-      className="absolute inset-0 cursor-grab"
-      style={{ x, y, rotateX, rotateY }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        cursor: "grab",
+        x,
+        y,
+        rotateX,
+        rotateY,
+      }}
       drag
       dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
       dragElastic={0.6}
@@ -96,9 +108,7 @@ export default function Stack({
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < mobileBreakpoint);
-    };
+    const checkMobile = () => setIsMobile(window.innerWidth < mobileBreakpoint);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -107,19 +117,30 @@ export default function Stack({
   const shouldDisableDrag = mobileClickOnly && isMobile;
   const shouldEnableClick = sendToBackOnClick || shouldDisableDrag;
 
-  const [stack, setStack] = useState<
-    { id: number; content: React.ReactNode }[]
-  >(() =>
-    cards.length
-      ? cards.map((content, index) => ({ id: index + 1, content }))
-      : []
+  // Build initial stack once; sync only when card count changes (not ref changes)
+  const [stack, setStack] = useState<{ id: number; content: React.ReactNode }[]>(
+    () => cards.map((content, index) => ({ id: index + 1, content }))
   );
 
+  // Stable random rotations — computed once per card count, not per render
+  const rotationsRef = useRef<number[]>([]);
+  if (rotationsRef.current.length !== cards.length) {
+    rotationsRef.current = Array.from({ length: cards.length }, () =>
+      randomRotation ? Math.random() * 10 - 5 : 0
+    );
+  }
+
+  const prevLengthRef = useRef(cards.length);
   useEffect(() => {
-    if (cards.length) {
+    if (cards.length !== prevLengthRef.current) {
+      prevLengthRef.current = cards.length;
       setStack(cards.map((content, index) => ({ id: index + 1, content })));
+      rotationsRef.current = Array.from({ length: cards.length }, () =>
+        randomRotation ? Math.random() * 10 - 5 : 0
+      );
     }
-  }, [cards]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cards.length]);
 
   const sendToBack = (id: number) => {
     setStack((prev) => {
@@ -145,13 +166,17 @@ export default function Stack({
 
   return (
     <div
-      className="relative w-full h-full"
-      style={{ perspective: 600 }}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        perspective: 600,
+      }}
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
       {stack.map((card, index) => {
-        const randomRotate = randomRotation ? Math.random() * 10 - 5 : 0;
+        const rotation = rotationsRef.current[index] ?? 0;
         return (
           <CardRotate
             key={card.id}
@@ -160,10 +185,15 @@ export default function Stack({
             disableDrag={shouldDisableDrag}
           >
             <motion.div
-              className="rounded-2xl overflow-hidden w-full h-full"
+              style={{
+                borderRadius: 16,
+                overflow: "hidden",
+                width: "100%",
+                height: "100%",
+              }}
               onClick={() => shouldEnableClick && sendToBack(card.id)}
               animate={{
-                rotateZ: (stack.length - index - 1) * 4 + randomRotate,
+                rotateZ: (stack.length - index - 1) * 4 + rotation,
                 scale: 1 + index * 0.06 - stack.length * 0.06,
                 transformOrigin: "90% 90%",
               }}

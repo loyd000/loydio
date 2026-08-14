@@ -2,10 +2,10 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Credential, CredentialPhoto, Project } from "@/lib/supabase";
+import type { Credential, GalleryPhoto, Project } from "@/lib/supabase";
 import {
   deleteCredential,
-  deleteCredentialPhoto,
+  deleteGalleryPhoto,
   deleteProject,
   fetchAdminData,
   logout,
@@ -14,7 +14,7 @@ import {
   saveCredentialOrder,
   saveProject,
   saveProjectOrder,
-  uploadCredentialPhoto,
+  uploadGalleryPhoto,
   uploadImage,
 } from "./actions";
 
@@ -49,7 +49,7 @@ type CredentialFormState = {
 type AdminData = {
   projects: Project[];
   credentials: Credential[];
-  photos: CredentialPhoto[];
+  photos: GalleryPhoto[];
 };
 
 function emptyForm(type: "dev" | "design"): FormState {
@@ -86,7 +86,7 @@ function uploadFormData(file: File) {
 export default function AdminClient({ initialData, initialError = "" }: { initialData: AdminData; initialError?: string }) {
   const [projects, setProjects] = useState<Project[]>(initialData.projects);
   const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials);
-  const [photos, setPhotos] = useState<CredentialPhoto[]>(initialData.photos);
+  const [photos, setPhotos] = useState<GalleryPhoto[]>(initialData.photos);
   const [tab, setTab] = useState<"dev" | "design" | "credentials" | "photos">("dev");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormState | null>(null);
@@ -139,7 +139,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     setUploading("credImg");
     setError("");
     try { 
-      await uploadCredentialPhoto(uploadFormData(file));
+      await uploadGalleryPhoto(uploadFormData(file));
       await fetchData();
     }
     catch (e) { setError(errorMessage(e)); }
@@ -252,7 +252,7 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     if (!confirm("Delete this photo?")) return;
     setError("");
     try {
-      await deleteCredentialPhoto(id);
+      await deleteGalleryPhoto(id);
       await fetchData();
     } catch (e) {
       setError(errorMessage(e));
