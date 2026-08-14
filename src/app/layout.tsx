@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Syne, Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -69,9 +68,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(geist.variable, geistMono.variable, syne.variable, "font-sans")} suppressHydrationWarning>
       <head>
-        <Script
+        <script
           id="theme-script"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();`,
           }}

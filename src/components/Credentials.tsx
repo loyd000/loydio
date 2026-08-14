@@ -118,7 +118,7 @@ function CredentialRow({ c, index }: { c: Credential; index: number }) {
 }
 
 export default function Credentials() {
-  const [credentials, setCredentials] = useState<Credential[]>([]);
+  return null; // TODO: re-enable when ready
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });

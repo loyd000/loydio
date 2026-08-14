@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState, useEffect } from "react";
 import { supabase, type GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
@@ -10,8 +9,6 @@ const MONO = "var(--font-mono), monospace";
 export default function PhotoGallery() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [loading, setLoading] = useState(true);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   useEffect(() => {
     supabase
@@ -19,7 +16,6 @@ export default function PhotoGallery() {
       .select("*")
       .order("sort_order", { ascending: true })
       .then(({ data, error }) => {
-        console.log("[PhotoGallery] data:", data, "error:", error);
         if (!error && data) setPhotos(data);
         setLoading(false);
       });
@@ -44,16 +40,11 @@ export default function PhotoGallery() {
   ));
 
   return (
-    <section id="photos" className="lean-section" ref={ref}>
+    <section id="photos" className="lean-section">
       <div className="section-container" style={{ maxWidth: 800, margin: "0 auto" }}>
 
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          style={{ marginBottom: "2.5rem" }}
-        >
+        {/* Section header — CSS fade-in on mount (no inView needed, section only renders post-fetch) */}
+        <div style={{ marginBottom: "2.5rem", animation: "pgFadeUp 0.5s ease forwards" }}>
           <p
             style={{
               fontFamily: MONO,
@@ -82,15 +73,10 @@ export default function PhotoGallery() {
           >
             Drag or swipe to cycle through
           </p>
-        </motion.div>
+        </div>
 
-        {/* Stack wrapper */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{ display: "flex", justifyContent: "center" }}
-        >
+        {/* Stack */}
+        <div style={{ display: "flex", justifyContent: "center", animation: "pgFadeUp 0.6s 0.1s ease both" }}>
           <div
             style={{
               position: "relative",
@@ -109,15 +95,10 @@ export default function PhotoGallery() {
               mobileClickOnly
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* Count pill */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          style={{ display: "flex", justifyContent: "center", marginTop: "3rem" }}
-        >
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "3rem", animation: "pgFadeUp 0.4s 0.3s ease both" }}>
           <span
             style={{
               fontFamily: MONO,
@@ -132,9 +113,16 @@ export default function PhotoGallery() {
           >
             {photos.length} photo{photos.length !== 1 ? "s" : ""}
           </span>
-        </motion.div>
+        </div>
 
       </div>
+
+      <style>{`
+        @keyframes pgFadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 }
