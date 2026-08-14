@@ -309,7 +309,7 @@ export default function Projects() {
       id="projects"
       ref={ref}
       className="lean-section"
-      style={{ paddingTop: "4rem", paddingBottom: "1.5rem" }}
+      style={{ background: "var(--bg)", paddingTop: "4rem", paddingBottom: "1.5rem" }}
     >
       <div className="section-container">
         <motion.div
@@ -373,19 +373,37 @@ export default function Projects() {
       <style>{`
         .design-carousel-shell {
           position: relative;
-          width: 100%;
-          height: clamp(520px, 64vw, 680px);
+          height: clamp(500px, 64vw, 650px);
+          /* Keep the horizontal carousel crop, but let the active card's shadow
+             fade into the controls area instead of cutting it at this boundary. */
+          overflow: visible;
           padding: 1rem 0;
           touch-action: pan-y;
           cursor: grab;
           user-select: none;
           -webkit-user-select: none;
-          -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-          mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         }
         .design-carousel-shell:focus-visible {
           outline: 2px solid var(--accent);
           outline-offset: 4px;
+        }
+        .design-carousel-shell::before,
+        .design-carousel-shell::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          z-index: 6;
+          width: clamp(4rem, 16vw, 12rem);
+          pointer-events: none;
+        }
+        .design-carousel-shell::before {
+          left: 0;
+          background: linear-gradient(to right, var(--bg) 10%, rgba(250, 250, 250, 0));
+        }
+        .design-carousel-shell::after {
+          right: 0;
+          background: linear-gradient(to left, var(--bg) 10%, rgba(250, 250, 250, 0));
         }
         .design-carousel-stage {
           position: relative;
