@@ -217,10 +217,11 @@ export default function HeroAbout() {
         @media (max-width: 600px) {
           .hero-header-row {
             gap: 1rem;
+            flex-wrap: nowrap;
           }
           .hero-avatar {
-            width: 180px;
-            height: 180px;
+            width: 100px;
+            height: 100px;
           }
           .hero-about-container {
             padding-top: 6rem;
