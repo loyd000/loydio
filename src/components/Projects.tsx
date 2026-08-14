@@ -309,7 +309,7 @@ export default function Projects() {
       id="projects"
       ref={ref}
       className="lean-section"
-      style={{ background: "var(--bg)", paddingTop: "4rem", paddingBottom: "1.5rem" }}
+      style={{ paddingTop: "4rem", paddingBottom: "1.5rem" }}
     >
       <div className="section-container">
         <motion.div

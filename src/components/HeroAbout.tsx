@@ -7,7 +7,7 @@ export default function HeroAbout() {
     <section
       id="about"
       className="hero-about-section"
-      style={{ background: "var(--bg)", position: "relative", overflow: "hidden" }}
+      style={{ background: "transparent", position: "relative", overflow: "hidden" }}
     >
       <div
         className="section-container hero-about-container"

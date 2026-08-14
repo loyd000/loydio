@@ -61,7 +61,7 @@ export default function SkillsExperience() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="stack" ref={ref} className="lean-section" style={{ background: "var(--bg)" }}>
+    <section id="stack" ref={ref} className="lean-section">
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
