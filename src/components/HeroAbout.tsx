@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import TiltedCard from "./TiltedCard";
 import { motion } from "framer-motion";
 
 export default function HeroAbout() {
@@ -23,19 +24,18 @@ export default function HeroAbout() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="hero-avatar">
-              <Image
-                src="/me.jpg"
-                alt="Loyd De Guzman"
-                width={240}
-                height={240}
-                priority
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center top",
-                  display: "block",
-                }}
+              <TiltedCard
+                imageSrc="/me.jpg"
+                altText="Loyd De Guzman"
+                captionText="Loyd"
+                containerHeight="100%"
+                containerWidth="100%"
+                imageHeight="100%"
+                imageWidth="100%"
+                rotateAmplitude={12}
+                scaleOnHover={1.05}
+                showTooltip={true}
+                displayOverlayContent={false}
               />
             </div>
             
@@ -134,12 +134,7 @@ export default function HeroAbout() {
         .hero-avatar {
           width: 240px;
           height: 240px;
-          border-radius: 12px;
-          overflow: hidden;
           flex-shrink: 0;
-          border: 1px solid var(--border);
-          background: var(--surface);
-          box-shadow: 0 8px 24px -8px rgba(0,0,0,0.3);
         }
         
         .hero-name-socials {
