@@ -7,6 +7,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 const Projects         = dynamic(() => import("@/components/Projects"));
 const SkillsExperience = dynamic(() => import("@/components/SkillsExperience"));
 const Credentials      = dynamic(() => import("@/components/Credentials"));
+const PhotoGallery     = dynamic(() => import("@/components/PhotoGallery"));
 const Contact          = dynamic(() => import("@/components/Contact"));
 const Footer           = dynamic(() => import("@/components/Footer"));
 
@@ -20,6 +21,7 @@ export default function Home() {
         <Projects />
         <SkillsExperience />
         <Credentials />
+        <PhotoGallery />
         <Contact />
       </main>
       <Footer />
