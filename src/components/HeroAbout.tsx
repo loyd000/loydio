@@ -13,133 +13,100 @@ export default function HeroAbout() {
         className="section-container hero-about-container"
         style={{ position: "relative", zIndex: 1 }}
       >
-        {/* ═══════════════════════════════════════════
-            TOP: Photo (left) + Intro (right)
-        ═══════════════════════════════════════════ */}
-        <div className="hero-about-grid">
-
-          {/* Left column — photo */}
+        <div className="hero-about-content">
+          
+          {/* Header Row: Avatar + Name/Socials */}
           <motion.div
-            className="hero-about-photo"
-            initial={{ opacity: 0, x: -28 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="hero-header-row"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div
-              style={{
-                overflow: "hidden",
-                border: "1px solid var(--border)",
-                background: "var(--surface)",
-                width: "100%",
-              }}
-            >
+            <div className="hero-avatar">
               <Image
                 src="/me.jpg"
-                alt="John Lloyd De Guzman"
-                width={600}
-                height={600}
-                sizes="(max-width: 768px) 260px, 320px"
+                alt="Loyd De Guzman"
+                width={240}
+                height={240}
                 priority
                 style={{
                   width: "100%",
-                  height: "auto",
-                  aspectRatio: "1 / 1",
+                  height: "100%",
                   objectFit: "cover",
                   objectPosition: "center top",
                   display: "block",
                 }}
               />
             </div>
+            
+            <div className="hero-name-socials">
+              <div className="hero-name-wrapper">
+                <h1 className="hero-name">Loyd De Guzman</h1>
+                <svg className="verified-badge" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm-1.81 14.71L5.94 12.5l1.42-1.42 2.82 2.81 6.58-6.58 1.42 1.41-8.01 7.99z"/>
+                </svg>
+              </div>
+              
+              <div className="hero-socials">
+                <a href="https://github.com/loyd000" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                  </svg>
+                </a>
+                <a href="https://www.facebook.com/loydixyz" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                  </svg>
+                </a>
+                <a href="https://www.instagram.com/loyd.dg/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </a>
+                <a href="https://open.spotify.com/user/31ydnj4nyrc2wtyxem7czazbkx5y" target="_blank" rel="noopener noreferrer" aria-label="Spotify">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 11.9c3.2-1.3 7-1 9 1"></path>
+                    <path d="M7 14.5c3-1 6.5-.5 8.5 1"></path>
+                    <path d="M7.5 9c3.5-1.5 8-1.5 10 0"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Right column — intro */}
-          <div className="hero-about-intro">
-            {/* Eyebrow */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.1 }}
-              style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: "1rem" }}
-            >
-              <div style={{ width: 24, height: 1, background: "var(--accent)", flexShrink: 0 }} />
-              <span style={{ fontFamily: "var(--font-mono), var(--font-mono), monospace", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--muted)" }}>
-                Full-Stack Developer &amp; Graphic Designer
-              </span>
-            </motion.div>
+          {/* Role Title */}
+          <motion.h2
+            className="hero-role"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Computer Engineer <span className="hero-role-divider">—</span> Full-Stack, Mobile & Embedded
+          </motion.h2>
 
-            {/* Name */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.18 }}
-              style={{
-                fontFamily: "var(--font-display), 'Syne', sans-serif",
-                fontSize: "clamp(32px, 5.5vw, 56px)",
-                fontWeight: 400,
-                lineHeight: 1.15,
-                marginBottom: "1rem",
-              }}
-            >
-              Loyd De Guzman
-            </motion.h1>
+          {/* Bio Description */}
+          <motion.p
+            className="hero-description"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            I am a computer engineer fresh graduate who builds modern web platforms, mobile apps, and embedded/hardware-integrated systems. I bridge the gap between functionality and design, drawing on experience across TinyML, full-stack development, and graphic design to turn ideas into polished, working products.
+          </motion.p>
 
-            {/* Bio */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.32 }}
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "var(--muted)",
-                maxWidth: 400,
-                lineHeight: 1.8,
-                marginBottom: "1.5rem",
-              }}
-            >
-              I build modern web platforms, mobile apps, and hardware-integrated systems —
-              bridging the gap between functionality and design.
-            </motion.p>
-
-            {/* Social links row */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.4 }}
-              style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", alignItems: "center" }}
-            >
-              {[
-                { label: "github ↗", href: "https://github.com/loyd000" },
-                { label: "facebook ↗", href: "https://www.facebook.com/loydixyz" },
-                { label: "instagram ↗", href: "https://www.instagram.com/loyd.dg/" },
-                { label: "spotify ↗", href: "https://open.spotify.com/user/31ydnj4nyrc2wtyxem7czazbkx5y" },
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: "var(--font-mono), monospace",
-                    fontSize: 12,
-                    color: "var(--fg)",
-                    opacity: 0.6,
-                    textDecoration: "none",
-                    transition: "opacity 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.opacity = "1";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.opacity = "0.6";
-                  }}
-                >
-                  {s.label}
-                </a>
-              ))}
-            </motion.div>
-          </div>
+          {/* Action Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <a href="/RESUME_DE_GUZMAN.pdf" target="_blank" rel="noopener noreferrer" className="liquid-glass-btn" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "12px 32px", fontSize: "13px", fontWeight: 600, borderRadius: 999 }}>
+              View Resume <span style={{ fontFamily: "var(--font-mono)" }}>&gt;</span>
+            </a>
+          </motion.div>
 
         </div>
       </div>
@@ -147,53 +114,117 @@ export default function HeroAbout() {
       <style>{`
         .hero-about-section { display: block; }
         .hero-about-container {
-          padding-top: 5rem;
-          padding-bottom: 2rem;
-        }
-        .hero-about-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-        .hero-about-photo {
-          max-width: 280px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .hero-about-intro {
+          padding-top: 8rem;
+          padding-bottom: 5rem;
           display: flex;
-          flex-direction: column;
           justify-content: center;
         }
+        
+        .hero-about-content {
+          width: 100%;
+          max-width: 800px;
+          display: flex;
+          flex-direction: column;
+        }
 
-        @media (min-width: 900px) {
+        .hero-header-row {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          margin-bottom: 2.5rem;
+          flex-wrap: wrap;
+        }
+        
+        .hero-avatar {
+          width: 240px;
+          height: 240px;
+          border-radius: 12px;
+          overflow: hidden;
+          flex-shrink: 0;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          box-shadow: 0 8px 24px -8px rgba(0,0,0,0.3);
+        }
+        
+        .hero-name-socials {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+
+        .hero-name-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        
+        .hero-name {
+          font-family: var(--font-sans);
+          font-size: clamp(28px, 5vw, 40px);
+          font-weight: 700;
+          line-height: 1;
+          margin: 0;
+          color: var(--fg);
+        }
+
+        .verified-badge {
+          width: 22px;
+          height: 22px;
+          color: #1d9bf0; /* Twitter/verified blue */
+        }
+        
+        .hero-socials {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .hero-socials a {
+          color: var(--muted);
+          transition: color 0.2s ease, transform 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hero-socials a:hover {
+          color: var(--fg);
+          transform: translateY(-2px);
+        }
+
+        /* Role */
+        .hero-role {
+          font-family: var(--font-sans);
+          font-size: clamp(18px, 3vw, 24px);
+          font-weight: 500;
+          color: var(--fg);
+          margin-bottom: 1.25rem;
+          line-height: 1.3;
+        }
+        .hero-role-divider {
+          color: var(--muted);
+          font-weight: 300;
+        }
+
+        /* Description */
+        .hero-description {
+          font-family: var(--font-sans);
+          font-size: 15px;
+          line-height: 1.8;
+          color: var(--muted);
+          margin-bottom: 2.5rem;
+        }
+
+
+        @media (max-width: 600px) {
+          .hero-header-row {
+            gap: 1rem;
+          }
+          .hero-avatar {
+            width: 180px;
+            height: 180px;
+          }
           .hero-about-container {
             padding-top: 6rem;
-            padding-bottom: 3rem;
-          }
-          .hero-about-grid {
-            grid-template-columns: 320px 1fr;
-            align-items: stretch;
-            gap: 3rem;
-          }
-          .hero-about-photo {
-            width: 320px;
-            max-width: 320px;
-            margin-left: 0;
-            margin-right: 0;
-          }
-        }
-
-        @media (max-width: 899px) {
-          .hero-about-container {
-            padding-top: 5.5rem;
-            padding-bottom: 2rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-about-photo {
-            max-width: 220px;
+            padding-bottom: 4rem;
           }
         }
       `}</style>
