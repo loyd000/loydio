@@ -208,11 +208,11 @@ export default function Navbar() {
           color: var(--fg);
           padding: 6px 14px;
           border-radius: 999px;
-          font-family: var(--font-mono), monospace;
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
+          font-family: var(--font-display), 'Syne', sans-serif;
+          font-size: 13px;
+          font-weight: 400;
+          letter-spacing: 0.05em;
+          text-transform: capitalize;
           opacity: 0.55;
           transition: opacity 0.2s ease;
           white-space: nowrap;
@@ -261,18 +261,24 @@ export default function Navbar() {
           .pill-nav {
             top: auto;
             bottom: max(14px, env(safe-area-inset-bottom));
+            width: calc(100vw - 32px);
+            max-width: 420px;
           }
           .pill-nav-inner {
-            padding: 4px 5px;
-            gap: 1px;
+            padding: 6px 8px;
+            gap: 2px;
+            width: 100%;
+            justify-content: space-between;
           }
           .pill-link {
-            padding: 5px 10px;
-            font-size: 9.5px;
-            letter-spacing: 0.1em;
+            padding: 12px 12px;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            flex: 1;
+            justify-content: center;
           }
           .pill-divider {
-            height: 14px;
+            height: 18px;
             margin: 0 2px;
           }
         }
