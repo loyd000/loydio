@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type NowPlayingData = {
   isPlaying: boolean;
-  isLastPlayed?: boolean;
   title?: string;
   artist?: string;
   albumArt?: string | null;
@@ -36,23 +35,20 @@ export default function NowPlaying() {
 
   if (!data) return null;
 
-  const hasTrack = !!(data.title && data.artist);
-
   return (
     <div className="now-playing-container">
       <AnimatePresence mode="wait">
-        {hasTrack ? (
+        {data.isPlaying ? (
           <motion.a
-            key={data.isPlaying ? "playing" : "last-played"}
+            key="playing"
             href={data.songUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="now-playing-active"
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25 }}
-            title={data.isPlaying ? `Currently playing: ${data.title}` : `Last played: ${data.title}`}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
           >
             {data.albumArt && (
               <div className="np-album-art">
@@ -68,15 +64,11 @@ export default function NowPlaying() {
             <div className="np-info">
               <div className="np-title-row">
                 <span className="np-title">{data.title}</span>
-                {data.isPlaying ? (
-                  <span className="np-eq" title="Now playing">
-                    <span className="np-bar" />
-                    <span className="np-bar" />
-                    <span className="np-bar" />
-                  </span>
-                ) : (
-                  <span className="np-last-badge">Last played</span>
-                )}
+                <span className="np-eq">
+                  <span className="np-bar" />
+                  <span className="np-bar" />
+                  <span className="np-bar" />
+                </span>
               </div>
               <span className="np-artist">{data.artist}</span>
             </div>
@@ -85,10 +77,10 @@ export default function NowPlaying() {
           <motion.div
             key="idle"
             className="now-playing-idle"
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
           >
             <span className="np-icon">♫</span>
             <span className="np-text">Not playing anything right now</span>
@@ -134,13 +126,12 @@ export default function NowPlaying() {
           border: 1px solid var(--border);
           border-radius: 999px;
           text-decoration: none;
-          transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+          transition: background 0.2s ease, transform 0.2s ease;
         }
 
         .now-playing-active:hover {
           background: var(--hover-bg);
-          border-color: var(--border-strong);
-          transform: translateY(-1.5px);
+          transform: translateY(-2px);
         }
 
         .np-album-art {
@@ -169,38 +160,23 @@ export default function NowPlaying() {
           font-family: var(--font-sans);
           font-size: 13px;
           font-weight: 600;
-          line-height: 1.2;
+          line-height: 1.1;
           color: var(--fg);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 140px;
-        }
-
-        .np-artist {
-          font-family: var(--font-sans);
-          font-size: 11px;
-          line-height: 1.2;
-          color: var(--muted);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           max-width: 150px;
         }
 
-        .np-last-badge {
-          font-family: var(--font-mono);
-          font-size: 9px;
-          font-weight: 500;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
+        .np-artist {
+          font-family: var(--font-sans);
+          font-size: 11px;
+          line-height: 1.1;
           color: var(--muted);
-          background: var(--subtle-bg);
-          border: 1px solid var(--border);
-          padding: 1px 5px;
-          border-radius: 4px;
-          flex-shrink: 0;
-          line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 150px;
         }
 
         /* Equalizer Animation */
@@ -267,17 +243,12 @@ export default function NowPlaying() {
 
           .np-title {
             font-size: 11px;
-            max-width: 95px;
+            max-width: 108px;
           }
 
           .np-artist {
             font-size: 9px;
             max-width: 108px;
-          }
-
-          .np-last-badge {
-            font-size: 8px;
-            padding: 0 3px;
           }
 
           .np-text {

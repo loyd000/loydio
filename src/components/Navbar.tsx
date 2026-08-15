@@ -7,9 +7,9 @@ import VisitCounter from "./VisitCounter";
 import { useChatStream } from "@/lib/useChatStream";
 
 const links = [
-  { label: "About",    href: "#about",    route: false },
-  { label: "Projects", href: "/projects", route: true  },
-  { label: "Contact",  href: "#contact",  route: false },
+  { label: "About", href: "#about", route: false },
+  { label: "Projects", href: "/projects", route: true },
+  { label: "Contact", href: "#contact", route: false },
 ];
 
 const SUGGESTIONS = [
@@ -58,15 +58,15 @@ const LONG_PRESS_MS = 600;
 export default function Navbar() {
   const pathname = usePathname();
   const [activeSection, setActiveSection] = useState("");
-  const [scrolled,      setScrolled]      = useState(false);
-  const [chatOpen,      setChatOpen]      = useState(false);
-  const [holding,       setHolding]       = useState(false);
-  const [showHint,      setShowHint]      = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
-  const holdTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
-  const inputRef    = useRef<HTMLTextAreaElement>(null);
-  const navRef      = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   const { messages, input, setInput, streaming, sendMessage, reset } = useChatStream();
 
@@ -167,7 +167,7 @@ export default function Navbar() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatOpen]);
 
   // ── Close on click outside ────────────────────────────────────────────
@@ -180,7 +180,7 @@ export default function Navbar() {
     };
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatOpen]);
 
   // ── Long-press handlers ───────────────────────────────────────────────
@@ -273,8 +273,7 @@ export default function Navbar() {
             onTouchStart={startHold}
             onTouchEnd={cancelHold}
           >
-            <AnimatePresence mode="popLayout" initial={false}>
-
+            <AnimatePresence initial={false}>
               {/* ── NAV LINKS (compact state) ───────────────────── */}
               {!chatOpen ? (
                 <motion.div
@@ -283,7 +282,7 @@ export default function Navbar() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
+                  transition={{ duration: 0.18 }}
                 >
                   {links.map((l) => {
                     const isActive = l.route
@@ -367,9 +366,8 @@ export default function Navbar() {
                     {messages.map((msg, i) => (
                       <motion.div
                         key={i}
-                        className={`chat-bubble ${
-                          msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
-                        }`}
+                        className={`chat-bubble ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
+                          }`}
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
