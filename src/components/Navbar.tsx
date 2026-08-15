@@ -1,8 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback, KeyboardEvent } from "react";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
+import VisitCounter from "./VisitCounter";
+import { useChatStream } from "@/lib/useChatStream";
 
 const links = [
   { label: "About",    href: "#about",    route: false },
@@ -10,13 +12,31 @@ const links = [
   { label: "Contact",  href: "#contact",  route: false },
 ];
 
+const SUGGESTIONS = [
+  "What's your tech stack?",
+  "Tell me about your projects",
+  "How can I contact you?",
+  "What makes you unique?",
+];
+
+const LONG_PRESS_MS = 600;
+
 export default function Navbar() {
   const pathname = usePathname();
   const [activeSection, setActiveSection] = useState("");
   const [scrolled,      setScrolled]      = useState(false);
+  const [chatOpen,      setChatOpen]      = useState(false);
+  const [holding,       setHolding]       = useState(false);
 
+  const holdTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const messagesEnd = useRef<HTMLDivElement>(null);
+  const inputRef    = useRef<HTMLTextAreaElement>(null);
+  const navRef      = useRef<HTMLElement>(null);
+
+  const { messages, input, setInput, streaming, sendMessage, reset } = useChatStream();
+
+  // ── Scroll tracking ──────────────────────────────────────────────────
   useEffect(() => {
-    // On the /projects page, always mark projects as active — no scrolling needed.
     if (pathname === "/projects") {
       setActiveSection("projects");
       setScrolled(true);
@@ -44,17 +64,82 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isRoute: boolean) => {
-    if (isRoute) return; // let the browser follow the <a> href normally
+  // ── Auto-scroll messages ──────────────────────────────────────────────
+  useEffect(() => {
+    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // ── Focus input when chat opens ───────────────────────────────────────
+  useEffect(() => {
+    if (chatOpen) {
+      setTimeout(() => inputRef.current?.focus(), 250);
+    }
+  }, [chatOpen]);
+
+  // ── Close on Escape ───────────────────────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape" && chatOpen) closeChat();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatOpen]);
+
+  // ── Close on click outside ────────────────────────────────────────────
+  useEffect(() => {
+    if (!chatOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        closeChat();
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatOpen]);
+
+  // ── Long-press handlers ───────────────────────────────────────────────
+  const startHold = useCallback(() => {
+    if (chatOpen) return;
+    setHolding(true);
+    holdTimer.current = setTimeout(() => {
+      setHolding(false);
+      setChatOpen(true);
+    }, LONG_PRESS_MS);
+  }, [chatOpen]);
+
+  const cancelHold = useCallback(() => {
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+    setHolding(false);
+  }, []);
+
+  const closeChat = useCallback(() => {
+    setChatOpen(false);
+    reset();
+  }, [reset]);
+
+  // ── Nav click ─────────────────────────────────────────────────────────
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    isRoute: boolean
+  ) => {
+    if (isRoute) return;
     e.preventDefault();
-    // If we're not on the home page, go home first then let the hash resolve
     if (pathname !== "/") {
       window.location.href = `/${href}`;
       return;
     }
-    const target = document.querySelector(href);
-    if (!target) return;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // ── Send on Enter (Shift+Enter = newline) ─────────────────────────────
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input);
+    }
   };
 
   return (
@@ -62,7 +147,10 @@ export default function Navbar() {
       {/* LOGO - fixed top-left */}
       <a
         href="#"
-        onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+        onClick={(e) => {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
         aria-label="Loyd - back to top"
         className="logo-corner"
       >
@@ -71,37 +159,191 @@ export default function Navbar() {
         </div>
       </a>
 
-      {/* PILL NAVBAR - top on desktop, docked at the bottom on mobile */}
-      <nav className={`pill-nav backdrop-blur-[22px] backdrop-saturate-[1.9]${scrolled ? " pill-nav-scrolled" : ""}`} aria-label="Main navigation">
-        <div className="pill-nav-inner">
-          {links.map((l) => {
-            // For route links, match by pathname; for hash links, match by scroll section.
-            const isActive = l.route
-              ? pathname === l.href || pathname.startsWith(l.href + "/")
-              : activeSection === l.href.slice(1);
-            return (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={(e) => handleNavClick(e, l.href, l.route)}
-                className={`pill-link${isActive ? " active" : ""}`}
-                aria-current={isActive ? "page" : undefined}
+      {/*
+        CENTERING WRAPPER — fixed full-width flex center.
+        The pill sits in the flex center naturally, allowing Framer Motion's
+        layout spring to expand outwards & downwards flawlessly.
+      */}
+      <div className="pill-nav-wrapper">
+        <motion.nav
+          ref={navRef}
+          layout
+          transition={{
+            layout: { type: "spring", stiffness: 350, damping: 30, mass: 0.8 },
+          }}
+          className={[
+            "pill-nav",
+            "backdrop-blur-[22px] backdrop-saturate-[1.9]",
+            scrolled && !chatOpen ? "pill-nav-scrolled" : "",
+            holding ? "pill-nav-holding" : "",
+            chatOpen ? "pill-nav-chat" : "",
+          ].filter(Boolean).join(" ")}
+          aria-label={chatOpen ? "Chat with Loyd's AI" : "Main navigation"}
+          whileHover={!chatOpen && !holding ? { scale: 1.04 } : undefined}
+          whileTap={!chatOpen && !holding ? { scale: 0.98 } : undefined}
+          onMouseDown={startHold}
+          onMouseUp={cancelHold}
+          onMouseLeave={cancelHold}
+          onTouchStart={startHold}
+          onTouchEnd={cancelHold}
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+
+            {/* ── NAV LINKS (compact state) ───────────────────── */}
+            {!chatOpen ? (
+              <motion.div
+                key="nav-links"
+                className="pill-nav-inner"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.16 }}
               >
-                {isActive && (
-                  <motion.span
-                    layoutId="pill-indicator"
-                    className="pill-active-bg"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                {links.map((l) => {
+                  const isActive = l.route
+                    ? pathname === l.href || pathname.startsWith(l.href + "/")
+                    : activeSection === l.href.slice(1);
+                  return (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      onClick={(e) => handleNavClick(e, l.href, l.route)}
+                      className={`pill-link${isActive ? " active" : ""}`}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="pill-indicator"
+                          className="pill-active-bg"
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <span className="pill-link-label">{l.label}</span>
+                    </a>
+                  );
+                })}
+                <div className="pill-divider" />
+                <ThemeToggle />
+              </motion.div>
+            ) : (
+              /* ── CHAT PANEL (expanded state) ─────────────────── */
+              <motion.div
+                key="chat-panel"
+                className="chat-panel-inner"
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ duration: 0.2, delay: 0.04 }}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="chat-header">
+                  <div className="chat-header-info">
+                    <span className="chat-header-dot" aria-hidden="true" />
+                    <span className="chat-header-title">Ask me anything</span>
+                  </div>
+                  <button
+                    className="chat-close-btn"
+                    onClick={closeChat}
+                    aria-label="Close chat"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Messages */}
+                <div className="chat-messages" role="log" aria-live="polite">
+                  {messages.length === 0 && (
+                    <motion.div
+                      className="chat-empty"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <p className="chat-empty-title">Hey there 👋</p>
+                      <p className="chat-empty-sub">
+                        Ask me anything about Loyd — his work, skills, or projects.
+                      </p>
+                      <div className="chat-chips">
+                        {SUGGESTIONS.map((s) => (
+                          <button
+                            key={s}
+                            className="chat-chip"
+                            onClick={() => sendMessage(s)}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {messages.map((msg, i) => (
+                    <motion.div
+                      key={i}
+                      className={`chat-bubble ${
+                        msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
+                      }`}
+                      initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {msg.content}
+                      {msg.role === "assistant" &&
+                        streaming &&
+                        i === messages.length - 1 && (
+                          <span className="chat-cursor" aria-hidden="true" />
+                        )}
+                    </motion.div>
+                  ))}
+                  <div ref={messagesEnd} />
+                </div>
+
+                {/* Input */}
+                <div className="chat-input-row">
+                  <textarea
+                    ref={inputRef}
+                    className="chat-input"
+                    placeholder="Ask something..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    rows={1}
+                    disabled={streaming}
+                    aria-label="Chat message input"
                   />
-                )}
-                <span className="pill-link-label">{l.label}</span>
-              </a>
-            );
-          })}
-          <div className="pill-divider" />
-          <ThemeToggle />
-        </div>
-      </nav>
+                  <button
+                    className="chat-send-btn"
+                    onClick={() => sendMessage(input)}
+                    disabled={streaming || !input.trim()}
+                    aria-label="Send message"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="22" y1="2" x2="11" y2="13" />
+                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+          </AnimatePresence>
+        </motion.nav>
+      </div>
+
+      {/* VISIT COUNTER - fixed top-right */}
+      <div className="visit-counter-corner">
+        <VisitCounter />
+      </div>
     </>
   );
 }
