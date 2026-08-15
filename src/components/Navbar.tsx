@@ -61,6 +61,7 @@ export default function Navbar() {
   const [scrolled,      setScrolled]      = useState(false);
   const [chatOpen,      setChatOpen]      = useState(false);
   const [holding,       setHolding]       = useState(false);
+  const [showHint,      setShowHint]      = useState(false);
 
   const holdTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
@@ -68,6 +69,55 @@ export default function Navbar() {
   const navRef      = useRef<HTMLElement>(null);
 
   const { messages, input, setInput, streaming, sendMessage, reset } = useChatStream();
+
+  // ── Idle Detection (shows after 2s stillness; on movement, fades after 2s) ──
+  useEffect(() => {
+    if (chatOpen || holding) {
+      setShowHint(false);
+      return;
+    }
+
+    let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const onActivity = () => {
+      // 1. If hint is currently showing, schedule it to fade out in 2s
+      if (!hideTimeout) {
+        hideTimeout = setTimeout(() => {
+          setShowHint(false);
+          hideTimeout = null;
+        }, 2000);
+      }
+
+      // 2. Reset the idle timer (shows after 2s of stillness)
+      if (idleTimeout) clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => {
+        if (!chatOpen && !holding) {
+          setShowHint(true);
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+          }
+        }
+      }, 2000);
+    };
+
+    const events = ["mousemove", "scroll", "touchstart", "touchmove", "keydown", "click"];
+    events.forEach((evt) => window.addEventListener(evt, onActivity, { passive: true }));
+
+    // Start initial timer on mount (2s)
+    idleTimeout = setTimeout(() => {
+      if (!chatOpen && !holding) {
+        setShowHint(true);
+      }
+    }, 2000);
+
+    return () => {
+      if (idleTimeout) clearTimeout(idleTimeout);
+      if (hideTimeout) clearTimeout(hideTimeout);
+      events.forEach((evt) => window.removeEventListener(evt, onActivity));
+    };
+  }, [chatOpen, holding]);
 
   // ── Scroll tracking ──────────────────────────────────────────────────
   useEffect(() => {
@@ -137,6 +187,7 @@ export default function Navbar() {
   const startHold = useCallback(() => {
     if (chatOpen) return;
     setHolding(true);
+    setShowHint(false);
     holdTimer.current = setTimeout(() => {
       setHolding(false);
       setChatOpen(true);
@@ -199,185 +250,211 @@ export default function Navbar() {
         layout spring to expand outwards & downwards flawlessly.
       */}
       <div className="pill-nav-wrapper">
-        <motion.nav
-          ref={navRef}
-          layout
-          transition={{
-            layout: { type: "spring", stiffness: 320, damping: 28, mass: 0.8 },
-          }}
-          className={[
-            "pill-nav",
-            "backdrop-blur-[22px] backdrop-saturate-[1.9]",
-            scrolled && !chatOpen ? "pill-nav-scrolled" : "",
-            holding ? "pill-nav-holding" : "",
-            chatOpen ? "pill-nav-chat" : "",
-          ].filter(Boolean).join(" ")}
-          aria-label={chatOpen ? "Chat with Loyd's AI" : "Main navigation"}
-          whileHover={!chatOpen && !holding ? { scale: 1.04 } : undefined}
-          whileTap={!chatOpen && !holding ? { scale: 0.98 } : undefined}
-          onMouseDown={startHold}
-          onMouseUp={cancelHold}
-          onMouseLeave={cancelHold}
-          onTouchStart={startHold}
-          onTouchEnd={cancelHold}
-        >
-          <AnimatePresence mode="popLayout" initial={false}>
+        <div className="pill-nav-relative-anchor">
+          <motion.nav
+            ref={navRef}
+            layout
+            transition={{
+              layout: { type: "spring", stiffness: 320, damping: 28, mass: 0.8 },
+            }}
+            className={[
+              "pill-nav",
+              "backdrop-blur-[22px] backdrop-saturate-[1.9]",
+              scrolled && !chatOpen ? "pill-nav-scrolled" : "",
+              holding ? "pill-nav-holding" : "",
+              chatOpen ? "pill-nav-chat" : "",
+            ].filter(Boolean).join(" ")}
+            aria-label={chatOpen ? "Chat with Loyd's AI" : "Main navigation"}
+            whileHover={!chatOpen && !holding ? { scale: 1.04 } : undefined}
+            whileTap={!chatOpen && !holding ? { scale: 0.98 } : undefined}
+            onMouseDown={startHold}
+            onMouseUp={cancelHold}
+            onMouseLeave={cancelHold}
+            onTouchStart={startHold}
+            onTouchEnd={cancelHold}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
 
-            {/* ── NAV LINKS (compact state) ───────────────────── */}
-            {!chatOpen ? (
-              <motion.div
-                key="nav-links"
-                className="pill-nav-inner"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                {links.map((l) => {
-                  const isActive = l.route
-                    ? pathname === l.href || pathname.startsWith(l.href + "/")
-                    : activeSection === l.href.slice(1);
-                  return (
-                    <a
-                      key={l.href}
-                      href={l.href}
-                      onClick={(e) => handleNavClick(e, l.href, l.route)}
-                      className={`pill-link${isActive ? " active" : ""}`}
-                      aria-current={isActive ? "page" : undefined}
+              {/* ── NAV LINKS (compact state) ───────────────────── */}
+              {!chatOpen ? (
+                <motion.div
+                  key="nav-links"
+                  className="pill-nav-inner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {links.map((l) => {
+                    const isActive = l.route
+                      ? pathname === l.href || pathname.startsWith(l.href + "/")
+                      : activeSection === l.href.slice(1);
+                    return (
+                      <a
+                        key={l.href}
+                        href={l.href}
+                        onClick={(e) => handleNavClick(e, l.href, l.route)}
+                        className={`pill-link${isActive ? " active" : ""}`}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        {isActive && (
+                          <motion.span
+                            layoutId="pill-indicator"
+                            className="pill-active-bg"
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
+                        <span className="pill-link-label">{l.label}</span>
+                      </a>
+                    );
+                  })}
+                  <div className="pill-divider" />
+                  <ThemeToggle />
+                </motion.div>
+              ) : (
+                /* ── CHAT PANEL (expanded state) ─────────────────── */
+                <motion.div
+                  key="chat-panel"
+                  className="chat-panel-inner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="chat-header">
+                    <div className="chat-header-info">
+                      <span className="chat-header-dot" aria-hidden="true" />
+                      <span className="chat-header-title">Ask me anything</span>
+                    </div>
+                    <button
+                      className="chat-close-btn"
+                      onClick={closeChat}
+                      aria-label="Close chat"
                     >
-                      {isActive && (
-                        <motion.span
-                          layoutId="pill-indicator"
-                          className="pill-active-bg"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                      <span className="pill-link-label">{l.label}</span>
-                    </a>
-                  );
-                })}
-                <div className="pill-divider" />
-                <ThemeToggle />
-              </motion.div>
-            ) : (
-              /* ── CHAT PANEL (expanded state) ─────────────────── */
-              <motion.div
-                key="chat-panel"
-                className="chat-panel-inner"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                {/* Header */}
-                <div className="chat-header">
-                  <div className="chat-header-info">
-                    <span className="chat-header-dot" aria-hidden="true" />
-                    <span className="chat-header-title">Ask me anything</span>
+                      ×
+                    </button>
                   </div>
-                  <button
-                    className="chat-close-btn"
-                    onClick={closeChat}
-                    aria-label="Close chat"
-                  >
-                    ×
-                  </button>
-                </div>
 
-                {/* Messages */}
-                <div className="chat-messages" role="log" aria-live="polite">
-                  {messages.length === 0 && (
-                    <motion.div
-                      className="chat-empty"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 }}
-                    >
-                      <p className="chat-empty-title">Hey there 👋</p>
-                      <p className="chat-empty-sub">
-                        Ask me anything about Loyd — his work, skills, or projects.
-                      </p>
-                      <div className="chat-chips">
-                        {SUGGESTIONS.map((s) => (
-                          <button
-                            key={s}
-                            className="chat-chip"
-                            onClick={() => sendMessage(s)}
-                          >
-                            {s}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
+                  {/* Messages */}
+                  <div className="chat-messages" role="log" aria-live="polite">
+                    {messages.length === 0 && (
+                      <motion.div
+                        className="chat-empty"
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                      >
+                        <p className="chat-empty-title">Hey there 👋</p>
+                        <p className="chat-empty-sub">
+                          Ask me anything about Loyd — his work, skills, or projects.
+                        </p>
+                        <div className="chat-chips">
+                          {SUGGESTIONS.map((s) => (
+                            <button
+                              key={s}
+                              className="chat-chip"
+                              onClick={() => sendMessage(s)}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
 
-                  {messages.map((msg, i) => (
-                    <motion.div
-                      key={i}
-                      className={`chat-bubble ${
-                        msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
-                      }`}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {msg.role === "assistant" && msg.content === "" && streaming ? (
-                        <ThinkingIndicator />
-                      ) : (
-                        <>
-                          {msg.content}
-                          {msg.role === "assistant" &&
-                            streaming &&
-                            i === messages.length - 1 && (
-                              <span className="chat-cursor" aria-hidden="true" />
-                            )}
-                        </>
-                      )}
-                    </motion.div>
-                  ))}
-                  <div ref={messagesEnd} />
-                </div>
+                    {messages.map((msg, i) => (
+                      <motion.div
+                        key={i}
+                        className={`chat-bubble ${
+                          msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
+                        }`}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {msg.role === "assistant" && msg.content === "" && streaming ? (
+                          <ThinkingIndicator />
+                        ) : (
+                          <>
+                            {msg.content}
+                            {msg.role === "assistant" &&
+                              streaming &&
+                              i === messages.length - 1 && (
+                                <span className="chat-cursor" aria-hidden="true" />
+                              )}
+                          </>
+                        )}
+                      </motion.div>
+                    ))}
+                    <div ref={messagesEnd} />
+                  </div>
 
-                {/* Input */}
-                <div className="chat-input-row">
-                  <textarea
-                    ref={inputRef}
-                    className="chat-input"
-                    placeholder="Ask something..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    rows={1}
-                    disabled={streaming}
-                    aria-label="Chat message input"
-                  />
-                  <button
-                    className="chat-send-btn"
-                    onClick={() => sendMessage(input)}
-                    disabled={streaming || !input.trim()}
-                    aria-label="Send message"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                  {/* Input */}
+                  <div className="chat-input-row">
+                    <textarea
+                      ref={inputRef}
+                      className="chat-input"
+                      placeholder="Ask something..."
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      rows={1}
+                      disabled={streaming}
+                      aria-label="Chat message input"
+                    />
+                    <button
+                      className="chat-send-btn"
+                      onClick={() => sendMessage(input)}
+                      disabled={streaming || !input.trim()}
+                      aria-label="Send message"
                     >
-                      <line x1="22" y1="2" x2="11" y2="13" />
-                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                    </svg>
-                  </button>
-                </div>
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                      </svg>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+            </AnimatePresence>
+          </motion.nav>
+
+          {/* ── Idle Floating Hint (text only + monochrome star) ── */}
+          <AnimatePresence>
+            {showHint && !chatOpen && !holding && (
+              <motion.div
+                className="nav-hint-floating"
+                initial={{ opacity: 0, scale: 0.94, y: 3 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.94, y: 3 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                aria-hidden="true"
+              >
+                <svg
+                  className="nav-hint-sparkle-svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+                </svg>
+                <span className="nav-hint-text">hold to chat with me</span>
               </motion.div>
             )}
-
           </AnimatePresence>
-        </motion.nav>
+        </div>
       </div>
 
       {/* VISIT COUNTER - fixed top-right */}
