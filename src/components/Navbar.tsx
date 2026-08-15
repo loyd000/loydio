@@ -66,10 +66,12 @@ export default function Navbar() {
   const [holding,       setHolding]       = useState(false);
   const [showHint,      setShowHint]      = useState(false);
 
-  const holdTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const messagesEnd = useRef<HTMLDivElement>(null);
-  const inputRef    = useRef<HTMLTextAreaElement>(null);
-  const navRef      = useRef<HTMLElement>(null);
+  const holdTimer      = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const didHoldSucceed = useRef(false);
+  const holdStartTime  = useRef(0);
+  const messagesEnd    = useRef<HTMLDivElement>(null);
+  const inputRef       = useRef<HTMLTextAreaElement>(null);
+  const navRef         = useRef<HTMLElement>(null);
 
   const { messages, input, setInput, streaming, sendMessage, reset } = useChatStream();
 
@@ -201,9 +203,12 @@ export default function Navbar() {
   // ── Long-press handlers ───────────────────────────────────────────────
   const startHold = useCallback(() => {
     if (chatOpen) return;
+    didHoldSucceed.current = false;
+    holdStartTime.current = Date.now();
     setHolding(true);
     setShowHint(false);
     holdTimer.current = setTimeout(() => {
+      didHoldSucceed.current = true;
       setHolding(false);
       setChatOpen(true);
       sound.play("morph");
@@ -215,12 +220,20 @@ export default function Navbar() {
     setHolding(false);
   }, []);
 
-  // ── Nav click ─────────────────────────────────────────────────────────
+  // ── Nav click (Normal click navigates; long-press hold is suppressed) ──
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string,
     isRoute: boolean
   ) => {
+    // If the user held the navbar to open chat, cancel default link navigation!
+    if (didHoldSucceed.current || (holdStartTime.current > 0 && Date.now() - holdStartTime.current >= LONG_PRESS_MS)) {
+      e.preventDefault();
+      e.stopPropagation();
+      didHoldSucceed.current = false;
+      return;
+    }
+
     sound.play("click");
     if (isRoute) return;
     e.preventDefault();
