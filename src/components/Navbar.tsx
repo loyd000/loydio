@@ -19,6 +19,40 @@ const SUGGESTIONS = [
   "What makes you unique?",
 ];
 
+const THINKING_WORDS = [
+  "Flibbertigibbeting",
+  "Discombobulating",
+  "Combobulating",
+  "Noodling",
+  "Wrangling",
+  "Herding",
+];
+
+function ThinkingIndicator() {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * THINKING_WORDS.length));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % THINKING_WORDS.length);
+    }, 1100);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="chat-thinking" aria-label="Thinking...">
+      <svg
+        className="chat-thinking-star"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+      </svg>
+      <span className="chat-thinking-text">{THINKING_WORDS[index]}...</span>
+    </div>
+  );
+}
+
 const LONG_PRESS_MS = 600;
 
 export default function Navbar() {
@@ -288,12 +322,18 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {msg.content}
-                      {msg.role === "assistant" &&
-                        streaming &&
-                        i === messages.length - 1 && (
-                          <span className="chat-cursor" aria-hidden="true" />
-                        )}
+                      {msg.role === "assistant" && msg.content === "" && streaming ? (
+                        <ThinkingIndicator />
+                      ) : (
+                        <>
+                          {msg.content}
+                          {msg.role === "assistant" &&
+                            streaming &&
+                            i === messages.length - 1 && (
+                              <span className="chat-cursor" aria-hidden="true" />
+                            )}
+                        </>
+                      )}
                     </motion.div>
                   ))}
                   <div ref={messagesEnd} />
