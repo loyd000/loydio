@@ -169,7 +169,7 @@ export default function Navbar() {
           ref={navRef}
           layout
           transition={{
-            layout: { type: "spring", stiffness: 350, damping: 30, mass: 0.8 },
+            layout: { type: "spring", stiffness: 320, damping: 28, mass: 0.8 },
           }}
           className={[
             "pill-nav",
@@ -194,10 +194,10 @@ export default function Navbar() {
               <motion.div
                 key="nav-links"
                 className="pill-nav-inner"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.16 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
               >
                 {links.map((l) => {
                   const isActive = l.route
@@ -230,10 +230,10 @@ export default function Navbar() {
               <motion.div
                 key="chat-panel"
                 className="chat-panel-inner"
-                initial={{ opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.2, delay: 0.04 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
                 onMouseDown={(e) => e.stopPropagation()}
               >
                 {/* Header */}
@@ -256,7 +256,7 @@ export default function Navbar() {
                   {messages.length === 0 && (
                     <motion.div
                       className="chat-empty"
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
                     >
@@ -284,8 +284,8 @@ export default function Navbar() {
                       className={`chat-bubble ${
                         msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
                       }`}
-                      initial={{ opacity: 0, y: 6, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
                     >
                       {msg.content}
