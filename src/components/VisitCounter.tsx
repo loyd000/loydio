@@ -27,16 +27,31 @@ export default function VisitCounter() {
   useEffect(() => {
     const run = async () => {
       try {
+        // Check if already counted in this session or within the 24-hour window
+        const sessionVisited = typeof window !== "undefined" && sessionStorage.getItem("loyd_visit_session");
+        const lastVisit = typeof window !== "undefined" ? localStorage.getItem("loyd_last_visit") : null;
+        const now = Date.now();
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+        const isRecent = lastVisit ? now - parseInt(lastVisit, 10) < ONE_DAY_MS : false;
+
+        const shouldIncrement = !sessionVisited && !isRecent;
+        const method = shouldIncrement ? "POST" : "GET";
+
         const res = await fetch("/api/visits", {
-          method: "POST",
+          method,
           cache: "no-store",
         });
+
         if (res.ok) {
           const json = await res.json();
           setVisits(json.visits ?? 0);
+          if (shouldIncrement && typeof window !== "undefined") {
+            sessionStorage.setItem("loyd_visit_session", "true");
+            localStorage.setItem("loyd_last_visit", now.toString());
+          }
         }
       } catch (err) {
-        console.error("[VisitCounter] failed to increment", err);
+        console.error("[VisitCounter] failed to fetch count", err);
       } finally {
         setLoaded(true);
       }
