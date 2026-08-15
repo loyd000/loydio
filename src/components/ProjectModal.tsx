@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
+import { sound } from "@/lib/sound";
 
 const MONO = "var(--font-mono), monospace";
 const DISPLAY = "var(--font-display), 'Syne', sans-serif";
@@ -18,6 +19,16 @@ export default function ProjectModal({
   const [idx, setIdx] = useState(0);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const dragStartX = useRef<number | null>(null);
+
+  // Play pop on modal open
+  useEffect(() => {
+    sound.play("pop");
+  }, []);
+
+  const handleClose = useCallback(() => {
+    sound.play("close");
+    onClose();
+  }, [onClose]);
 
   // Collect all images: screenshots first, then cover as fallback
   const images = project.images?.length
@@ -36,24 +47,26 @@ export default function ProjectModal({
 
   const prevImg = useCallback(() => {
     if (images.length < 2) return;
+    sound.play("click");
     setIdx((i) => (i - 1 + images.length) % images.length);
   }, [images.length]);
 
   const nextImg = useCallback(() => {
     if (images.length < 2) return;
+    sound.play("click");
     setIdx((i) => (i + 1) % images.length);
   }, [images.length]);
 
   // Keyboard nav
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
       if (e.key === "ArrowLeft") prevImg();
       if (e.key === "ArrowRight") nextImg();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onClose, prevImg, nextImg]);
+  }, [handleClose, prevImg, nextImg]);
 
   // Swipe nav on image
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -82,7 +95,7 @@ export default function ProjectModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
-        onClick={onClose}
+        onClick={handleClose}
         aria-label="Close modal"
       >
         {/* ── Modal shell ── */}
@@ -101,7 +114,7 @@ export default function ProjectModal({
           {/* ── Close button ── */}
           <button
             ref={closeBtnRef}
-            onClick={onClose}
+            onClick={handleClose}
             className="pm-close"
             aria-label="Close"
           >

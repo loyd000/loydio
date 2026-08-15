@@ -1,7 +1,7 @@
 "use client";
-
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { sound } from "@/lib/sound";
 
 export interface ProjectItem {
   id?: string | number;
@@ -162,6 +162,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
   // Navigate to specific index
   const goToIndex = useCallback(
     (i: number) => {
+      sound.play("click");
       const nearestRaw = Math.round(offsetRef.current / ANGLE_STEP);
       const nearestIdx = ((nearestRaw % N) + N) % N;
       let deltaIdx = i - nearestIdx;
@@ -363,6 +364,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
             <div
               key={p.title + i}
               onClick={() => goToIndex(i)}
+              onMouseEnter={() => sound.play("hover")}
               className={`arc-card liquid-glass-card ${i === activeIndex ? "active" : ""}`}
               style={{
                 position: "absolute",
@@ -510,6 +512,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
       >
         <button
           onClick={() => goToIndex(((activeIndex - 1) % N + N) % N)}
+          onMouseEnter={() => sound.play("hover")}
           aria-label="Previous project"
           className="liquid-glass-btn"
           style={{
@@ -532,6 +535,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
             <div
               key={i}
               onClick={() => goToIndex(i)}
+              onMouseEnter={() => sound.play("hover")}
               style={{
                 width: 6,
                 height: 6,
@@ -548,6 +552,7 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
 
         <button
           onClick={() => goToIndex((activeIndex + 1) % N)}
+          onMouseEnter={() => sound.play("hover")}
           aria-label="Next project"
           className="liquid-glass-btn"
           style={{
@@ -642,6 +647,8 @@ export default function ArcCarousel({ projects }: ArcCarouselProps) {
               href={detailItem.link}
               target="_blank"
               rel="noopener noreferrer"
+              onMouseEnter={() => sound.play("hover")}
+              onClick={() => sound.play("click")}
               className="btn btn-outline"
               style={{ padding: "8px 18px", fontSize: 11 }}
             >

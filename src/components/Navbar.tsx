@@ -3,13 +3,15 @@ import { useEffect, useRef, useState, useCallback, KeyboardEvent } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
+import SoundToggle from "./SoundToggle";
 import VisitCounter from "./VisitCounter";
 import { useChatStream } from "@/lib/useChatStream";
+import { sound } from "@/lib/sound";
 
 const links = [
-  { label: "About", href: "#about", route: false },
-  { label: "Projects", href: "/projects", route: true },
-  { label: "Contact", href: "#contact", route: false },
+  { label: "About",    href: "#about",    route: false },
+  { label: "Projects", href: "/projects", route: true  },
+  { label: "Contact",  href: "#contact",  route: false },
 ];
 
 const SUGGESTIONS = [
@@ -58,17 +60,23 @@ const LONG_PRESS_MS = 600;
 export default function Navbar() {
   const pathname = usePathname();
   const [activeSection, setActiveSection] = useState("");
-  const [scrolled, setScrolled] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [holding, setHolding] = useState(false);
-  const [showHint, setShowHint] = useState(false);
+  const [scrolled,      setScrolled]      = useState(false);
+  const [chatOpen,      setChatOpen]      = useState(false);
+  const [isClosing,     setIsClosing]     = useState(false);
+  const [holding,       setHolding]       = useState(false);
+  const [showHint,      setShowHint]      = useState(false);
 
-  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const inputRef    = useRef<HTMLTextAreaElement>(null);
+  const navRef      = useRef<HTMLElement>(null);
 
   const { messages, input, setInput, streaming, sendMessage, reset } = useChatStream();
+
+  // ── Global Interactive Sound Listeners ────────────────────────────────
+  useEffect(() => {
+    sound.initGlobalListeners();
+  }, []);
 
   // ── Idle Detection (shows after 2s stillness; on movement, fades after 2s) ──
   useEffect(() => {
@@ -81,7 +89,6 @@ export default function Navbar() {
     let idleTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const onActivity = () => {
-      // 1. If hint is currently showing, schedule it to fade out in 2s
       if (!hideTimeout) {
         hideTimeout = setTimeout(() => {
           setShowHint(false);
@@ -89,7 +96,6 @@ export default function Navbar() {
         }, 2000);
       }
 
-      // 2. Reset the idle timer (shows after 2s of stillness)
       if (idleTimeout) clearTimeout(idleTimeout);
       idleTimeout = setTimeout(() => {
         if (!chatOpen && !holding) {
@@ -105,7 +111,6 @@ export default function Navbar() {
     const events = ["mousemove", "scroll", "touchstart", "touchmove", "keydown", "click"];
     events.forEach((evt) => window.addEventListener(evt, onActivity, { passive: true }));
 
-    // Start initial timer on mount (2s)
     idleTimeout = setTimeout(() => {
       if (!chatOpen && !holding) {
         setShowHint(true);
@@ -155,10 +160,22 @@ export default function Navbar() {
 
   // ── Focus input when chat opens ───────────────────────────────────────
   useEffect(() => {
-    if (chatOpen) {
+    if (chatOpen && !isClosing) {
       setTimeout(() => inputRef.current?.focus(), 250);
     }
-  }, [chatOpen]);
+  }, [chatOpen, isClosing]);
+
+  // ── Sequential close: fade text first, then shrink navbar ─────────────
+  const closeChat = useCallback(() => {
+    if (isClosing) return;
+    sound.play("close");
+    setIsClosing(true);
+    setTimeout(() => {
+      setChatOpen(false);
+      setIsClosing(false);
+      reset();
+    }, 140);
+  }, [isClosing, reset]);
 
   // ── Close on Escape ───────────────────────────────────────────────────
   useEffect(() => {
@@ -167,8 +184,7 @@ export default function Navbar() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatOpen]);
+  }, [chatOpen, closeChat]);
 
   // ── Close on click outside ────────────────────────────────────────────
   useEffect(() => {
@@ -180,8 +196,7 @@ export default function Navbar() {
     };
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatOpen]);
+  }, [chatOpen, closeChat]);
 
   // ── Long-press handlers ───────────────────────────────────────────────
   const startHold = useCallback(() => {
@@ -191,6 +206,7 @@ export default function Navbar() {
     holdTimer.current = setTimeout(() => {
       setHolding(false);
       setChatOpen(true);
+      sound.play("morph");
     }, LONG_PRESS_MS);
   }, [chatOpen]);
 
@@ -199,17 +215,13 @@ export default function Navbar() {
     setHolding(false);
   }, []);
 
-  const closeChat = useCallback(() => {
-    setChatOpen(false);
-    reset();
-  }, [reset]);
-
   // ── Nav click ─────────────────────────────────────────────────────────
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string,
     isRoute: boolean
   ) => {
+    sound.play("click");
     if (isRoute) return;
     e.preventDefault();
     if (pathname !== "/") {
@@ -219,11 +231,18 @@ export default function Navbar() {
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // ── Send message with sound ───────────────────────────────────────────
+  const handleSendMessage = (text: string) => {
+    if (!text.trim() || streaming) return;
+    sound.play("messageSend");
+    sendMessage(text);
+  };
+
   // ── Send on Enter (Shift+Enter = newline) ─────────────────────────────
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage(input);
+      handleSendMessage(input);
     }
   };
 
@@ -232,8 +251,10 @@ export default function Navbar() {
       {/* LOGO - fixed top-left */}
       <a
         href="#"
+        onMouseEnter={() => sound.play("hover")}
         onClick={(e) => {
           e.preventDefault();
+          sound.play("click");
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         aria-label="Loyd - back to top"
@@ -246,8 +267,7 @@ export default function Navbar() {
 
       {/*
         CENTERING WRAPPER — fixed full-width flex center.
-        The pill sits in the flex center naturally, allowing Framer Motion's
-        layout spring to expand outwards & downwards flawlessly.
+        The pill sits in the flex center naturally, with layout morph expansion.
       */}
       <div className="pill-nav-wrapper">
         <div className="pill-nav-relative-anchor">
@@ -255,7 +275,7 @@ export default function Navbar() {
             ref={navRef}
             layout
             transition={{
-              layout: { type: "spring", stiffness: 320, damping: 28, mass: 0.8 },
+              layout: { type: "spring", stiffness: 280, damping: 24, mass: 0.85 },
             }}
             className={[
               "pill-nav",
@@ -265,7 +285,7 @@ export default function Navbar() {
               chatOpen ? "pill-nav-chat" : "",
             ].filter(Boolean).join(" ")}
             aria-label={chatOpen ? "Chat with Loyd's AI" : "Main navigation"}
-            whileHover={!chatOpen && !holding ? { scale: 1.04 } : undefined}
+            whileHover={!chatOpen && !holding ? { scale: 1.03 } : undefined}
             whileTap={!chatOpen && !holding ? { scale: 0.98 } : undefined}
             onMouseDown={startHold}
             onMouseUp={cancelHold}
@@ -273,7 +293,7 @@ export default function Navbar() {
             onTouchStart={startHold}
             onTouchEnd={cancelHold}
           >
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
               {/* ── NAV LINKS (compact state) ───────────────────── */}
               {!chatOpen ? (
                 <motion.div
@@ -282,7 +302,7 @@ export default function Navbar() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.18 }}
+                  transition={{ duration: 0.16, delay: 0.08 }}
                 >
                   {links.map((l) => {
                     const isActive = l.route
@@ -292,6 +312,7 @@ export default function Navbar() {
                       <a
                         key={l.href}
                         href={l.href}
+                        onMouseEnter={() => sound.play("hover")}
                         onClick={(e) => handleNavClick(e, l.href, l.route)}
                         className={`pill-link${isActive ? " active" : ""}`}
                         aria-current={isActive ? "page" : undefined}
@@ -308,6 +329,7 @@ export default function Navbar() {
                     );
                   })}
                   <div className="pill-divider" />
+                  <SoundToggle />
                   <ThemeToggle />
                 </motion.div>
               ) : (
@@ -316,9 +338,12 @@ export default function Navbar() {
                   key="chat-panel"
                   className="chat-panel-inner"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  animate={{ opacity: isClosing ? 0 : 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
+                  transition={{
+                    duration: isClosing ? 0.12 : 0.2,
+                    delay: isClosing ? 0 : 0.08,
+                  }}
                   onMouseDown={(e) => e.stopPropagation()}
                 >
                   {/* Header */}
@@ -329,6 +354,7 @@ export default function Navbar() {
                     </div>
                     <button
                       className="chat-close-btn"
+                      onMouseEnter={() => sound.play("hover")}
                       onClick={closeChat}
                       aria-label="Close chat"
                     >
@@ -354,7 +380,8 @@ export default function Navbar() {
                             <button
                               key={s}
                               className="chat-chip"
-                              onClick={() => sendMessage(s)}
+                              onMouseEnter={() => sound.play("hover")}
+                              onClick={() => handleSendMessage(s)}
                             >
                               {s}
                             </button>
@@ -366,8 +393,9 @@ export default function Navbar() {
                     {messages.map((msg, i) => (
                       <motion.div
                         key={i}
-                        className={`chat-bubble ${msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
-                          }`}
+                        className={`chat-bubble ${
+                          msg.role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
+                        }`}
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
@@ -404,7 +432,8 @@ export default function Navbar() {
                     />
                     <button
                       className="chat-send-btn"
-                      onClick={() => sendMessage(input)}
+                      onMouseEnter={() => sound.play("hover")}
+                      onClick={() => handleSendMessage(input)}
                       disabled={streaming || !input.trim()}
                       aria-label="Send message"
                     >
@@ -425,33 +454,32 @@ export default function Navbar() {
                   </div>
                 </motion.div>
               )}
-
             </AnimatePresence>
           </motion.nav>
 
           {/* ── Idle Floating Hint (text only + monochrome star) ── */}
-          <AnimatePresence>
-            {showHint && !chatOpen && !holding && (
-              <motion.div
-                className="nav-hint-floating"
-                initial={{ opacity: 0, scale: 0.94, y: 3 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.94, y: 3 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                aria-hidden="true"
-              >
-                <svg
-                  className="nav-hint-sparkle-svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-                </svg>
-                <span className="nav-hint-text">hold to chat with me</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            className="nav-hint-floating"
+            initial={false}
+            animate={{
+              opacity: showHint && !chatOpen && !holding ? 1 : 0,
+              scale: showHint && !chatOpen && !holding ? 1 : 0.94,
+              y: showHint && !chatOpen && !holding ? 0 : 3,
+              pointerEvents: "none",
+            }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            aria-hidden="true"
+          >
+            <svg
+              className="nav-hint-sparkle-svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+            </svg>
+            <span className="nav-hint-text">hold to chat with me</span>
+          </motion.div>
         </div>
       </div>
 

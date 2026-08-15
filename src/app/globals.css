@@ -2257,20 +2257,22 @@ p {
 [data-theme="dark"] .pill-nav-holding {
   animation: navHoldPulse 0.6s ease-out forwards;
 }
-.pill-nav-holding {
-  animation: navHoldPulse 0.6s ease-out forwards;
-  cursor: wait;
-}
-
-/* ── Expanded chat state — pill becomes a panel ── */
+/* ── Expanded chat state — pill blooms into panel ── */
 .pill-nav-chat {
-  border-radius: 22px !important;
   width: 420px !important;
   max-width: calc(100vw - 32px) !important;
   height: 480px !important;
-  align-items: stretch !important;
+  border-radius: 22px !important;
   cursor: default !important;
   overflow: hidden !important;
+}
+
+@media (max-width: 640px) {
+  .pill-nav-chat {
+    width: calc(100vw - 32px) !important;
+    height: min(440px, 75vh) !important;
+    border-radius: 20px !important;
+  }
 }
 
 /* ── Chat panel inner layout ── */
@@ -2524,20 +2526,6 @@ p {
 .chat-send-btn:hover:not(:disabled) { transform: scale(1.08); }
 .chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Mobile adjustments for chat panel */
-@media (max-width: 640px) {
-  .pill-nav-chat {
-    width: calc(100vw - 32px) !important;
-    height: min(440px, 75vh) !important;
-    bottom: max(14px, env(safe-area-inset-bottom)) !important;
-    top: auto !important;
-    border-radius: 20px !important;
-  }
-  .chat-panel-inner {
-    width: calc(100vw - 32px);
-    height: min(440px, 75vh);
-  }
-}
 
 
 
@@ -2612,4 +2600,23 @@ body { padding-top: 0 !important; }
 @keyframes pgFadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Creative Diagonal Theme Wipe Transition (Hardware Accelerated) ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  transform: translateZ(0);
+  will-change: clip-path, transform;
+  backface-visibility: hidden;
+  contain: layout paint size;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 999999;
 }

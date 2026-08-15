@@ -6,6 +6,7 @@ import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
+import { sound } from "@/lib/sound";
 
 const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 
@@ -21,6 +22,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
   const currentIndex = Math.min(activeIndex, projects.length - 1);
 
   const goToIndex = (index: number) => {
+    sound.play("click");
     setActiveIndex(((index % projects.length) + projects.length) % projects.length);
   };
 
@@ -204,6 +206,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
           <div className="design-carousel-controls">
             <button
               onClick={() => goToIndex(currentIndex - 1)}
+              onMouseEnter={() => sound.play("hover")}
               aria-label="Previous graphic design project"
               className="liquid-glass-btn"
             >
@@ -215,6 +218,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                 <button
                   key={p.id ?? p.title}
                   onClick={() => goToIndex(i)}
+                  onMouseEnter={() => sound.play("hover")}
                   aria-label={`Show ${p.title}`}
                   aria-current={i === currentIndex}
                   className="design-carousel-dot"
@@ -229,6 +233,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
 
             <button
               onClick={() => goToIndex(currentIndex + 1)}
+              onMouseEnter={() => sound.play("hover")}
               aria-label="Next graphic design project"
               className="liquid-glass-btn"
             >
@@ -324,6 +329,8 @@ export default function Projects() {
           <Link
             href="/projects"
             className="proj-view-all-link"
+            onMouseEnter={() => sound.play("hover")}
+            onClick={() => sound.play("click")}
             style={{
               fontFamily: DISPLAY_FONT,
               fontSize: 11,
