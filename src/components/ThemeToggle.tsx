@@ -11,7 +11,7 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  const toggle = async () => {
+  const toggle = () => {
     const next = !dark;
     setDark(next);
     localStorage.setItem("theme", next ? "dark" : "light");
@@ -29,22 +29,7 @@ export default function ThemeToggle() {
       return;
     }
 
-    const transition = document.startViewTransition(apply);
-    await transition.ready;
-
-    document.documentElement.animate(
-      {
-        clipPath: [
-          "polygon(260% -20%, 260% -20%, 120% 160%, 120% 160%)",
-          "polygon(-80% -20%, 180% -20%, 180% 120%, -80% 120%)",
-        ],
-      },
-      {
-        duration: 2400,
-        easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-        pseudoElement: "::view-transition-new(root)",
-      }
-    );
+    document.startViewTransition(apply);
   };
 
   return (
