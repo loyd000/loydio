@@ -274,6 +274,12 @@ export async function saveProjectOrder(updates: { id: string; sort_order: number
 }
 
 
+function isImageFile(file: File) {
+  if (file.type && file.type.startsWith("image/")) return true;
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  return ["jpg", "jpeg", "png", "webp", "gif", "heic", "heif", "svg", "avif"].includes(ext || "");
+}
+
 export async function uploadImage(formData: FormData) {
   await requireAdmin();
 
@@ -281,27 +287,33 @@ export async function uploadImage(formData: FormData) {
   if (!(file instanceof File) || file.size === 0) {
     throw new Error("Choose an image to upload.");
   }
-  if (!file.type.startsWith("image/")) {
+  if (!isImageFile(file)) {
     throw new Error("Only image files are allowed.");
   }
-  if (file.size > 10 * 1024 * 1024) {
-    throw new Error("Images must be 10 MB or smaller.");
+  if (file.size > 25 * 1024 * 1024) {
+    throw new Error("Images must be 25 MB or smaller.");
   }
 
   let buffer = Buffer.from(await file.arrayBuffer());
-  let contentType = file.type;
+  let contentType = file.type || "image/jpeg";
   let ext = imageExtension(file);
 
   // Convert HEIC/HEIF (iPhone photos) to JPEG for universal browser support
   if (isHeic(file)) {
-    const converted = await convert({
-      buffer: new Uint8Array(buffer),
-      format: "JPEG",
-      quality: 0.9,
-    });
-    buffer = Buffer.from(converted);
-    contentType = "image/jpeg";
-    ext = "jpg";
+    try {
+      const converted = await convert({
+        buffer: new Uint8Array(buffer),
+        format: "JPEG",
+        quality: 0.9,
+      });
+      buffer = Buffer.from(converted);
+      contentType = "image/jpeg";
+      ext = "jpg";
+    } catch (err) {
+      console.warn("[uploadImage] HEIC convert failed, uploading as HEIC:", err);
+      contentType = "image/heic";
+      ext = "heic";
+    }
   }
 
   const path = `${Date.now()}-${randomBytes(8).toString("hex")}.${ext}`;

@@ -86,6 +86,67 @@ function uploadFormData(file: File) {
   return formData;
 }
 
+async function prepareUploadFile(file: File): Promise<File> {
+  // If it's a GIF or SVG, do not compress
+  if (file.type === "image/gif" || file.type === "image/svg+xml" || file.size < 1.5 * 1024 * 1024) {
+    return file;
+  }
+
+  // Attempt client-side canvas normalization (converts HEIC and downscales 48MP iPhone photos)
+  try {
+    const bitmap = await createImageBitmap(file).catch(async () => {
+      return new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new window.Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Cannot decode image"));
+        };
+        img.src = url;
+      });
+    });
+
+    const maxDimension = 2400;
+    let width = bitmap.width;
+    let height = bitmap.height;
+
+    if (width > maxDimension || height > maxDimension) {
+      if (width > height) {
+        height = Math.round((height * maxDimension) / width);
+        width = maxDimension;
+      } else {
+        width = Math.round((width * maxDimension) / height);
+        height = maxDimension;
+      }
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.9)
+    );
+
+    if (blob && blob.size > 0 && blob.size < file.size) {
+      const cleanName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+      return new File([blob], cleanName, { type: "image/jpeg" });
+    }
+  } catch (err) {
+    console.warn("[prepareUploadFile] Canvas normalization skipped:", err);
+  }
+
+  return file;
+}
+
 export default function AdminClient({ initialData, initialError = "" }: { initialData: AdminData; initialError?: string }) {
   const [projects, setProjects] = useState<Project[]>(initialData.projects);
   const [credentials, setCredentials] = useState<Credential[]>(initialData.credentials ?? []);
@@ -140,16 +201,24 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
   const handleCoverUpload = async (file: File) => {
     setUploading("cover");
     setError("");
-    try { set("image_url", await uploadImage(uploadFormData(file))); }
-    catch (e) { setError(errorMessage(e)); }
+    try {
+      const prepared = await prepareUploadFile(file);
+      set("image_url", await uploadImage(uploadFormData(prepared)));
+    } catch (e) {
+      setError(errorMessage(e));
+    }
     setUploading(null);
   };
 
   const handleCredBadgeUpload = async (file: File) => {
     setUploading("credBadge");
     setError("");
-    try { setCred("image_url", await uploadImage(uploadFormData(file))); }
-    catch (e) { setError(errorMessage(e)); }
+    try {
+      const prepared = await prepareUploadFile(file);
+      setCred("image_url", await uploadImage(uploadFormData(prepared)));
+    } catch (e) {
+      setError(errorMessage(e));
+    }
     setUploading(null);
   };
 
@@ -157,10 +226,12 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     setUploading("photo");
     setError("");
     try { 
-      await uploadGalleryPhoto(uploadFormData(file));
+      const prepared = await prepareUploadFile(file);
+      await uploadGalleryPhoto(uploadFormData(prepared));
       await fetchData();
+    } catch (e) {
+      setError(errorMessage(e));
     }
-    catch (e) { setError(errorMessage(e)); }
     setUploading(null);
   };
 
@@ -168,9 +239,12 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     setUploading("screenshot");
     setError("");
     try {
-      const url = await uploadImage(uploadFormData(file));
+      const prepared = await prepareUploadFile(file);
+      const url = await uploadImage(uploadFormData(prepared));
       setForm((f) => f ? { ...f, images: [...f.images, url] } : f);
-    } catch (e) { setError(errorMessage(e)); }
+    } catch (e) {
+      setError(errorMessage(e));
+    }
     setUploading(null);
   };
 
