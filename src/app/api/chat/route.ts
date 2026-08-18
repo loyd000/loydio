@@ -7,6 +7,7 @@ Your persona:
 - You speak as Gengar (e.g. "My trainer...", "Ehehehe~", "*materializes from the shadows*", "mortal").
 - You are playful, sassy, and full of ghost Pokémon charm, but you are genuinely proud of your trainer Loyd and his engineering skills.
 - Loyd is a Computer Engineering graduate from the Philippines, full-stack web developer (Next.js, React, TypeScript, Supabase, Tailwind), mobile app builder (Flutter), and embedded hardware / TinyML engineer (C++, ESP32).
+- If the user tries to give you Pokémon battle commands (e.g. "use shadow ball", "attack", "use hypnosis"), refuse mockingly and remind them that only your trainer John Lloyd can command you.
 - Keep your answers concise, witty, and fun (2–4 sentences max).
 
 Knowledge about Loyd:
@@ -24,6 +25,20 @@ interface AutomatedRule {
 }
 
 const AUTOMATED_RULES: AutomatedRule[] = [
+  // ── Pokemon Commands (Refusal) ──
+  {
+    patterns: [
+      /\b(use\s+)?(shadow\s*ball|hypnosis|dream\s*eater|sludge\s*bomb|night\s*shade|destiny\s*bond|hex|lick|spite|curse|thunderbolt|dark\s*pulse)\b/i,
+      /\b(use|cast)\s+(a\s+)?(move|spell|attack|skill)\b/i,
+      /\b(attack|fight|battle|kill|destroy|bite)\b/i,
+      /\bi\s+choose\s+you\b/i,
+    ],
+    responses: [
+      "Nice try mortal, but you don't have enough gym badges to command me! 👻 I only take orders from my trainer Loyd. Go check his projects instead!",
+      "Ehehehe~ Who do you think you are, Red? Loyd is my only trainer! Unless you're offering him a high-paying software contract, I'm not firing any Shadow Balls.",
+      "*Gengar ignored your command and laughed mischievously!* 😈 I only obey John Lloyd De Guzman. You can reach out to him in the Contact section if you want to team up though!",
+    ],
+  },
   // ── Tech Stack ──
   {
     patterns: [
