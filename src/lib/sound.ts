@@ -24,6 +24,7 @@ class SoundEngine {
   private lastHoverTime: number = 0;
   private lastHoverTarget: EventTarget | null = null;
   private initialized: boolean = false;
+  private currentAudio: HTMLAudioElement | null = null;
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -140,7 +141,7 @@ class SoundEngine {
         this.ctx = new AudioCtx();
       }
     }
-    if (this.ctx && this.ctx.state === "suspended") {
+    if (this.ctx && this.ctx.state === "suspended" && !this.isMuted) {
       this.ctx.resume().catch(() => {});
     }
     return this.ctx;
@@ -155,7 +156,12 @@ class SoundEngine {
     if (typeof window !== "undefined") {
       localStorage.setItem("loyd_sound_enabled", (!muted).toString());
     }
-    if (!muted) {
+    if (muted) {
+      this.stopAllAudio();
+      if (this.ctx && this.ctx.state === "running") {
+        this.ctx.suspend().catch(() => {});
+      }
+    } else {
       this.unlock();
     }
     this.listeners.forEach((fn) => fn(this.isMuted));
@@ -174,6 +180,34 @@ class SoundEngine {
   public subscribe(fn: (muted: boolean) => void): () => void {
     this.listeners.add(fn);
     return () => this.listeners.delete(fn);
+  }
+
+  public playGengarCry(): void {
+    if (this.isMuted) return;
+    try {
+      if (typeof Audio !== "undefined") {
+        const audio = new Audio("/gengar.mp3");
+        audio.volume = 0.75;
+        this.currentAudio = audio;
+        audio.play().catch(() => {
+          this.play("morph");
+        });
+      } else {
+        this.play("morph");
+      }
+    } catch {
+      this.play("morph");
+    }
+  }
+
+  public stopAllAudio(): void {
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch {}
+      this.currentAudio = null;
+    }
   }
 
   /**

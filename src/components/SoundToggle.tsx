@@ -1,21 +1,25 @@
 "use client";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { sound } from "@/lib/sound";
 
-const subscribeSound = (callback: () => void) => sound.subscribe(callback);
-const getSoundSnapshot = () => sound.getIsMuted();
-const getSoundServerSnapshot = () => false;
-
-const subscribeMounted = () => () => {};
-const getMountedSnapshot = () => true;
-const getMountedServerSnapshot = () => false;
-
 export default function SoundToggle() {
-  const mounted = useSyncExternalStore(subscribeMounted, getMountedSnapshot, getMountedServerSnapshot);
-  const isMuted = useSyncExternalStore(subscribeSound, getSoundSnapshot, getSoundServerSnapshot);
+  const [mounted, setMounted] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
-  const toggle = () => {
-    sound.toggleMute();
+  useEffect(() => {
+    setMounted(true);
+    setIsMuted(sound.getIsMuted());
+    const unsubscribe = sound.subscribe((muted) => {
+      setIsMuted(muted);
+    });
+    return unsubscribe;
+  }, []);
+
+  const toggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const nextMuted = sound.toggleMute();
+    setIsMuted(nextMuted);
   };
 
   return (
@@ -34,11 +38,11 @@ export default function SoundToggle() {
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
-        opacity: isMuted ? 0.45 : 0.75,
+        opacity: isMuted ? 0.4 : 0.85,
         transition: "opacity 0.18s ease, transform 0.15s ease",
       }}
       onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-      onMouseLeave={(e) => (e.currentTarget.style.opacity = isMuted ? "0.45" : "0.75")}
+      onMouseLeave={(e) => (e.currentTarget.style.opacity = isMuted ? "0.4" : "0.85")}
     >
       {!mounted ? (
         <div style={{ width: 15, height: 15 }} />

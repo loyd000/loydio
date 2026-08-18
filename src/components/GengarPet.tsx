@@ -75,18 +75,9 @@ export default function GengarPet() {
     }
   }, [chatOpen]);
 
-  // Play Gengar cry sound (or fallback to synth pop)
+  // Play Gengar cry sound (or fallback to synth pop via SoundEngine)
   const playGengarSound = useCallback(() => {
-    if (sound.getIsMuted()) return;
-    try {
-      const audio = new Audio("/gengar.mp3");
-      audio.volume = 0.75;
-      audio.play().catch(() => {
-        sound.play("morph");
-      });
-    } catch {
-      sound.play("morph");
-    }
+    sound.playGengarCry();
   }, []);
 
   // Shoot Shadow Ball directly at user's cursor (3.2s full sequence)
