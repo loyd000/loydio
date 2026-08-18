@@ -133,9 +133,17 @@ const AUTOMATED_RULES: AutomatedRule[] = [
   },
   // ── Greetings ──
   {
-    patterns: [/^(hi|hello|hey|sup|yo|hola|kamusta|musta)[\s!.]*$/i],
+    patterns: [
+      /\b(hi|hello|hey|heyy|heyyy|sup|yo|hola|kamusta|musta|greetings|howdy|wassup|what'?s\s*up)\b/i,
+      /\bgood\s*(morning|afternoon|evening|day)\b/i,
+      /\bhi\s+(there|gengar|loyd)\b/i,
+      /\bhey\s+(there|gengar|loyd|bro)\b/i,
+      /^(hi|hello|hey|yo|sup|hola)[\s!.,?]*$/i,
+    ],
     responses: [
-      "*materializes from the shadows* Boo! I'm Gengar. What do you want to know about my trainer Loyd, mortal?",
+      "Boo! 👻 Ehehehe, you summoned me! I'm Gengar, Loyd's ghost companion. What do you want to know about my trainer?",
+      "*materializes from the shadows* Boo! What's up mortal? Looking for Loyd's skills, projects, or just haunting around?",
+      "Ehehehe~ Hello mortal! Did you come to check out Loyd's portfolio or are you just here to admire my ghostly aura?",
     ],
   },
 ];

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence, useSpring } from "framer-motion";
 import { sound } from "@/lib/sound";
@@ -323,246 +324,257 @@ export default function GengarPet() {
         )}
       </AnimatePresence>
 
-      {/* ── 2. SUMMONED GIANT GENGAR & LEFT-ALIGNED FLOATING TEXT ── */}
-      <AnimatePresence>
-        {chatOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: "100vw",
-              height: "100dvh",
-              zIndex: 999999,
-              overflow: "hidden",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              padding: "24px 16px 0",
-            }}
-          >
-            {/* 100% Solid Dark Blur Fullscreen Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28 }}
-              onClick={handleCloseChat}
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                width: "100%",
-                height: "100%",
-                background: "rgba(10, 10, 14, 0.94)",
-                backdropFilter: "blur(28px) saturate(180%)",
-                WebkitBackdropFilter: "blur(28px) saturate(180%)",
-                zIndex: 1,
-              }}
-            />
-
-            {/* ── PURE FLOATING TEXT DIALOGUE (UPPER/CENTER, LEFT-ALIGNED INTERNALLY) ── */}
-            <motion.div
-              initial={{ opacity: 0, y: -16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                position: "relative",
-                zIndex: 30,
-                width: "min(640px, calc(100vw - 32px))",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                textAlign: "left",
-                marginBottom: "clamp(24px, 4vh, 44px)",
-              }}
-            >
-              {/* Previous user question context (if any) */}
-              {lastUserMessage && (
+      {/* ── 2. SUMMONED GIANT GENGAR & FULLSCREEN DIALOGUE (PORTAL TO BODY) ── */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {chatOpen && (
+              <>
+                {/* 100% Fullscreen Dark Backdrop */}
                 <motion.div
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.55 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  onClick={handleCloseChat}
                   style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "13px",
-                    letterSpacing: "0.02em",
-                    color: "rgba(255, 255, 255, 0.7)",
-                    marginBottom: "10px",
-                    textAlign: "left",
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    minHeight: "100dvh",
+                    background: "rgba(8, 8, 12, 0.96)",
+                    backdropFilter: "blur(32px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(32px) saturate(180%)",
+                    zIndex: 999998,
                   }}
-                >
-                  &gt; {lastUserMessage.content}
-                </motion.div>
-              )}
+                />
 
-              {/* Floating Gengar Speech Text (Left-aligned) */}
-              <div
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "clamp(16px, 2.4vw, 23px)",
-                  fontWeight: 500,
-                  lineHeight: 1.55,
-                  color: "#ffffff",
-                  textShadow: "0 2px 20px rgba(0, 0, 0, 0.8)",
-                  letterSpacing: "-0.015em",
-                  maxWidth: "600px",
-                  minHeight: "44px",
-                  marginBottom: "24px",
-                  textAlign: "left",
-                }}
-              >
-                {currentDialogue}
-                {streaming && (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      width: "2px",
-                      height: "1.1em",
-                      background: "#fff",
-                      marginLeft: "6px",
-                      verticalAlign: "middle",
-                      animation: "blink 0.8s infinite",
-                    }}
-                  />
-                )}
-              </div>
-
-              {/* ── SEAMLESS USER INPUT LINE WITH BLINKING CARET ── */}
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: "440px",
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+                {/* Floating Content Stage */}
                 <div
                   style={{
-                    width: "100%",
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    minHeight: "100dvh",
+                    zIndex: 999999,
+                    overflow: "hidden",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    borderBottom: "1.5px solid rgba(255, 255, 255, 0.22)",
-                    padding: "6px 0",
-                    transition: "border-color 0.2s ease",
+                    justifyContent: "flex-end",
+                    padding: "24px 16px 0",
+                    pointerEvents: "none",
                   }}
                 >
-                  <span
+                  {/* ── PURE FLOATING TEXT DIALOGUE ── */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "15px",
-                      color: "rgba(255, 255, 255, 0.45)",
-                      marginRight: "8px",
+                      position: "relative",
+                      zIndex: 30,
+                      width: "min(640px, calc(100vw - 32px))",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      textAlign: "left",
+                      marginBottom: "clamp(24px, 4vh, 44px)",
+                      pointerEvents: "auto",
+                    }}
+                  >
+                    {/* Previous user question context (if any) */}
+                    {lastUserMessage && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.55 }}
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "13px",
+                          letterSpacing: "0.02em",
+                          color: "rgba(255, 255, 255, 0.7)",
+                          marginBottom: "10px",
+                          textAlign: "left",
+                        }}
+                      >
+                        &gt; {lastUserMessage.content}
+                      </motion.div>
+                    )}
+
+                    {/* Floating Gengar Speech Text (Left-aligned) */}
+                    <div
+                      style={{
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "clamp(16px, 2.4vw, 23px)",
+                        fontWeight: 500,
+                        lineHeight: 1.55,
+                        color: "#ffffff",
+                        textShadow: "0 2px 20px rgba(0, 0, 0, 0.8)",
+                        letterSpacing: "-0.015em",
+                        maxWidth: "600px",
+                        minHeight: "44px",
+                        marginBottom: "24px",
+                        textAlign: "left",
+                      }}
+                    >
+                      {currentDialogue}
+                      {streaming && (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: "2px",
+                            height: "1.1em",
+                            background: "#fff",
+                            marginLeft: "6px",
+                            verticalAlign: "middle",
+                            animation: "blink 0.8s infinite",
+                          }}
+                        />
+                      )}
+                    </div>
+
+                    {/* ── SEAMLESS USER INPUT LINE WITH BLINKING CARET ── */}
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "440px",
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          borderBottom: "1.5px solid rgba(255, 255, 255, 0.22)",
+                          padding: "6px 0",
+                          transition: "border-color 0.2s ease",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "15px",
+                            color: "rgba(255, 255, 255, 0.45)",
+                            marginRight: "8px",
+                            userSelect: "none",
+                          }}
+                        >
+                          &gt;
+                        </span>
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault();
+                              handleSend();
+                            }
+                          }}
+                          placeholder={streaming ? "Gengar is speaking..." : "ask something and hit enter..."}
+                          disabled={streaming}
+                          style={{
+                            flex: 1,
+                            background: "transparent",
+                            border: "none",
+                            color: "#ffffff",
+                            fontSize: "15px",
+                            fontFamily: "var(--font-mono)",
+                            outline: "none",
+                            caretColor: "#ffffff",
+                          }}
+                        />
+                        {input.trim() && !streaming && (
+                          <button
+                            onClick={handleSend}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#fff",
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "12px",
+                              cursor: "pointer",
+                              padding: "2px 6px",
+                              opacity: 0.8,
+                            }}
+                          >
+                            [ENTER ↵]
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* ── GIANT GENGAR (CENTERED AT BOTTOM) ── */}
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "flex-end",
+                      zIndex: 20,
+                      pointerEvents: "none",
                       userSelect: "none",
                     }}
                   >
-                    &gt;
-                  </span>
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSend();
-                      }
-                    }}
-                    placeholder={streaming ? "Gengar is speaking..." : "ask something and hit enter..."}
-                    disabled={streaming}
-                    style={{
-                      flex: 1,
-                      background: "transparent",
-                      border: "none",
-                      color: "#ffffff",
-                      fontSize: "15px",
-                      fontFamily: "var(--font-mono)",
-                      outline: "none",
-                      caretColor: "#ffffff",
-                    }}
-                  />
-                  {input.trim() && !streaming && (
-                    <button
-                      onClick={handleSend}
+                    <motion.div
+                      initial={{ y: 200, opacity: 0 }}
+                      animate={{
+                        y: streaming ? [-12, 0, -12, 0] : 0,
+                        opacity: 1,
+                        rotate: streaming ? [-1.5, 1.5, -1.5, 1.5, 0] : [0, -0.6, 0.6, 0],
+                      }}
+                      exit={{ y: 200, opacity: 0 }}
+                      transition={{
+                        y: { duration: streaming ? 0.6 : 0.4, ease: "easeOut" },
+                        rotate: { duration: streaming ? 0.6 : 4, repeat: Infinity, ease: "easeInOut" },
+                        opacity: { duration: 0.25 },
+                      }}
                       style={{
-                        background: "none",
-                        border: "none",
-                        color: "#fff",
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "12px",
-                        cursor: "pointer",
-                        padding: "2px 6px",
-                        opacity: 0.8,
+                        width: "min(580px, 92vw)",
+                        height: "auto",
+                        aspectRatio: "1 / 1",
+                        marginBottom: "clamp(-90px, -12vw, 0px)",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
                       }}
                     >
-                      [ENTER ↵]
-                    </button>
-                  )}
+                      <Image
+                        src="/gengar.gif"
+                        alt="Giant Looming Gengar"
+                        width={580}
+                        height={580}
+                        priority
+                        unoptimized
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                          filter: "none",
+                        }}
+                      />
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-
-            {/* ── GIANT GENGAR (FLEXBOX CENTERED, LEGS SUBMERGED BELOW) ── */}
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "flex-end",
-                zIndex: 20,
-                pointerEvents: "none",
-                userSelect: "none",
-              }}
-            >
-              <motion.div
-                initial={{ y: 200, opacity: 0 }}
-                animate={{
-                  y: streaming ? [-12, 0, -12, 0] : 0,
-                  opacity: 1,
-                  rotate: streaming ? [-1.5, 1.5, -1.5, 1.5, 0] : [0, -0.6, 0.6, 0],
-                }}
-                exit={{ y: 200, opacity: 0 }}
-                transition={{
-                  y: { duration: streaming ? 0.6 : 0.4, ease: "easeOut" },
-                  rotate: { duration: streaming ? 0.6 : 4, repeat: Infinity, ease: "easeInOut" },
-                  opacity: { duration: 0.25 },
-                }}
-                style={{
-                  width: "min(580px, 92vw)",
-                  height: "auto",
-                  aspectRatio: "1 / 1",
-                  marginBottom: "clamp(-90px, -12vw, 0px)", // Raised higher on screen
-                  display: "flex",
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                }}
-              >
-                <Image
-                  src="/gengar.gif"
-                  alt="Giant Looming Gengar"
-                  width={580}
-                  height={580}
-                  priority
-                  unoptimized
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    filter: "none",
-                  }}
-                />
-              </motion.div>
-            </div>
-          </div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   );
 }
