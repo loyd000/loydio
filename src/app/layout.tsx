@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import GengarPet from "@/components/GengarPet";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -90,6 +91,7 @@ export default function RootLayout({
           </defs>
         </svg>
         {children}
+        <GengarPet />
       </body>
     </html>
   );
