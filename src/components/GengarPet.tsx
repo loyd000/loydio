@@ -334,7 +334,6 @@ export default function GengarPet() {
               right: 0,
               bottom: 0,
               width: "100vw",
-              height: "100vh",
               height: "100dvh",
               zIndex: 999999,
               overflow: "hidden",
