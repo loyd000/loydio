@@ -13,7 +13,9 @@ type SoundType =
   | "themeDark"
   | "messageSend"
   | "messageReceive"
-  | "pop";
+  | "pop"
+  | "shadowball"
+  | "shadowballImpact";
 
 class SoundEngine {
   private ctx: AudioContext | null = null;
@@ -378,6 +380,35 @@ class SoundEngine {
 
           osc.start(now);
           osc.stop(now + 0.08);
+          break;
+        }
+
+        // ── Gengar Shadow Ball Start (handled by Gengar cry audio) ──
+        case "shadowball": {
+          // Silent or micro subtle 8-bit charge chirp
+          break;
+        }
+
+        // ── Retro 8-bit Pixel Game Impact ───────────────────────────
+        case "shadowballImpact": {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          // Authentic retro 8-bit square wave crunch
+          osc.type = "square";
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.setValueAtTime(220, now + 0.03);
+          osc.frequency.setValueAtTime(120, now + 0.06);
+          osc.frequency.setValueAtTime(50, now + 0.09);
+
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.16);
           break;
         }
       }

@@ -23,6 +23,34 @@ export default function GengarPet() {
   const [isInteracting, setIsInteracting] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
 
+  // ── Shadow Ball Projectile State ──
+  const [shadowBall, setShadowBall] = useState<{
+    id: number;
+    stage: "charging" | "flying";
+    chargeX: number;
+    chargeY: number;
+    targetX: number;
+    targetY: number;
+  } | null>(null);
+  const [isCasting, setIsCasting] = useState(false);
+  const [castSpeech, setCastSpeech] = useState<string | null>(null);
+
+  const isCastingRef = useRef(false);
+  const lastCastTimeRef = useRef(Date.now());
+  const mousePosRef = useRef<{ x: number; y: number }>({
+    x: typeof window !== "undefined" ? window.innerWidth / 2 : 500,
+    y: typeof window !== "undefined" ? window.innerHeight / 2 : 400,
+  });
+
+  // Track cursor position globally
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   // Position spring values for natural roaming
   const springConfig = { damping: 22, stiffness: 35, mass: 0.9 };
   const x = useSpring(100, springConfig);
@@ -61,9 +89,127 @@ export default function GengarPet() {
     }
   }, []);
 
+  // Shoot Shadow Ball directly at user's cursor (3.2s full sequence)
+  const shootShadowBall = useCallback(() => {
+    if (
+      typeof window === "undefined" ||
+      chatOpen ||
+      isInteracting ||
+      isCastingRef.current
+    ) {
+      return;
+    }
+
+    const curX = x.get();
+    const curY = y.get();
+    // Instantly freeze spring motion to avoid any lingering drift
+    x.jump(curX);
+    y.jump(curY);
+    setIsWalking(false);
+
+    const targetX = mousePosRef.current.x;
+    const targetY = mousePosRef.current.y;
+
+    // Face the target cursor
+    const facingDir = targetX > curX + 38 ? 1 : -1;
+    setDirection(facingDir);
+    isCastingRef.current = true;
+    setIsCasting(true);
+    lastCastTimeRef.current = Date.now();
+
+    // Pause roaming while casting the 3.2s attack
+    if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
+    if (walkEndTimerRef.current) clearTimeout(walkEndTimerRef.current);
+
+    const phrases = [
+      "Shadow Ball! 🔮",
+      "Take this! 👻",
+      "Boo! 😈",
+      "Ehehehe! 🔮",
+      "Shadow Ball! ⚡",
+    ];
+    const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+    setCastSpeech(phrase);
+
+    // Play Gengar cry sound when starting the attack!
+    playGengarSound();
+
+    // Position of charging ball right beside Gengar's hands
+    const chargeX = curX + (facingDir === 1 ? 56 : 20);
+    const chargeY = curY + 24;
+    const ballId = Date.now();
+
+    // ── Phase 1: 0ms - 1000ms (1.0s) Charging beside Gengar (Frames 0-4) ──
+    setShadowBall({
+      id: ballId,
+      stage: "charging",
+      chargeX,
+      chargeY,
+      targetX,
+      targetY,
+    });
+
+    const CHARGE_DELAY = 1000;
+    const TRAVEL_TIME = 1400;
+    const DISAPPEAR_TIME = 800;
+
+    // ── Phase 2: 1000ms - 2400ms (1.4s) Flying to cursor (Frames 5-11) ──
+    setTimeout(() => {
+      if (chatOpen) {
+        setShadowBall(null);
+        setIsCasting(false);
+        isCastingRef.current = false;
+        setCastSpeech(null);
+        return;
+      }
+
+      const freshTargetX = mousePosRef.current.x;
+      const freshTargetY = mousePosRef.current.y;
+
+      setShadowBall({
+        id: ballId,
+        stage: "flying",
+        chargeX,
+        chargeY,
+        targetX: freshTargetX,
+        targetY: freshTargetY,
+      });
+
+      // ── Phase 3: 2400ms - 3200ms (0.8s) Impact & Disappearance at cursor (Frames 12-15) ──
+      setTimeout(() => {
+        sound.play("shadowballImpact");
+
+        // Attack completes at 3200ms
+        setTimeout(() => {
+          setShadowBall(null);
+          setIsCasting(false);
+          isCastingRef.current = false;
+          setCastSpeech(null);
+          // Resume roaming after attack
+          if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
+          roamLoopRef.current = setTimeout(stepRoam, 1200);
+        }, DISAPPEAR_TIME);
+      }, TRAVEL_TIME);
+    }, CHARGE_DELAY);
+  }, [chatOpen, isInteracting, x, y]);
+
+  // Periodic Shadow Ball firing routine (autonomous ambush)
+  useEffect(() => {
+    const shootInterval = setInterval(() => {
+      if (chatOpen || isInteracting || isCastingRef.current) return;
+      if (Date.now() - lastCastTimeRef.current < 12000) return;
+
+      if (Math.random() < 0.5) {
+        shootShadowBall();
+      }
+    }, 6000);
+
+    return () => clearInterval(shootInterval);
+  }, [chatOpen, isInteracting, shootShadowBall]);
+
   // Walk or float to a new coordinate on screen
   const walkToSpot = useCallback((targetX: number, targetY: number, travelDurationMs: number) => {
-    if (chatOpen) return;
+    if (chatOpen || isCastingRef.current) return;
 
     const currentX = x.get();
     if (targetX > currentX + 15) {
@@ -84,7 +230,7 @@ export default function GengarPet() {
 
   // Main active roaming AI
   const stepRoam = useCallback(() => {
-    if (typeof window === "undefined" || isInteracting || isHovered || chatOpen) {
+    if (typeof window === "undefined" || isInteracting || isHovered || chatOpen || isCastingRef.current) {
       if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
       roamLoopRef.current = setTimeout(() => stepRoamRef.current(), 1500);
       return;
@@ -125,10 +271,19 @@ export default function GengarPet() {
 
     walkToSpot(nextX, nextY, travelTime);
 
+    // Occasional sneak attack upon arrival
+    if (Math.random() < 0.35 && Date.now() - lastCastTimeRef.current > 14000) {
+      setTimeout(() => {
+        if (!chatOpen && !isInteracting && !isCastingRef.current) {
+          shootShadowBall();
+        }
+      }, travelTime + 300);
+    }
+
     const pauseTime = 1200 + Math.random() * 1200;
     if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
     roamLoopRef.current = setTimeout(() => stepRoamRef.current(), travelTime + pauseTime);
-  }, [x, y, isInteracting, isHovered, chatOpen, walkToSpot]);
+  }, [x, y, isInteracting, isHovered, chatOpen, walkToSpot, shootShadowBall]);
 
   useEffect(() => {
     stepRoamRef.current = stepRoam;
@@ -255,11 +410,41 @@ export default function GengarPet() {
               onMouseLeave={() => setIsHovered(false)}
               onClick={handleGengarClick}
             >
-              {/* Walking Waddle / Ghost Bobbing */}
+              {/* Dynamic Ground Oval Shadow */}
               <motion.div
                 animate={{
-                  y: isWalking ? [0, -6, 0, -6, 0] : [0, -4, 0],
-                  rotate: isWalking ? [-6, 6, -6, 6, 0] : [0, -2, 2, 0],
+                  scaleX: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
+                  scaleY: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
+                  opacity: isWalking ? [0.65, 0.38, 0.65, 0.38, 0.65] : [0.6, 0.42, 0.6],
+                }}
+                transition={{
+                  duration: isWalking ? 0.6 : 2.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                style={{
+                  position: "absolute",
+                  bottom: -1,
+                  left: 0,
+                  right: 0,
+                  margin: "0 auto",
+                  width: 52,
+                  height: 12,
+                  borderRadius: "50%",
+                  background:
+                    "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.62) 0%, rgba(30, 8, 44, 0.38) 50%, rgba(0, 0, 0, 0) 75%)",
+                  pointerEvents: "none",
+                  zIndex: 0,
+                  filter: "blur(1px)",
+                }}
+              />
+
+              {/* Walking Waddle / Ghost Bobbing / Attack Stance */}
+              <motion.div
+                animate={{
+                  y: isCasting ? 0 : isWalking ? [0, -6, 0, -6, 0] : [0, -4, 0],
+                  rotate: isCasting ? 0 : isWalking ? [-6, 6, -6, 6, 0] : [0, -2, 2, 0],
+                  scale: 1,
                 }}
                 transition={{
                   duration: isWalking ? 0.6 : 2.2,
@@ -272,6 +457,7 @@ export default function GengarPet() {
                   height: "100%",
                   transform: `scaleX(${direction})`,
                   transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+                  zIndex: 1,
                 }}
               >
                 <Image
@@ -284,13 +470,46 @@ export default function GengarPet() {
                   style={{
                     objectFit: "contain",
                     pointerEvents: "none",
-                    filter: "none",
                   }}
                 />
               </motion.div>
 
+              {/* Cast Speech / Battle Cry */}
+              {castSpeech && !isHovered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, scale: 0.8 }}
+                  animate={{ opacity: 1, y: -8, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  style={{
+                    position: "absolute",
+                    bottom: "100%",
+                    left: 0,
+                    right: 0,
+                    margin: "0 auto",
+                    width: "max-content",
+                    background: "rgba(32, 10, 48, 0.95)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(192, 132, 252, 0.45)",
+                    color: "#f3e8ff",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    padding: "4px 10px",
+                    borderRadius: "10px",
+                    whiteSpace: "nowrap",
+                    pointerEvents: "none",
+                    boxShadow: "0 4px 18px rgba(147, 51, 234, 0.5)",
+                    zIndex: 12,
+                  }}
+                >
+                  {castSpeech}
+                </motion.div>
+              )}
+
               {/* Hover Tooltip Hint */}
-              {isHovered && (
+              {isHovered && !castSpeech && (
                 <motion.div
                   initial={{ opacity: 0, y: 4, scale: 0.9 }}
                   animate={{ opacity: 1, y: -6, scale: 1 }}
@@ -298,8 +517,10 @@ export default function GengarPet() {
                   style={{
                     position: "absolute",
                     bottom: "100%",
-                    left: "50%",
-                    transform: "translateX(-50%)",
+                    left: 0,
+                    right: 0,
+                    margin: "0 auto",
+                    width: "max-content",
                     background: "rgba(18, 18, 22, 0.92)",
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
@@ -321,6 +542,61 @@ export default function GengarPet() {
               )}
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── 2. Full 3.2s Synchronized Shadow Ball GIF (1.0s Charge + 1.4s Travel + 0.8s Impact) ── */}
+      <AnimatePresence>
+        {shadowBall && (
+          <motion.div
+            key={shadowBall.id}
+            initial={{
+              x: shadowBall.chargeX - 38,
+              y: shadowBall.chargeY - 38,
+              opacity: 1,
+            }}
+            animate={
+              shadowBall.stage === "charging"
+                ? {
+                    x: shadowBall.chargeX - 38,
+                    y: shadowBall.chargeY - 38,
+                    opacity: 1,
+                  }
+                : {
+                    x: shadowBall.targetX - 38,
+                    y: shadowBall.targetY - 38,
+                    opacity: 1,
+                  }
+            }
+            transition={
+              shadowBall.stage === "flying"
+                ? { duration: 1.4, ease: [0.25, 0.1, 0.25, 1] }
+                : { duration: 0.1 }
+            }
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: 76,
+              height: 76,
+              pointerEvents: "none",
+              zIndex: 10050,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/Shadowball.gif?t=${shadowBall.id}`}
+              alt="Gengar Shadow Ball"
+              width={76}
+              height={76}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                pointerEvents: "none",
+              }}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -544,6 +820,7 @@ export default function GengarPet() {
                         opacity: { duration: 0.25 },
                       }}
                       style={{
+                        position: "relative",
                         width: "min(580px, 92vw)",
                         height: "auto",
                         aspectRatio: "1 / 1",
@@ -553,6 +830,33 @@ export default function GengarPet() {
                         justifyContent: "center",
                       }}
                     >
+                      {/* Giant Gengar Oval Ground Shadow / Base Glow */}
+                      <motion.div
+                        animate={{
+                          scaleX: streaming ? [1, 0.9, 1, 0.9, 1] : [1, 0.96, 1],
+                          opacity: streaming ? [0.75, 0.5, 0.75, 0.5, 0.75] : [0.7, 0.55, 0.7],
+                        }}
+                        transition={{
+                          duration: streaming ? 0.6 : 4,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                        style={{
+                          position: "absolute",
+                          bottom: "clamp(25px, 6vw, 55px)",
+                          left: 0,
+                          right: 0,
+                          margin: "0 auto",
+                          width: "72%",
+                          height: "18%",
+                          borderRadius: "50%",
+                          background:
+                            "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.8) 0%, rgba(30, 8, 45, 0.45) 50%, rgba(0, 0, 0, 0) 75%)",
+                          filter: "blur(6px)",
+                          pointerEvents: "none",
+                          zIndex: 0,
+                        }}
+                      />
                       <Image
                         src="/gengar.gif"
                         alt="Giant Looming Gengar"
@@ -565,6 +869,8 @@ export default function GengarPet() {
                           height: "100%",
                           objectFit: "contain",
                           filter: "none",
+                          position: "relative",
+                          zIndex: 1,
                         }}
                       />
                     </motion.div>
