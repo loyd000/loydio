@@ -101,37 +101,44 @@ Liquid glass is the signature visual feature of the portfolio. It simulates a 3D
 ```css
 /* Signature Multi-Layer Highlight & Bevel Box-Shadow Formula */
 .liquid-glass-card {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(28px) saturate(210%);
   -webkit-backdrop-filter: blur(28px) saturate(210%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 
-    /* Top-edge bright shine */
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.92),
-    /* Left-edge subtle shine */
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.45),
-    /* Bottom-edge shadow */
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-    /* Right-edge shadow */
+    /* 1. Razor-sharp top specular shine */
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    /* 2. Subtle soft upper glass gradient */
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    /* 3. Left-edge bevel shine */
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    /* 4. Bottom-edge shadow anchor */
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+    /* 5. Right-edge shadow */
     inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
-    /* Outer luminous rim */
-    0 0 0 0.5px rgba(255, 255, 255, 0.3),
-    /* Drop shadow */
-    0 12px 36px 0 rgba(0, 0, 0, 0.1);
+    /* 6. Luminous crystal outer rim */
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    /* 7. Outer ambient glass shine aura */
+    0 0 16px 0 rgba(255, 255, 255, 0.16),
+    /* 8. Drop shadow */
+    0 12px 36px 0 rgba(0, 0, 0, 0.08);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] .liquid-glass-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.52),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.55),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
-    0 0 0 0.5px rgba(255, 255, 255, 0.09),
-    0 12px 36px 0 rgba(0, 0, 0, 0.38);
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 16px 0 rgba(255, 255, 255, 0.06),
+    0 12px 36px 0 rgba(0, 0, 0, 0.42);
 }
 ```
 

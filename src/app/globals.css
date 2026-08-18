@@ -1415,24 +1415,31 @@ p {
 /* ─────────────────────────────────────────────────────────────
    Liquid Glass Card Effect
 ───────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   Liquid Glass Card Effect
+───────────────────────────────────────────────────────────── */
 .liquid-glass-card {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(28px) saturate(210%);
   -webkit-backdrop-filter: blur(28px) saturate(210%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 
-    /* top-edge bright shine */
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.92),
-    /* left-edge subtle shine */
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.45),
-    /* bottom-edge shadow */
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-    /* right-edge shadow */
+    /* ✨ 1. Razor-sharp top specular shine */
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    /* ✨ 2. Subtle soft upper glass gradient */
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    /* ✨ 3. Left-edge bevel shine */
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    /* 🌑 4. Bottom-edge shadow anchor */
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+    /* 🌑 5. Right-edge shadow */
     inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
-    /* outer luminous rim */
-    0 0 0 0.5px rgba(255, 255, 255, 0.3),
-    /* drop shadow */
-    0 12px 36px 0 rgba(0, 0, 0, 0.1);
+    /* 💡 6. Luminous crystal outer rim */
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    /* 💡 7. Outer ambient glass shine aura */
+    0 0 16px 0 rgba(255, 255, 255, 0.16),
+    /* 🌫️ 8. Drop shadow */
+    0 12px 36px 0 rgba(0, 0, 0, 0.08);
   transition: background 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1440,41 +1447,55 @@ p {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(36px) saturate(230%);
   -webkit-backdrop-filter: blur(36px) saturate(230%);
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow: 
     inset 0 2px 0 0 rgba(255, 255, 255, 1),
-    inset 2px 0 0 0 rgba(255, 255, 255, 0.6),
+    inset 0 6px 14px -2px rgba(255, 255, 255, 0.35),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.65),
     inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.08),
     inset -1.5px 0 0 0 rgba(0, 0, 0, 0.04),
-    0 0 0 0.5px rgba(255, 255, 255, 0.55),
-    0 28px 72px 0 rgba(0, 0, 0, 0.18);
+    0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 0 24px 0 rgba(255, 255, 255, 0.32),
+    0 28px 72px 0 rgba(0, 0, 0, 0.16);
 }
 
 [data-theme="dark"] .liquid-glass-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.52),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.55),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
-    0 0 0 0.5px rgba(255, 255, 255, 0.09),
-    0 12px 36px 0 rgba(0, 0, 0, 0.38);
+    /* ✨ 1. Crisp top-edge white shine */
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    /* ✨ 2. Subtle soft upper reflection */
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    /* ✨ 3. Left-edge bevel shine */
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    /* 🌑 4. Bottom-edge shadow anchor */
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    /* 🌑 5. Right-edge shadow */
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    /* 💡 6. Luminous crystal outer rim */
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    /* 💡 7. Outer ambient glass shine aura */
+    0 0 16px 0 rgba(255, 255, 255, 0.06),
+    /* 🌫️ 8. Drop shadow */
+    0 12px 36px 0 rgba(0, 0, 0, 0.42);
 }
 
 [data-theme="dark"] .liquid-glass-card.active {
   background: rgba(18, 18, 22, 0.92);
   backdrop-filter: blur(36px) saturate(210%);
   -webkit-backdrop-filter: blur(36px) saturate(210%);
-  border: 1px solid rgba(255, 255, 255, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.32);
   box-shadow: 
-    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
-    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.7),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 6px 14px -2px rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.72),
     inset -1.5px 0 0 0 rgba(0, 0, 0, 0.4),
-    0 0 0 0.5px rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 24px 0 rgba(255, 255, 255, 0.1),
     0 28px 72px 0 rgba(0, 0, 0, 0.65);
 }
 
@@ -1483,56 +1504,64 @@ p {
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(22px) saturate(190%);
   -webkit-backdrop-filter: blur(22px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   color: var(--fg);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.9),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
-    0 0 0 0.5px rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 14px 0 rgba(255, 255, 255, 0.14),
     0 4px 18px 0 rgba(0, 0, 0, 0.08);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .liquid-glass-btn:hover {
-  background: rgba(255, 255, 255, 0.32);
-  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.85);
   transform: scale(1.08);
   box-shadow: 
     inset 0 2px 0 0 rgba(255, 255, 255, 1),
-    inset 2px 0 0 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.07),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.22),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.04),
-    0 0 0 0.5px rgba(255, 255, 255, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 18px 0 rgba(255, 255, 255, 0.22),
     0 8px 28px 0 rgba(0, 0, 0, 0.12);
 }
 
 [data-theme="dark"] .liquid-glass-btn {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(22px) saturate(190%);
   -webkit-backdrop-filter: blur(22px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: var(--fg);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.58),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.55),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
-    0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 14px 0 rgba(255, 255, 255, 0.06),
     0 4px 18px 0 rgba(0, 0, 0, 0.35);
 }
 
 [data-theme="dark"] .liquid-glass-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.55);
   transform: scale(1.08);
   box-shadow: 
-    inset 0 2px 0 0 rgba(255, 255, 255, 0.78),
-    inset 2px 0 0 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.65),
-    inset -1.5px 0 0 0 rgba(0, 0, 0, 0.38),
-    0 0 0 0.5px rgba(255, 255, 255, 0.18),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.82),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.7),
+    inset -1.5px 0 0 0 rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 18px 0 rgba(255, 255, 255, 0.1),
     0 8px 28px 0 rgba(0, 0, 0, 0.5);
 }
 
@@ -1542,86 +1571,98 @@ p {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(22px) saturate(190%);
   -webkit-backdrop-filter: blur(22px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.88),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.38),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.02),
-    0 0 0 0.5px rgba(255, 255, 255, 0.26),
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 14px 0 rgba(255, 255, 255, 0.14),
     0 4px 18px 0 rgba(0, 0, 0, 0.07);
 }
 
 [data-theme="dark"] .liquid-glass-pill {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(22px) saturate(190%);
   -webkit-backdrop-filter: blur(22px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.52),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.48),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.24),
-    0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 14px 0 rgba(255, 255, 255, 0.06),
     0 4px 18px 0 rgba(0, 0, 0, 0.3);
 }
 
 /* ── Experience timeline — liquid glass cards ── */
 .exp-glass-card {
   padding: 1.5rem 1.75rem;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 8px;
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.9),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.38),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.025),
-    0 0 0 0.5px rgba(255, 255, 255, 0.26),
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 14px 0 rgba(255, 255, 255, 0.14),
     0 3px 12px 0 rgba(0, 0, 0, 0.06);
   transition: background 0.28s ease, border-color 0.28s ease,
               box-shadow 0.28s ease, transform 0.28s ease;
 }
 
 .exp-glass-card:hover {
-  background: rgba(255, 255, 255, 0.28);
-  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.85);
   box-shadow:
     inset 0 2px 0 0 rgba(255, 255, 255, 1),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.22),
     inset 2px 0 0 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.07),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.04),
-    0 0 0 0.5px rgba(255, 255, 255, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 18px 0 rgba(255, 255, 255, 0.22),
     0 6px 24px 0 rgba(0, 0, 0, 0.09);
   transform: translateY(-1px);
 }
 
 [data-theme="dark"] .exp-glass-card {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.45),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.5),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.25),
-    0 0 0 0.5px rgba(255, 255, 255, 0.08),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 14px 0 rgba(255, 255, 255, 0.06),
     0 3px 12px 0 rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .exp-glass-card:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.5);
   box-shadow:
-    inset 0 2px 0 0 rgba(255, 255, 255, 0.65),
-    inset 2px 0 0 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.62),
-    inset -1.5px 0 0 0 rgba(0, 0, 0, 0.35),
-    0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.82),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.7),
+    inset -1.5px 0 0 0 rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 18px 0 rgba(255, 255, 255, 0.1),
     0 6px 24px 0 rgba(0, 0, 0, 0.45);
   transform: translateY(-1px);
 }
@@ -1632,26 +1673,30 @@ p {
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(22px) saturate(175%);
   -webkit-backdrop-filter: blur(22px) saturate(175%);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 12px;
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.9),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.38),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
     inset -1px 0 0 0 rgba(0, 0, 0, 0.02),
-    0 0 0 0.5px rgba(255, 255, 255, 0.26),
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 16px 0 rgba(255, 255, 255, 0.16),
     0 6px 26px 0 rgba(0, 0, 0, 0.07);
 }
 
 [data-theme="dark"] .contact-glass-wrapper {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.48),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.52),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
-    0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 16px 0 rgba(255, 255, 255, 0.06),
     0 6px 26px 0 rgba(0, 0, 0, 0.35);
 }
 
@@ -2151,49 +2196,76 @@ p {
   position: relative;
   pointer-events: auto;
   background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 999px;
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.9),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.38),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.02),
-    0 0 0 0.5px rgba(255, 255, 255, 0.26),
-    0 4px 24px 0 rgba(0, 0, 0, 0.06);
+    /* ✨ 1. Razor-sharp top specular shine */
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    /* ✨ 2. Subtle soft upper glass gradient (reduced) */
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    /* ✨ 3. Left-edge bevel shine */
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    /* 🌑 4. Bottom-edge shadow anchor */
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+    /* 🌑 5. Right-edge shadow */
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
+    /* 💡 6. Luminous crystal outer rim */
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    /* 💡 7. Outer ambient glass shine aura */
+    0 0 16px 0 rgba(255, 255, 255, 0.16),
+    /* 🌫️ 8. Drop shadow */
+    0 8px 28px 0 rgba(0, 0, 0, 0.08);
   transition:
     box-shadow 0.3s ease,
     background 0.3s ease,
     border-color 0.3s ease;
   overflow: hidden;
 }
+
 [data-theme="dark"] .pill-nav {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.48),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.52),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.28),
-    0 0 0 0.5px rgba(255, 255, 255, 0.1),
-    0 4px 24px 0 rgba(0, 0, 0, 0.3);
+    /* ✨ 1. Crisp top-edge white shine */
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    /* ✨ 2. Subtle soft upper reflection (reduced) */
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    /* ✨ 3. Left-edge bevel shine */
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    /* 🌑 4. Bottom-edge shadow anchor */
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    /* 🌑 5. Right-edge shadow */
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
+    /* 💡 6. Luminous crystal outer rim */
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    /* 💡 7. Outer ambient glass shine aura */
+    0 0 16px 0 rgba(255, 255, 255, 0.06),
+    /* 🌫️ 8. Drop shadow */
+    0 8px 32px 0 rgba(0, 0, 0, 0.42);
 }
+
 .pill-nav-scrolled {
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.95),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.03),
-    0 0 0 0.5px rgba(255, 255, 255, 0.3),
-    0 8px 32px 0 rgba(0, 0, 0, 0.12);
+    inset 0 2px 0 0 rgba(255, 255, 255, 1),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.22),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.08),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.48),
+    0 0 18px 0 rgba(255, 255, 255, 0.2),
+    0 10px 36px 0 rgba(0, 0, 0, 0.14);
 }
+
 [data-theme="dark"] .pill-nav-scrolled {
   box-shadow:
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.52),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.24),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.6),
-    inset -1px 0 0 0 rgba(0, 0, 0, 0.35),
-    0 0 0 0.5px rgba(255, 255, 255, 0.15),
-    0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.08),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.72),
+    inset -1px 0 0 0 rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 0 18px 0 rgba(255, 255, 255, 0.08),
+    0 12px 38px 0 rgba(0, 0, 0, 0.52);
 }
 
 .pill-nav-inner {
@@ -2739,10 +2811,10 @@ body { padding-top: 0 !important; }
 }
 
 .cert-card {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 18px;
   padding: 2.25rem 1.5rem 1.75rem;
   display: flex;
@@ -2756,40 +2828,52 @@ body { padding-top: 0 !important; }
               box-shadow 0.28s ease,
               background 0.28s ease;
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.85),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.35),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.16),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 14px 0 rgba(255, 255, 255, 0.14),
     0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .cert-card:hover {
   transform: translateY(-3px);
-  border-color: var(--fg);
+  border-color: rgba(255, 255, 255, 0.85);
   background: rgba(255, 255, 255, 0.24);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.95),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 2px 0 0 rgba(255, 255, 255, 1),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.22),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.55),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 18px 0 rgba(255, 255, 255, 0.22),
     0 12px 36px var(--border-mid);
 }
 
 [data-theme="dark"] .cert-card {
   background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.45),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.5),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.72),
+    inset 0 4px 10px -2px rgba(255, 255, 255, 0.06),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 14px 0 rgba(255, 255, 255, 0.06),
     0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] .cert-card:hover {
-  background: rgba(255, 255, 255, 0.075);
+  background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.5);
   box-shadow: 
-    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.7),
-    inset 1.5px 0 0 0 rgba(255, 255, 255, 0.3),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.65),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.82),
+    inset 0 5px 12px -2px rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1.5px 0 0 rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 18px 0 rgba(255, 255, 255, 0.1),
     0 12px 36px rgba(0, 0, 0, 0.5);
 }
 
