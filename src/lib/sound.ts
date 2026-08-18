@@ -28,6 +28,27 @@ class SoundEngine {
       const stored = localStorage.getItem("loyd_sound_enabled");
       // Default to sound enabled unless explicitly set to false
       this.isMuted = stored === "false";
+
+      // Auto-unlock Web Audio API on the first user interaction gesture
+      const handleUnlock = () => {
+        this.unlock();
+        window.removeEventListener("pointerdown", handleUnlock);
+        window.removeEventListener("touchstart", handleUnlock);
+        window.removeEventListener("keydown", handleUnlock);
+        window.removeEventListener("click", handleUnlock);
+      };
+
+      window.addEventListener("pointerdown", handleUnlock, { passive: true });
+      window.addEventListener("touchstart", handleUnlock, { passive: true });
+      window.addEventListener("keydown", handleUnlock, { passive: true });
+      window.addEventListener("click", handleUnlock, { passive: true });
+
+      // Automatically initialize global interactive element listeners
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => this.initGlobalListeners());
+      } else {
+        setTimeout(() => this.initGlobalListeners(), 0);
+      }
     }
   }
 
@@ -58,6 +79,8 @@ class SoundEngine {
       ".pm-arrow",
       ".liquid-glass-btn",
       ".liquid-glass-pill > *",
+      ".cert-card",
+      ".proj-card",
       "[data-sound='hover']",
     ].join(", ");
 
@@ -100,6 +123,13 @@ class SoundEngine {
     );
   }
 
+  public unlock(): void {
+    const ctx = this.getContext();
+    if (ctx && ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
+  }
+
   private getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
     if (!this.ctx) {
@@ -109,7 +139,7 @@ class SoundEngine {
       }
     }
     if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume();
+      this.ctx.resume().catch(() => {});
     }
     return this.ctx;
   }
@@ -123,12 +153,17 @@ class SoundEngine {
     if (typeof window !== "undefined") {
       localStorage.setItem("loyd_sound_enabled", (!muted).toString());
     }
+    if (!muted) {
+      this.unlock();
+    }
     this.listeners.forEach((fn) => fn(this.isMuted));
   }
 
   public toggleMute(): boolean {
-    this.setMuted(!this.isMuted);
-    if (!this.isMuted) {
+    const nextMuted = !this.isMuted;
+    this.setMuted(nextMuted);
+    if (!nextMuted) {
+      this.unlock();
       this.play("click");
     }
     return this.isMuted;
@@ -149,6 +184,11 @@ class SoundEngine {
       const ctx = this.getContext();
       if (!ctx) return;
 
+      // Auto resume if suspended
+      if (ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+
       const now = ctx.currentTime;
 
       switch (type) {
@@ -158,17 +198,17 @@ class SoundEngine {
           const gain = ctx.createGain();
 
           osc.type = "sine";
-          osc.frequency.setValueAtTime(800, now);
-          osc.frequency.exponentialRampToValueAtTime(140, now + 0.035);
+          osc.frequency.setValueAtTime(820, now);
+          osc.frequency.exponentialRampToValueAtTime(140, now + 0.04);
 
-          gain.gain.setValueAtTime(0.09, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.04);
+          osc.stop(now + 0.045);
           break;
         }
 
@@ -179,22 +219,21 @@ class SoundEngine {
 
           osc.type = "sine";
           osc.frequency.setValueAtTime(1400, now);
-          osc.frequency.exponentialRampToValueAtTime(700, now + 0.014);
+          osc.frequency.exponentialRampToValueAtTime(700, now + 0.016);
 
-          gain.gain.setValueAtTime(0.022, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+          gain.gain.setValueAtTime(0.045, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.016);
+          osc.stop(now + 0.02);
           break;
         }
 
         // ── Resonant Glass Bloom (Navbar Long-press Morph) ───────────
         case "morph": {
-          // Warm harmonic resonance
           const osc1 = ctx.createOscillator();
           const osc2 = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -207,9 +246,9 @@ class SoundEngine {
           osc2.frequency.setValueAtTime(640, now);
           osc2.frequency.exponentialRampToValueAtTime(1160, now + 0.09);
 
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.linearRampToValueAtTime(0.12, now + 0.03);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.16, now + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
 
           osc1.connect(gain);
           osc2.connect(gain);
@@ -217,8 +256,8 @@ class SoundEngine {
 
           osc1.start(now);
           osc2.start(now);
-          osc1.stop(now + 0.19);
-          osc2.stop(now + 0.19);
+          osc1.stop(now + 0.21);
+          osc2.stop(now + 0.21);
           break;
         }
 
@@ -228,17 +267,17 @@ class SoundEngine {
           const gain = ctx.createGain();
 
           osc.type = "sine";
-          osc.frequency.setValueAtTime(420, now);
-          osc.frequency.exponentialRampToValueAtTime(180, now + 0.06);
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(180, now + 0.07);
 
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.08);
+          osc.stop(now + 0.09);
           break;
         }
 
@@ -249,16 +288,16 @@ class SoundEngine {
 
           osc.type = "sine";
           osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.setValueAtTime(659.25, now + 0.04); // E5
+          osc.frequency.setValueAtTime(659.25, now + 0.045); // E5
 
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.15);
+          osc.stop(now + 0.17);
           break;
         }
 
@@ -269,16 +308,16 @@ class SoundEngine {
 
           osc.type = "sine";
           osc.frequency.setValueAtTime(659.25, now); // E5
-          osc.frequency.setValueAtTime(440.0, now + 0.04); // A4
+          osc.frequency.setValueAtTime(440.0, now + 0.045); // A4
 
-          gain.gain.setValueAtTime(0.07, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.15);
+          osc.stop(now + 0.17);
           break;
         }
 
@@ -291,14 +330,14 @@ class SoundEngine {
           osc.frequency.setValueAtTime(440, now);
           osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
 
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.07);
+          osc.stop(now + 0.08);
           break;
         }
 
@@ -311,34 +350,34 @@ class SoundEngine {
           osc.frequency.setValueAtTime(784, now); // G5
           osc.frequency.setValueAtTime(1046.5, now + 0.05); // C6
 
-          gain.gain.setValueAtTime(0.06, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.18);
+          osc.stop(now + 0.2);
           break;
         }
 
-        // ── Glass Pop (Modal Open) ──────────────────────────────────
+        // ── Glass Pop (Modal Open / Gengar Interaction) ──────────────
         case "pop": {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
 
           osc.type = "sine";
-          osc.frequency.setValueAtTime(540, now);
-          osc.frequency.exponentialRampToValueAtTime(720, now + 0.04);
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(780, now + 0.045);
 
-          gain.gain.setValueAtTime(0.09, now);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
 
           osc.connect(gain);
           gain.connect(ctx.destination);
 
           osc.start(now);
-          osc.stop(now + 0.07);
+          osc.stop(now + 0.08);
           break;
         }
       }

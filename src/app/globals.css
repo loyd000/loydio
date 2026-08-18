@@ -2952,3 +2952,68 @@ body { padding-top: 0 !important; }
   }
 }
 
+/* ── Gengar AI Floating Dialogue & Avatar ── */
+.gengar-dialogue-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 999999;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.gengar-giant-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -210px;
+  width: min(680px, 86vw);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  z-index: 20;
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.gengar-floating-text {
+  position: relative;
+  z-index: 30;
+  width: min(640px, calc(100vw - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: clamp(140px, 25vh, 260px);
+  padding: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .gengar-giant-wrapper {
+    left: 50% !important;
+    bottom: -60px !important;
+    width: min(420px, 92vw) !important;
+  }
+  .gengar-floating-text {
+    width: 100% !important;
+    margin-bottom: clamp(180px, 36vh, 280px) !important;
+    padding: 0 12px !important;
+  }
+}
+
+
