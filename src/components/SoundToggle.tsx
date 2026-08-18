@@ -1,17 +1,18 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { sound } from "@/lib/sound";
 
-export default function SoundToggle() {
-  const [mounted, setMounted] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+const subscribeSound = (callback: () => void) => sound.subscribe(callback);
+const getSoundSnapshot = () => sound.getIsMuted();
+const getSoundServerSnapshot = () => false;
 
-  useEffect(() => {
-    setIsMuted(sound.getIsMuted());
-    setMounted(true);
-    const unsubscribe = sound.subscribe((muted) => setIsMuted(muted));
-    return unsubscribe;
-  }, []);
+const subscribeMounted = () => () => {};
+const getMountedSnapshot = () => true;
+const getMountedServerSnapshot = () => false;
+
+export default function SoundToggle() {
+  const mounted = useSyncExternalStore(subscribeMounted, getMountedSnapshot, getMountedServerSnapshot);
+  const isMuted = useSyncExternalStore(subscribeSound, getSoundSnapshot, getSoundServerSnapshot);
 
   const toggle = () => {
     sound.toggleMute();

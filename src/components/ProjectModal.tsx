@@ -76,8 +76,11 @@ export default function ProjectModal({
     if (dragStartX.current === null) return;
     const delta = e.clientX - dragStartX.current;
     dragStartX.current = null;
-    if (Math.abs(delta) < 40) return;
-    delta < 0 ? nextImg() : prevImg();
+    if (delta < 0) {
+      nextImg();
+    } else {
+      prevImg();
+    }
   };
 
   const portalRoot = typeof document === "undefined" ? null : document.body;

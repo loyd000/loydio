@@ -9,7 +9,7 @@ function errorMessage(error: unknown) {
 export default async function AdminPage() {
   if (!(await isAdminAuthenticated())) return <LoginForm />;
 
-  let initialData: Awaited<ReturnType<typeof fetchAdminData>> = { projects: [], photos: [] };
+  let initialData: Awaited<ReturnType<typeof fetchAdminData>> = { projects: [], credentials: [], photos: [] };
   let initialError = "";
 
   try {

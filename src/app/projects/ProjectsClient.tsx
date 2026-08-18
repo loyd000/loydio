@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
-import { supabase, type Project } from "@/lib/supabase";
+import type { Project } from "@/lib/supabase";
 import ProjectModal from "@/components/ProjectModal";
+import { sound } from "@/lib/sound";
 
 const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
 const Footer = dynamic(() => import("@/components/Footer"));
@@ -16,7 +17,6 @@ const MONO = "var(--font-mono), monospace";
 const DISPLAY = "var(--font-display), sans-serif";
 
 type Filter = "all" | "dev" | "design";
-
 
 /* ── Project card ──────────────────────────────────────────────── */
 function ProjectCard({
@@ -51,6 +51,7 @@ function ProjectCard({
       initial={{ opacity: 0, y: 28 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.48, delay: (index % 6) * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => sound.play("hover")}
     >
       {/* image */}
       <div className="proj-card-img-wrap">
@@ -89,12 +90,21 @@ function ProjectCard({
               target="_blank"
               rel="noopener noreferrer"
               className="proj-cta-btn liquid-glass-btn"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                sound.play("click");
+              }}
             >
               View Project →
             </a>
           ) : (
-            <button className="proj-cta-btn liquid-glass-btn" onClick={() => onModal(project)}>
+            <button
+              className="proj-cta-btn liquid-glass-btn"
+              onClick={() => {
+                sound.play("click");
+                onModal(project);
+              }}
+            >
               View Details →
             </button>
           )}
@@ -102,7 +112,16 @@ function ProjectCard({
       </div>
 
       {/* body */}
-      <div className="proj-card-body" onClick={() => !hasLink && onModal(project)} style={{ cursor: hasLink ? "default" : "pointer" }}>
+      <div
+        className="proj-card-body"
+        onClick={() => {
+          if (!hasLink) {
+            sound.play("click");
+            onModal(project);
+          }
+        }}
+        style={{ cursor: hasLink ? "default" : "pointer" }}
+      >
         <h2 className="proj-card-title">{project.title}</h2>
         {project.description && (
           <p className="proj-card-desc">{project.description}</p>
@@ -120,6 +139,7 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             className="proj-card-link"
+            onClick={() => sound.play("click")}
           >
             Open →
           </a>
@@ -135,7 +155,6 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
   const [modal, setModal] = useState<Project | null>(null);
 
   const allProjects = initialProjects;
-
 
   const filtered =
     filter === "all" ? allProjects :
@@ -156,50 +175,63 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
       <ScrollToTop />
       <Navbar />
 
-      <main className="projects-page-main">
-        {/* ── Page header ── */}
-        <section className="projects-page-header">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Link href="/" className="projects-back-link">
-              ← Back
-            </Link>
-            <p className="projects-page-eyebrow">— Work</p>
-            <h1 className="projects-page-title">Projects</h1>
-            <p className="projects-page-subtitle">
-              A collection of dev and design work — things I built, shipped, or explored.
-            </p>
-          </motion.div>
-
-          {/* ── Filter tabs ── */}
-          <motion.div
-            className="projects-filter-bar"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {tabs.map((tab) => (
-              <button
-                key={tab.value}
-                className={`projects-filter-tab${filter === tab.value ? " active" : ""}`}
-                onClick={() => setFilter(tab.value)}
-                aria-pressed={filter === tab.value}
-                id={`filter-${tab.value}`}
+      <main className="subpage-main">
+        <div className="section-container">
+          {/* ── Page header ── */}
+          <div className="subpage-header">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Link
+                href="/"
+                className="subpage-back-link"
+                onMouseEnter={() => sound.play("hover")}
+                onClick={() => sound.play("click")}
               >
-                {tab.label}
-                <span className="projects-filter-count">{tab.count}</span>
-              </button>
-            ))}
-          </motion.div>
-        </section>
+                ← Back
+              </Link>
+              <p className="section-kicker">— Work</p>
+              <h1 className="subpage-title">Projects</h1>
+              <p className="subpage-subtitle">
+                A collection of dev and design work — things I built, shipped, or explored.
+              </p>
+            </motion.div>
 
-        {/* ── Grid ── */}
-        <section className="projects-page-grid-section section-container">
+            {/* ── Filter tabs ── */}
+            <motion.div
+              className="subpage-controls-bar"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="subpage-filter-bar">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.value}
+                    className={`subpage-filter-tab${filter === tab.value ? " active" : ""}`}
+                    onClick={() => {
+                      sound.play("click");
+                      setFilter(tab.value);
+                    }}
+                    onMouseEnter={() => sound.play("hover")}
+                    aria-pressed={filter === tab.value}
+                    id={`filter-${tab.value}`}
+                  >
+                    {tab.label}
+                    <span className="subpage-filter-count">{tab.count}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* ── Grid ── */}
           {filtered.length === 0 ? (
-            <p className="projects-page-message">No projects found.</p>
+            <p style={{ fontFamily: MONO, fontSize: "11px", color: "var(--muted)", letterSpacing: "0.12em", padding: "3rem 0" }}>
+              No projects found.
+            </p>
           ) : (
             <AnimatePresence mode="wait">
               <motion.div
@@ -216,7 +248,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
               </motion.div>
             </AnimatePresence>
           )}
-        </section>
+        </div>
       </main>
 
       <Footer />
@@ -226,109 +258,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
       </AnimatePresence>
 
       <style>{`
-        /* ── Page layout ── */
-        .projects-page-main {
-          min-height: 100vh;
-          background: var(--bg);
-          padding-top: 6rem;
-        }
-        .projects-page-header {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem clamp(1.5rem, 6vw, 5rem) 2rem;
-        }
-        .projects-back-link {
-          display: inline-block;
-          font-family: ${MONO};
-          font-size: 10px;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--muted);
-          text-decoration: none;
-          margin-bottom: 2rem;
-          transition: color 0.2s ease;
-        }
-        .projects-back-link:hover { color: var(--fg); }
-
-        .projects-page-eyebrow {
-          font-family: ${MONO};
-          font-size: 10px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: var(--muted);
-          margin-bottom: 0.75rem;
-        }
-        .projects-page-title {
-          font-family: ${DISPLAY};
-          font-size: clamp(2.4rem, 6vw, 4.5rem);
-          font-weight: 800;
-          line-height: 1;
-          letter-spacing: -0.03em;
-          color: var(--fg);
-          margin-bottom: 1rem;
-        }
-        .projects-page-subtitle {
-          font-size: 13px;
-          color: var(--muted);
-          max-width: 440px;
-          line-height: 1.75;
-          margin-bottom: 2.5rem;
-        }
-        .projects-page-message {
-          font-family: ${MONO};
-          font-size: 11px;
-          color: var(--muted);
-          letter-spacing: 0.12em;
-          padding: 3rem 0;
-        }
-
-        /* ── Filter bar ── */
-        .projects-filter-bar {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          background: var(--subtle-bg);
-          border: 1px solid var(--border);
-          border-radius: 999px;
-          padding: 4px;
-          width: fit-content;
-        }
-        .projects-filter-tab {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-family: ${MONO};
-          font-size: 10.5px;
-          font-weight: 500;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--muted);
-          background: none;
-          border: none;
-          border-radius: 999px;
-          padding: 6px 16px;
-          cursor: pointer;
-          transition: color 0.2s ease, background 0.2s ease;
-        }
-        .projects-filter-tab:hover { color: var(--fg); }
-        .projects-filter-tab.active {
-          color: var(--fg);
-          background: var(--bg);
-          box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-        }
-        [data-theme="dark"] .projects-filter-tab.active {
-          box-shadow: 0 1px 6px rgba(0,0,0,0.4);
-        }
-        .projects-filter-count {
-          font-size: 9px;
-          opacity: 0.45;
-          font-weight: 600;
-        }
-
         /* ── Grid ── */
-        .projects-page-grid-section {
-          padding-bottom: 6rem;
-        }
         .proj-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -338,7 +268,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           .proj-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 600px) {
-          .proj-grid { grid-template-columns: 1fr; gap: 1rem; }
+          .proj-grid { grid-template-columns: 1fr; gap: 1.25rem; }
         }
 
         /* ── Card ── */
@@ -509,32 +439,6 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           align-self: flex-start;
         }
         .proj-card-link:hover { opacity: 1; }
-
-        /* ── Skeleton ── */
-        .proj-card-skeleton {
-          pointer-events: none;
-        }
-        .proj-skeleton-img {
-          background: var(--subtle-bg);
-          animation: proj-shimmer 1.4s ease-in-out infinite;
-        }
-        .proj-skeleton-line {
-          background: var(--subtle-bg);
-          border-radius: 3px;
-          animation: proj-shimmer 1.4s ease-in-out infinite;
-        }
-        @keyframes proj-shimmer {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-
-        /* ── Mobile tweaks ── */
-        @media (max-width: 640px) {
-          .projects-page-main { padding-top: 5rem; }
-          .projects-page-header { padding-bottom: 1.5rem; }
-          .projects-filter-bar { width: 100%; justify-content: center; }
-          .projects-filter-tab { flex: 1; justify-content: center; }
-        }
       `}</style>
     </>
   );

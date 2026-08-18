@@ -6,7 +6,7 @@ import {
   useTransform,
   type PanInfo,
 } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 interface CardRotateProps {
   children: React.ReactNode;
@@ -107,6 +107,7 @@ export default function Stack({
 }: StackProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [order, setOrder] = useState<number[]>(() => cards.map((_, index) => index));
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < mobileBreakpoint);
@@ -118,59 +119,42 @@ export default function Stack({
   const shouldDisableDrag = mobileClickOnly && isMobile;
   const shouldEnableClick = sendToBackOnClick || shouldDisableDrag;
 
-  // Build initial stack once; sync only when card count changes (not ref changes)
-  const [stack, setStack] = useState<{ id: number; content: React.ReactNode }[]>(
-    () => cards.map((content, index) => ({ id: index + 1, content }))
-  );
+  const currentOrder = useMemo(() => {
+    const valid = order.filter((i) => i < cards.length);
+    const missing = Array.from({ length: cards.length }, (_, i) => i).filter((i) => !valid.includes(i));
+    return [...valid, ...missing];
+  }, [order, cards.length]);
 
-  // Stable random rotations — computed once per card count, not per render
-  const rotationsRef = useRef<number[]>([]);
-  if (rotationsRef.current.length !== cards.length) {
-    rotationsRef.current = Array.from({ length: cards.length }, () =>
-      randomRotation ? Math.random() * 10 - 5 : 0
-    );
-  }
-
-  const prevLengthRef = useRef(cards.length);
-  useEffect(() => {
-    if (cards.length !== prevLengthRef.current) {
-      prevLengthRef.current = cards.length;
-      setStack(cards.map((content, index) => ({ id: index + 1, content })));
-      rotationsRef.current = Array.from({ length: cards.length }, () =>
-        randomRotation ? Math.random() * 10 - 5 : 0
-      );
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cards.length]);
-
-  const sendToBack = (id: number) => {
-    setStack((prev) => {
-      const newStack = [...prev];
-      const index = newStack.findIndex((card) => card.id === id);
-      const [card] = newStack.splice(index, 1);
-      newStack.unshift(card);
-      return newStack;
+  // Deterministic pseudo-random rotations to avoid SSR mismatches and pure-render violations
+  const rotations = useMemo(() => {
+    return cards.map((_, index) => {
+      if (!randomRotation) return 0;
+      const pseudo = ((Math.sin(index * 12.9898 + 78.233) * 43758.5453) % 1);
+      return pseudo * 10 - 5;
     });
-  };
+  }, [cards, randomRotation]);
 
-  const sendToBackRef = useRef(sendToBack);
-  useEffect(() => { sendToBackRef.current = sendToBack; });
+  const sendToBack = useCallback((index: number) => {
+    setOrder((prev) => {
+      const filtered = prev.filter((i) => i !== index);
+      return [index, ...filtered];
+    });
+  }, []);
 
   useEffect(() => {
-    if (!autoplay || stack.length <= 1) return;
+    if (!autoplay || currentOrder.length <= 1 || isPaused) return;
     const interval = setInterval(() => {
-      setStack((prev) => {
-        const newStack = [...prev];
-        const [card] = newStack.splice(newStack.length - 1, 1);
-        newStack.unshift(card);
-        return newStack;
+      setOrder((prev) => {
+        if (prev.length <= 1) return prev;
+        const last = prev[prev.length - 1];
+        const rest = prev.slice(0, -1);
+        return [last, ...rest];
       });
     }, autoplayDelay);
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoplay, autoplayDelay, isPaused, stack.length]);
+  }, [autoplay, autoplayDelay, isPaused, currentOrder.length]);
 
-  if (stack.length === 0) return null;
+  if (cards.length === 0) return null;
 
   return (
     <div
@@ -183,12 +167,15 @@ export default function Stack({
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
-      {stack.map((card, index) => {
-        const rotation = rotationsRef.current[index] ?? 0;
+      {currentOrder.map((cardIndex, stackPosition) => {
+        const cardContent = cards[cardIndex];
+        const rotation = rotations[cardIndex] ?? 0;
+        if (!cardContent) return null;
+
         return (
           <CardRotate
-            key={card.id}
-            onSendToBack={() => sendToBack(card.id)}
+            key={cardIndex}
+            onSendToBack={() => sendToBack(cardIndex)}
             sensitivity={sensitivity}
             disableDrag={shouldDisableDrag}
           >
@@ -200,10 +187,10 @@ export default function Stack({
                 height: "100%",
                 boxShadow: "0 10px 30px -10px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)",
               }}
-              onClick={() => shouldEnableClick && sendToBack(card.id)}
+              onClick={() => shouldEnableClick && sendToBack(cardIndex)}
               animate={{
-                rotateZ: (stack.length - index - 1) * 4 + rotation,
-                scale: 1 + index * 0.06 - stack.length * 0.06,
+                rotateZ: (currentOrder.length - stackPosition - 1) * 4 + rotation,
+                scale: 1 + stackPosition * 0.06 - currentOrder.length * 0.06,
                 transformOrigin: "90% 90%",
               }}
               initial={false}
@@ -213,7 +200,7 @@ export default function Stack({
                 damping: animationConfig.damping,
               }}
             >
-              {card.content}
+              {cardContent}
             </motion.div>
           </CardRotate>
         );

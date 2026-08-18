@@ -59,12 +59,17 @@ const LONG_PRESS_MS = 600;
 
 export default function Navbar() {
   const pathname = usePathname();
+  const isProjectsRoute = pathname === "/projects";
   const [activeSection, setActiveSection] = useState("");
   const [scrolled,      setScrolled]      = useState(false);
   const [chatOpen,      setChatOpen]      = useState(false);
   const [isClosing,     setIsClosing]     = useState(false);
   const [holding,       setHolding]       = useState(false);
   const [showHint,      setShowHint]      = useState(false);
+
+  const effectiveActiveSection = isProjectsRoute ? "projects" : activeSection;
+  const effectiveScrolled = isProjectsRoute ? true : scrolled;
+  const effectiveShowHint = showHint && !chatOpen && !holding;
 
   const holdTimer      = useRef<ReturnType<typeof setTimeout> | null>(null);
   const didHoldSucceed = useRef(false);
@@ -83,7 +88,6 @@ export default function Navbar() {
   // ── Idle Detection (shows after 2s stillness; on movement, fades after 2s) ──
   useEffect(() => {
     if (chatOpen || holding) {
-      setShowHint(false);
       return;
     }
 
@@ -128,9 +132,7 @@ export default function Navbar() {
 
   // ── Scroll tracking ──────────────────────────────────────────────────
   useEffect(() => {
-    if (pathname === "/projects") {
-      setActiveSection("projects");
-      setScrolled(true);
+    if (isProjectsRoute) {
       return;
     }
     const allSections = ["about", "credentials", "projects", "social", "contact"];
@@ -153,7 +155,7 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname]);
+  }, [isProjectsRoute]);
 
   // ── Auto-scroll messages ──────────────────────────────────────────────
   useEffect(() => {
@@ -201,10 +203,10 @@ export default function Navbar() {
   }, [chatOpen, closeChat]);
 
   // ── Long-press handlers ───────────────────────────────────────────────
-  const startHold = useCallback(() => {
+  const startHold = useCallback((e?: React.SyntheticEvent) => {
     if (chatOpen) return;
     didHoldSucceed.current = false;
-    holdStartTime.current = Date.now();
+    holdStartTime.current = e ? e.timeStamp : 0;
     setHolding(true);
     setShowHint(false);
     holdTimer.current = setTimeout(() => {
@@ -221,13 +223,14 @@ export default function Navbar() {
   }, []);
 
   // ── Nav click (Normal click navigates; long-press hold is suppressed) ──
-  const handleNavClick = (
+  const handleNavClick = useCallback((
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string,
     isRoute: boolean
   ) => {
     // If the user held the navbar to open chat, cancel default link navigation!
-    if (didHoldSucceed.current || (holdStartTime.current > 0 && Date.now() - holdStartTime.current >= LONG_PRESS_MS)) {
+    const isHoldTimeout = holdStartTime.current > 0 && e.timeStamp - holdStartTime.current >= LONG_PRESS_MS;
+    if (didHoldSucceed.current || isHoldTimeout) {
       e.preventDefault();
       e.stopPropagation();
       didHoldSucceed.current = false;
@@ -238,11 +241,11 @@ export default function Navbar() {
     if (isRoute) return;
     e.preventDefault();
     if (pathname !== "/") {
-      window.location.href = `/${href}`;
+      window.location.assign(`/${href}`);
       return;
     }
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, [pathname]);
 
   // ── Send message with sound ───────────────────────────────────────────
   const handleSendMessage = (text: string) => {
@@ -293,7 +296,7 @@ export default function Navbar() {
             className={[
               "pill-nav",
               "backdrop-blur-[22px] backdrop-saturate-[1.9]",
-              scrolled && !chatOpen ? "pill-nav-scrolled" : "",
+              effectiveScrolled && !chatOpen ? "pill-nav-scrolled" : "",
               holding ? "pill-nav-holding" : "",
               chatOpen ? "pill-nav-chat" : "",
             ].filter(Boolean).join(" ")}
@@ -320,7 +323,7 @@ export default function Navbar() {
                   {links.map((l) => {
                     const isActive = l.route
                       ? pathname === l.href || pathname.startsWith(l.href + "/")
-                      : activeSection === l.href.slice(1);
+                      : effectiveActiveSection === l.href.slice(1);
                     return (
                       <a
                         key={l.href}
@@ -475,9 +478,9 @@ export default function Navbar() {
             className="nav-hint-floating"
             initial={false}
             animate={{
-              opacity: showHint && !chatOpen && !holding ? 1 : 0,
-              scale: showHint && !chatOpen && !holding ? 1 : 0.94,
-              y: showHint && !chatOpen && !holding ? 0 : 3,
+              opacity: effectiveShowHint ? 1 : 0,
+              scale: effectiveShowHint ? 1 : 0.94,
+              y: effectiveShowHint ? 0 : 3,
               pointerEvents: "none",
             }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}

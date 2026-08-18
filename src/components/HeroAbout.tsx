@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import TiltedCard from "./TiltedCard";
 import { motion } from "framer-motion";
 import NowPlaying from "./NowPlaying";

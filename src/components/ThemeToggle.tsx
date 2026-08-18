@@ -1,19 +1,38 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useSyncExternalStore, useState } from "react";
 import { sound } from "@/lib/sound";
 
-export default function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
-  const [dark, setDark] = useState(false);
+const subscribeMounted = () => () => {};
+const getMountedSnapshot = () => true;
+const getMountedServerSnapshot = () => false;
 
-  useEffect(() => {
-    setDark(localStorage.getItem("theme") === "dark");
-    setMounted(true);
-  }, []);
+const subscribeTheme = (callback: () => void) => {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+};
+
+const getThemeSnapshot = () => {
+  if (typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "dark") {
+    return true;
+  }
+  if (typeof window !== "undefined" && localStorage.getItem("theme") === "dark") {
+    return true;
+  }
+  return false;
+};
+
+const getThemeServerSnapshot = () => false;
+
+export default function ThemeToggle() {
+  const mounted = useSyncExternalStore(subscribeMounted, getMountedSnapshot, getMountedServerSnapshot);
+  const isDarkFromStore = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getThemeServerSnapshot);
+  const [localDark, setLocalDark] = useState<boolean | null>(null);
+
+  const dark = localDark !== null ? localDark : isDarkFromStore;
 
   const toggle = () => {
     const next = !dark;
-    setDark(next);
+    setLocalDark(next);
     localStorage.setItem("theme", next ? "dark" : "light");
 
     if (next) {

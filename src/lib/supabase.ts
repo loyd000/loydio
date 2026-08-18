@@ -24,6 +24,19 @@ export type GalleryPhoto = {
   created_at: string;
 };
 
+export type Credential = {
+  id: string;
+  title: string;
+  org: string;
+  year: string;
+  link: string | null;
+  image_url: string | null;
+  type: string;
+  description: string;
+  sort_order: number;
+  created_at: string;
+};
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
