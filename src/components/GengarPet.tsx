@@ -4,7 +4,6 @@ import { useEffect, useState, useRef, useCallback, useSyncExternalStore } from "
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence, useSpring } from "framer-motion";
-import { sound } from "@/lib/sound";
 import { useChatStream } from "@/lib/useChatStream";
 
 function useIsClient() {
@@ -75,11 +74,6 @@ export default function GengarPet() {
     }
   }, [chatOpen]);
 
-  // Play Gengar cry sound (or fallback to synth pop via SoundEngine)
-  const playGengarSound = useCallback(() => {
-    sound.playGengarCry();
-  }, []);
-
   // Shoot Shadow Ball directly at user's cursor (3.2s full sequence)
   const shootShadowBall = useCallback(() => {
     if (
@@ -121,9 +115,6 @@ export default function GengarPet() {
     ];
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
     setCastSpeech(phrase);
-
-    // Play Gengar cry sound when starting the attack!
-    playGengarSound();
 
     // Position of charging ball right beside Gengar's hands
     const chargeX = curX + (facingDir === 1 ? 56 : 20);
@@ -168,8 +159,6 @@ export default function GengarPet() {
 
       // ── Phase 3: 2400ms - 3200ms (0.8s) Impact & Disappearance at cursor (Frames 12-15) ──
       setTimeout(() => {
-        sound.play("shadowballImpact");
-
         // Attack completes at 3200ms
         setTimeout(() => {
           setShadowBall(null);
@@ -310,7 +299,6 @@ export default function GengarPet() {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        sound.play("close");
         setChatOpen(false);
       }
     };
@@ -322,14 +310,12 @@ export default function GengarPet() {
   const handleGengarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!chatOpen) {
-      playGengarSound();
       setChatOpen(true);
       setIsWalking(false);
     }
   };
 
   const handleCloseChat = () => {
-    sound.play("close");
     setChatOpen(false);
     if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
     roamLoopRef.current = setTimeout(stepRoam, 1000);
@@ -337,7 +323,6 @@ export default function GengarPet() {
 
   const handleSend = () => {
     if (!input.trim() || streaming) return;
-    sound.play("messageSend");
     sendMessage(input);
   };
 
@@ -372,7 +357,6 @@ export default function GengarPet() {
               exit={{ scale: 0.8, opacity: 0 }}
               onDragStart={() => {
                 setIsInteracting(true);
-                sound.play("hover");
               }}
               onDragEnd={(_e, info) => {
                 setIsInteracting(false);
@@ -396,7 +380,6 @@ export default function GengarPet() {
               whileTap={{ scale: 0.94, cursor: "grabbing" }}
               onMouseEnter={() => {
                 setIsHovered(true);
-                sound.play("hover");
               }}
               onMouseLeave={() => setIsHovered(false)}
               onClick={handleGengarClick}

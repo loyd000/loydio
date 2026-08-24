@@ -1,6 +1,5 @@
 "use client";
 import { useSyncExternalStore, useState } from "react";
-import { sound } from "@/lib/sound";
 
 const subscribeMounted = () => () => {};
 const getMountedSnapshot = () => true;
@@ -34,12 +33,6 @@ export default function ThemeToggle() {
     const next = !dark;
     setLocalDark(next);
     localStorage.setItem("theme", next ? "dark" : "light");
-
-    if (next) {
-      sound.play("themeDark");
-    } else {
-      sound.play("themeLight");
-    }
 
     const apply = () => document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
 

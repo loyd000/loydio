@@ -2,13 +2,103 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { supabase, type Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
-import ArcCarousel, { type ProjectItem } from "./ArcCarousel";
-import { sound } from "@/lib/sound";
+import SpotlightCard from "./SpotlightCard";
 
 const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
+const MotionSpotlightCard = motion.create(SpotlightCard);
+
+function DevProjectGrid({ projects, onModal }: { projects: Project[]; onModal: (p: Project) => void }) {
+  const gridRef = useRef(null);
+  const gridInView = useInView(gridRef, { once: true, margin: "-60px" });
+
+  if (projects.length === 0) return null;
+
+  return (
+    <div ref={gridRef} className="dev-project-grid">
+      {projects.map((p, i) => {
+        const hasLink = Boolean(p.link);
+
+        return (
+          <MotionSpotlightCard
+            key={p.id}
+            className="dev-project-card liquid-glass-card"
+            spotlightColor="var(--dev-spotlight-color)"
+            initial={{ opacity: 0, y: 20 }}
+            animate={gridInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: (i % 6) * 0.07, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              className="dev-project-media"
+              onClick={() => {
+                if (!hasLink) {
+                  onModal(p);
+                }
+              }}
+              style={{ cursor: hasLink ? "default" : "pointer" }}
+            >
+              {p.image_url ? (
+                <Image
+                  src={p.image_url}
+                  alt={p.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
+                  style={{ objectFit: "contain" }}
+                  className="dev-project-img"
+                />
+              ) : (
+                <div className="dev-project-media-placeholder" aria-hidden>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.2 }}>
+                    <rect x="3" y="3" width="18" height="18" stroke="var(--fg)" strokeWidth="1" />
+                    <circle cx="8.5" cy="8.5" r="2" stroke="var(--fg)" strokeWidth="1" />
+                    <path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--fg)" strokeWidth="1" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              )}
+              <div className="dev-project-shine" aria-hidden />
+              {p.year && <span className="dev-project-year">{p.year}</span>}
+            </div>
+
+            <div className="dev-project-body">
+              <h3 className="section-heading dev-project-title">{p.title}</h3>
+              {p.description && <p className="dev-project-desc">{p.description}</p>}
+
+              {hasLink ? (
+                <a
+                  href={p.link!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                  className="dev-project-cta"
+                >
+                  View Project
+                  <ArrowUpRight size={14} strokeWidth={2} />
+                </a>
+              ) : (
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onModal(p);
+                  }}
+                  className="dev-project-cta"
+                >
+                  View Project
+                  <ArrowUpRight size={14} strokeWidth={2} />
+                </button>
+              )}
+            </div>
+          </MotionSpotlightCard>
+        );
+      })}
+    </div>
+  );
+}
 
 function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (p: Project) => void }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -22,7 +112,6 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
   const currentIndex = Math.min(activeIndex, projects.length - 1);
 
   const goToIndex = (index: number) => {
-    sound.play("click");
     setActiveIndex(((index % projects.length) + projects.length) % projects.length);
   };
 
@@ -206,7 +295,6 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
           <div className="design-carousel-controls">
             <button
               onClick={() => goToIndex(currentIndex - 1)}
-              onMouseEnter={() => sound.play("hover")}
               aria-label="Previous graphic design project"
               className="liquid-glass-btn"
             >
@@ -218,7 +306,6 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                 <button
                   key={p.id ?? p.title}
                   onClick={() => goToIndex(i)}
-                  onMouseEnter={() => sound.play("hover")}
                   aria-label={`Show ${p.title}`}
                   aria-current={i === currentIndex}
                   className="design-carousel-dot"
@@ -233,7 +320,6 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
 
             <button
               onClick={() => goToIndex(currentIndex + 1)}
-              onMouseEnter={() => sound.play("hover")}
               aria-label="Next graphic design project"
               className="liquid-glass-btn"
             >
@@ -247,11 +333,16 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
 }
 function SkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
   return (
-    <div className={variant === "dev" ? "project-grid-2col" : "project-grid"} role="status" aria-label="Loading projects">
+    <div className={variant === "dev" ? "dev-project-grid" : "project-grid"} role="status" aria-label="Loading projects">
       {Array.from({ length: variant === "dev" ? 4 : 3 }).map((_, i) => (
-        <div key={i} className="project-skeleton-card" style={{ animationDelay: `${i * 0.12}s` }} aria-hidden>
+        <div
+          key={i}
+          className={variant === "dev" ? "dev-project-card liquid-glass-card project-skeleton-card" : "project-skeleton-card"}
+          style={{ animationDelay: `${i * 0.12}s` }}
+          aria-hidden
+        >
           <div className="project-skeleton-block" style={{ aspectRatio: variant === "design" ? "4 / 3" : "16 / 9" }} />
-          <div style={{ padding: "1.5rem" }}>
+          <div style={{ padding: variant === "dev" ? "1.1rem 0 0" : "1.5rem" }}>
             <div className="project-skeleton-title" />
             <div className="project-skeleton-line" style={{ width: "85%" }} />
             <div className="project-skeleton-line" style={{ width: "65%" }} />
@@ -298,17 +389,6 @@ export default function Projects() {
       });
   }, []);
 
-  const carouselProjects: ProjectItem[] = devProjects.map((project) => ({
-    id: project.id,
-    title: project.title,
-    status: (["2024", "2025", "2026"].includes(project.year) ? "Shipped" : "In progress") as "Shipped" | "In progress",
-    shipped: ["2024", "2025", "2026"].includes(project.year),
-    description: project.description,
-    tags: project.tags ?? [],
-    link: project.link,
-    image_url: project.image_url,
-  }));
-
   return (
     <section
       id="projects"
@@ -329,8 +409,6 @@ export default function Projects() {
           <Link
             href="/projects"
             className="proj-view-all-link"
-            onMouseEnter={() => sound.play("hover")}
-            onClick={() => sound.play("click")}
             style={{
               fontFamily: DISPLAY_FONT,
               fontSize: 11,
@@ -348,10 +426,10 @@ export default function Projects() {
           <SkeletonGrid variant="dev" />
         ) : loadError ? (
           <ProjectMessage>Unable to load projects. Please try again later.</ProjectMessage>
-        ) : carouselProjects.length === 0 ? (
+        ) : devProjects.length === 0 ? (
           <ProjectMessage>No development work uploaded yet.</ProjectMessage>
         ) : (
-          <ArcCarousel projects={carouselProjects} />
+          <DevProjectGrid projects={devProjects} onModal={setModal} />
         )}
 
         <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>
@@ -376,6 +454,130 @@ export default function Projects() {
       </AnimatePresence>
 
       <style>{`
+        :root {
+          --dev-spotlight-color: rgba(0, 0, 0, 0.06);
+        }
+        [data-theme="dark"] {
+          --dev-spotlight-color: rgba(255, 255, 255, 0.14);
+        }
+        .dev-project-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.75rem;
+        }
+        .dev-project-card {
+          border-radius: 20px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          padding: clamp(0.9rem, 1.4vw, 1.15rem);
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dev-project-card:hover {
+          transform: translateY(-3px);
+        }
+        .dev-project-media {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border-radius: 12px;
+          background: var(--subtle-bg);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .dev-project-media-placeholder {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .dev-project-shine {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.02) 42%, transparent 100%);
+          pointer-events: none;
+        }
+        .dev-project-year {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-family: var(--font-mono), monospace;
+          font-size: 9px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #fff;
+          opacity: 0.55;
+          text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .dev-project-body {
+          padding: 1.1rem 0 0;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          gap: 0.6rem;
+        }
+        .dev-project-title {
+          font-size: clamp(17px, 1.9vw, 21px);
+          line-height: 1.2;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .dev-project-desc {
+          font-size: 12.5px;
+          color: var(--muted);
+          line-height: 1.7;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          flex: 1;
+        }
+        .dev-project-cta {
+          align-self: center;
+          margin-top: auto;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: none;
+          border: none;
+          padding: 0;
+          font-family: var(--font-mono), monospace;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          text-decoration: none;
+          color: var(--muted);
+          cursor: pointer;
+          transition: color 0.2s ease;
+        }
+        .dev-project-cta:hover {
+          color: var(--fg);
+        }
+        .dev-project-cta svg {
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dev-project-cta:hover svg {
+          transform: translate(2px, -2px);
+        }
+        .dev-project-grid .project-skeleton-card {
+          border-radius: 20px;
+          border: 1px solid var(--border);
+          min-height: auto;
+        }
+        .dev-project-grid .project-skeleton-block {
+          border-radius: 12px;
+        }
+        @media (max-width: 640px) {
+          .dev-project-grid {
+            grid-template-columns: 1fr;
+          }
+        }
         .design-carousel-shell {
           position: relative;
           height: clamp(500px, 64vw, 650px);

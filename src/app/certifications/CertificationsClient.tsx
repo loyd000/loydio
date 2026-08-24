@@ -6,7 +6,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Credential } from "@/lib/supabase";
-import { sound } from "@/lib/sound";
 
 const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
 const Footer = dynamic(() => import("@/components/Footer"));
@@ -56,8 +55,6 @@ export default function CertificationsClient({
               <Link
                 href="/"
                 className="subpage-back-link"
-                onMouseEnter={() => sound.play("hover")}
-                onClick={() => sound.play("click")}
               >
                 ← Back
               </Link>
@@ -89,10 +86,8 @@ export default function CertificationsClient({
                     <button
                       key={t}
                       onClick={() => {
-                        sound.play("click");
                         setSelectedType(t);
                       }}
-                      onMouseEnter={() => sound.play("hover")}
                       className={`subpage-filter-tab${isActive ? " active" : ""}`}
                       aria-pressed={isActive}
                     >
@@ -138,7 +133,6 @@ export default function CertificationsClient({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.48, delay: (index % 6) * 0.05, ease: [0.16, 1, 0.3, 1] }}
                       className="cert-card"
-                      onMouseEnter={() => sound.play("hover")}
                     >
                       {/* Badge Icon */}
                       <div className="cert-badge-wrapper">
@@ -192,7 +186,6 @@ export default function CertificationsClient({
                             target="_blank"
                             rel="noopener noreferrer"
                             className="cert-verify-btn"
-                            onClick={() => sound.play("click")}
                             aria-label={`Verify ${c.title} credential`}
                           >
                             &#123; VERIFY &#125;

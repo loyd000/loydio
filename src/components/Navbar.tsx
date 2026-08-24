@@ -3,9 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
-import SoundToggle from "./SoundToggle";
 import VisitCounter from "./VisitCounter";
-import { sound } from "@/lib/sound";
 
 const links = [
   { label: "About",    href: "#about",    route: false },
@@ -21,11 +19,6 @@ export default function Navbar() {
 
   const effectiveActiveSection = isProjectsRoute ? "projects" : activeSection;
   const effectiveScrolled = isProjectsRoute ? true : scrolled;
-
-  // ── Global Interactive Sound Listeners ────────────────────────────────
-  useEffect(() => {
-    sound.initGlobalListeners();
-  }, []);
 
   // ── Scroll tracking ──────────────────────────────────────────────────
   useEffect(() => {
@@ -57,7 +50,6 @@ export default function Navbar() {
   // ── Nav click handler ────────────────────────────────────────────────
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string, isRoute: boolean) => {
-      sound.play("click");
       if (isRoute) return;
       e.preventDefault();
       if (pathname !== "/") {
@@ -74,10 +66,8 @@ export default function Navbar() {
       {/* LOGO - fixed top-left */}
       <a
         href="#"
-        onMouseEnter={() => sound.play("hover")}
         onClick={(e) => {
           e.preventDefault();
-          sound.play("click");
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         aria-label="Loyd - back to top"
@@ -116,7 +106,6 @@ export default function Navbar() {
                   <a
                     key={l.href}
                     href={l.href}
-                    onMouseEnter={() => sound.play("hover")}
                     onClick={(e) => handleNavClick(e, l.href, l.route)}
                     className={`pill-link${isActive ? " active" : ""}`}
                     aria-current={isActive ? "page" : undefined}
@@ -133,7 +122,6 @@ export default function Navbar() {
                 );
               })}
               <div className="pill-divider" />
-              <SoundToggle />
               <ThemeToggle />
             </div>
           </motion.nav>

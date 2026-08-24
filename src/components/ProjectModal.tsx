@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
-import { sound } from "@/lib/sound";
 
 const MONO = "var(--font-mono), monospace";
 const DISPLAY = "var(--font-display), 'Syne', sans-serif";
@@ -20,13 +19,7 @@ export default function ProjectModal({
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const dragStartX = useRef<number | null>(null);
 
-  // Play pop on modal open
-  useEffect(() => {
-    sound.play("pop");
-  }, []);
-
   const handleClose = useCallback(() => {
-    sound.play("close");
     onClose();
   }, [onClose]);
 
@@ -47,13 +40,11 @@ export default function ProjectModal({
 
   const prevImg = useCallback(() => {
     if (images.length < 2) return;
-    sound.play("click");
     setIdx((i) => (i - 1 + images.length) % images.length);
   }, [images.length]);
 
   const nextImg = useCallback(() => {
     if (images.length < 2) return;
-    sound.play("click");
     setIdx((i) => (i + 1) % images.length);
   }, [images.length]);
 

@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { supabase, type Credential } from "@/lib/supabase";
-import { sound } from "@/lib/sound";
 
 export default function Certifications() {
   const [certifications, setCertifications] = useState<Credential[]>([]);
@@ -66,8 +65,6 @@ export default function Certifications() {
           <Link
             href="/certifications"
             className="proj-view-all-link"
-            onMouseEnter={() => sound.play("hover")}
-            onClick={() => sound.play("click")}
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: "11px",
@@ -101,7 +98,6 @@ export default function Certifications() {
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   className="cert-card"
-                  onMouseEnter={() => sound.play("hover")}
                 >
                   {/* Top: Badge Icon */}
                   <div className="cert-badge-wrapper">
@@ -145,7 +141,6 @@ export default function Certifications() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cert-verify-btn"
-                        onClick={() => sound.play("click")}
                         aria-label={`Verify ${c.title} credential`}
                       >
                         &#123; VERIFY &#125;

@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Project } from "@/lib/supabase";
 import ProjectModal from "@/components/ProjectModal";
-import { sound } from "@/lib/sound";
 
 const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
 const Footer = dynamic(() => import("@/components/Footer"));
@@ -51,7 +50,6 @@ function ProjectCard({
       initial={{ opacity: 0, y: 28 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.48, delay: (index % 6) * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => sound.play("hover")}
     >
       {/* image */}
       <div className="proj-card-img-wrap">
@@ -92,7 +90,6 @@ function ProjectCard({
               className="proj-cta-btn liquid-glass-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                sound.play("click");
               }}
             >
               View Project →
@@ -101,7 +98,6 @@ function ProjectCard({
             <button
               className="proj-cta-btn liquid-glass-btn"
               onClick={() => {
-                sound.play("click");
                 onModal(project);
               }}
             >
@@ -116,7 +112,6 @@ function ProjectCard({
         className="proj-card-body"
         onClick={() => {
           if (!hasLink) {
-            sound.play("click");
             onModal(project);
           }
         }}
@@ -139,7 +134,6 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             className="proj-card-link"
-            onClick={() => sound.play("click")}
           >
             Open →
           </a>
@@ -187,8 +181,6 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
               <Link
                 href="/"
                 className="subpage-back-link"
-                onMouseEnter={() => sound.play("hover")}
-                onClick={() => sound.play("click")}
               >
                 ← Back
               </Link>
@@ -212,10 +204,8 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
                     key={tab.value}
                     className={`subpage-filter-tab${filter === tab.value ? " active" : ""}`}
                     onClick={() => {
-                      sound.play("click");
                       setFilter(tab.value);
                     }}
-                    onMouseEnter={() => sound.play("hover")}
                     aria-pressed={filter === tab.value}
                     id={`filter-${tab.value}`}
                   >
