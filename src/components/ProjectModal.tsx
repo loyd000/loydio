@@ -133,14 +133,14 @@ export default function ProjectModal({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -16 }}
                     transition={{ duration: 0.18 }}
-                    style={{ position: "absolute", inset: 0 }}
+                    style={{ position: "absolute", inset: "clamp(10px, 2.5vw, 20px)" }}
                   >
                     <Image
                       src={images[idx]}
                       alt={`${project.title} screenshot ${idx + 1}`}
                       fill
-                      sizes="(max-width: 720px) 100vw, 50vw"
-                      style={{ objectFit: "cover" }}
+                      sizes="(max-width: 720px) 100vw, 960px"
+                      style={{ objectFit: "contain" }}
                       priority={idx === 0}
                     />
                   </motion.div>
@@ -149,21 +149,28 @@ export default function ProjectModal({
                 {/* Arrow nav */}
                 {images.length > 1 && (
                   <>
-                    <button className="pm-arrow pm-arrow-left" onClick={prevImg} aria-label="Previous image">
+                    <button
+                      className="pm-arrow pm-arrow-left"
+                      onClick={prevImg}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onPointerUp={(e) => e.stopPropagation()}
+                      aria-label="Previous image"
+                    >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                         <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </button>
-                    <button className="pm-arrow pm-arrow-right" onClick={nextImg} aria-label="Next image">
+                    <button
+                      className="pm-arrow pm-arrow-right"
+                      onClick={nextImg}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onPointerUp={(e) => e.stopPropagation()}
+                      aria-label="Next image"
+                    >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                         <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </button>
-
-                    {/* Counter pill */}
-                    <div className="pm-img-counter">
-                      {idx + 1} / {images.length}
-                    </div>
                   </>
                 )}
               </div>
@@ -195,17 +202,11 @@ export default function ProjectModal({
 
           {/* ── Right pane: Details ── */}
           <div className="pm-details">
-            {/* Top meta row */}
-            <div className="pm-meta-row">
-              {project.category && (
-                <span className="pm-badge">{project.category}</span>
-              )}
-              <span className="pm-type-dot" data-type={project.type} />
+            {/* Title row */}
+            <div className="pm-title-row">
+              <h2 className="pm-title">{project.title}</h2>
               <span className="pm-year">{project.year}</span>
             </div>
-
-            {/* Title */}
-            <h2 className="pm-title">{project.title}</h2>
 
             {/* Divider */}
             <div className="pm-divider" />
@@ -278,14 +279,14 @@ const STYLES = `
   .pm-shell {
     position: relative;
     width: 100%;
-    max-width: 960px;
+    max-width: 640px;
     max-height: 88vh;
     background: var(--bg);
     border: 1px solid var(--border-strong);
     border-radius: 16px;
     overflow: hidden;
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    display: flex;
+    flex-direction: column;
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.06) inset,
       0 32px 80px rgba(0,0,0,0.4),
@@ -325,13 +326,14 @@ const STYLES = `
     flex-direction: column;
     overflow: hidden;
     background: var(--subtle-bg);
-    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
   }
   .pm-main-img {
-    flex: 1;
     position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    min-height: 0;
     touch-action: pan-y;
     user-select: none;
     -webkit-user-select: none;
@@ -367,25 +369,6 @@ const STYLES = `
   .pm-arrow-left { left: 12px; }
   .pm-arrow-right { right: 12px; }
 
-  /* Counter pill */
-  .pm-img-counter {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: ${MONO};
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    color: #fff;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 999px;
-    padding: 3px 10px;
-    white-space: nowrap;
-  }
-
   /* Thumbnail strip */
   .pm-thumbstrip {
     display: flex;
@@ -420,48 +403,30 @@ const STYLES = `
 
   /* ── Details pane ── */
   .pm-details {
-    padding: clamp(1.5rem, 3vw, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-height: 0;
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
   }
 
-  /* Meta row */
-  .pm-meta-row {
+  /* Title row */
+  .pm-title-row {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 0.85rem;
   }
-  .pm-badge {
-    font-family: ${MONO};
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--fg);
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    padding: 3px 10px;
-  }
-  .pm-type-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .pm-type-dot[data-type="dev"]    { background: #3b82f6; }
-  .pm-type-dot[data-type="design"] { background: #a855f7; }
   .pm-year {
     font-family: ${MONO};
     font-size: 10px;
     opacity: 0.35;
     letter-spacing: 0.1em;
-    margin-left: auto;
+    white-space: nowrap;
   }
 
   /* Title */
@@ -472,13 +437,13 @@ const STYLES = `
     line-height: 1.1;
     letter-spacing: -0.02em;
     color: var(--fg);
-    margin: 0 0 1.25rem;
+    margin: 0;
   }
 
   .pm-divider {
     height: 1px;
     background: var(--border);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
   }
 
   /* Description */
@@ -553,62 +518,35 @@ const STYLES = `
      ════════════════════════════════════════════════ */
   @media (max-width: 720px) {
     .pm-backdrop {
-      align-items: flex-end;
-      padding: 0;
+      align-items: center;
+      padding: 1.25rem 1rem;
     }
     .pm-shell {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
       max-width: 100%;
-      max-height: 92dvh;
-      border-radius: 20px 20px 0 0;
-      border-bottom: none;
-    }
-    .pm-gallery {
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-    }
-    .pm-main-img {
-      height: clamp(200px, 52vw, 320px);
-      flex: none;
+      max-height: 90dvh;
+      border-radius: 16px;
     }
     .pm-close {
       top: 12px;
       right: 12px;
     }
     .pm-details {
-      padding: 1.25rem 1.25rem 2rem;
-      max-height: 50dvh;
+      padding: 1.25rem 1.25rem 1.5rem;
     }
     .pm-title {
       font-size: clamp(18px, 5vw, 24px);
     }
-    /* Drag handle pill at top of modal */
-    .pm-shell::before {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 36px;
-      height: 4px;
-      border-radius: 999px;
-      background: var(--border-strong);
-      opacity: 0.4;
-      z-index: 20;
-      pointer-events: none;
-    }
   }
 `;
 
-// Inject styles once into <head> when the modal first mounts
+// Inject/sync styles into <head> when the module loads
 if (typeof document !== "undefined") {
   const id = "pm-styles";
-  if (!document.getElementById(id)) {
-    const el = document.createElement("style");
+  let el = document.getElementById(id) as HTMLStyleElement | null;
+  if (!el) {
+    el = document.createElement("style");
     el.id = id;
-    el.textContent = STYLES;
     document.head.appendChild(el);
   }
+  if (el.textContent !== STYLES) el.textContent = STYLES;
 }
