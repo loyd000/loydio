@@ -404,7 +404,7 @@ export default function Projects() {
           style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
           <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)" }}>
-            — Projects
+            01 — Projects
           </p>
           <Link
             href="/projects"

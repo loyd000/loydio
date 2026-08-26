@@ -24,7 +24,7 @@ export default function Navbar() {
   useEffect(() => {
     if (isProjectsRoute) return;
 
-    const allSections = ["about", "credentials", "projects", "social", "contact"];
+    const allSections = ["about", "projects", "contact"];
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
       let current = "";
@@ -35,11 +35,7 @@ export default function Navbar() {
           if (rect.top <= 250 && rect.bottom >= 250) current = id;
         }
       });
-      if (current) {
-        if (["about", "credentials"].includes(current)) setActiveSection("about");
-        else if (["projects", "social"].includes(current)) setActiveSection("projects");
-        else if (current === "contact") setActiveSection("contact");
-      }
+      if (current) setActiveSection(current);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });

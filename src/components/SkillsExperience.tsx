@@ -69,7 +69,7 @@ export default function SkillsExperience() {
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{ marginBottom: "4rem" }}
         >
-          <p className="section-kicker">— Technologies &amp; Tools</p>
+          <p className="section-kicker">02 — Technologies &amp; Tools</p>
           <div className="tech-logo-loops" aria-label="Technologies and tools">
             {skillRows.map((row, rowIndex) => (
               <div className="tech-logo-loop" key={rowIndex}>
@@ -104,7 +104,7 @@ export default function SkillsExperience() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <p className="section-kicker journey-kicker">— Journey</p>
+          <p className="section-kicker journey-kicker">03 — Journey</p>
           <div className="journey-list">
             {journey.map((entry, index) => (
               <motion.div
