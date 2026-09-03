@@ -25,6 +25,7 @@ const skills = [
 
 const skillRows = [skills.slice(0, 8), skills.slice(8)];
 
+/*
 const journey = [
   {
     label: "2022",
@@ -55,6 +56,7 @@ const journey = [
     description: "Working WFH as a Claims Assessor for an Australian business solutions company, still open for commissions, figuring out life one day at a time.",
   },
 ];
+*/
 
 export default function SkillsExperience() {
   const ref = useRef(null);
@@ -67,7 +69,6 @@ export default function SkillsExperience() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
-          style={{ marginBottom: "4rem" }}
         >
           <p className="section-kicker">02 — Technologies &amp; Tools</p>
           <div className="tech-logo-loops" aria-label="Technologies and tools">
@@ -97,32 +98,6 @@ export default function SkillsExperience() {
             ))}
           </div>
           <GitHubContributions />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <p className="section-kicker journey-kicker">03 — Journey</p>
-          <div className="journey-list">
-            {journey.map((entry, index) => (
-              <motion.div
-                key={entry.label}
-                initial={{ opacity: 0, y: 14 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                className="journey-item"
-              >
-                <details>
-                  <summary>
-                    <span className="journey-label">{entry.label}</span>
-                  </summary>
-                  <p>{entry.description}</p>
-                </details>
-              </motion.div>
-            ))}
-          </div>
         </motion.div>
       </div>
     </section>

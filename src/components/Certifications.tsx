@@ -59,7 +59,7 @@ export default function Certifications() {
               color: "var(--muted)",
             }}
           >
-            04 — certifications
+            03 — certifications
           </p>
 
           <Link
