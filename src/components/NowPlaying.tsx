@@ -16,21 +16,40 @@ export default function NowPlaying() {
   const [data, setData] = useState<NowPlayingData | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     const fetchNowPlaying = async () => {
       try {
-        const res = await fetch("/api/spotify/now-playing");
+        const res = await fetch("/api/spotify/now-playing", { signal: controller.signal });
         if (res.ok) {
           const json = await res.json();
           setData(json);
         }
       } catch (err) {
-        console.error("Failed to fetch now playing", err);
+        if ((err as Error).name !== "AbortError") console.error("Failed to fetch now playing", err);
       }
     };
 
-    fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 30000); // Poll every 30s
-    return () => clearInterval(interval);
+    // Poll every 30s only while the tab is visible; refresh right away on return
+    const start = () => {
+      if (interval) return;
+      fetchNowPlaying();
+      interval = setInterval(fetchNowPlaying, 30000);
+    };
+    const stop = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+    };
+    const onVisibilityChange = () => (document.visibilityState === "visible" ? start() : stop());
+
+    onVisibilityChange();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      stop();
+      controller.abort();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
 
   if (!data) return null;

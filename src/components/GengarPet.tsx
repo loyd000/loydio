@@ -301,6 +301,10 @@ export default function GengarPet() {
     // Reduced motion: stay parked at the starting corner.
     if (reduceMotion) return;
 
+    // Warm the cache so the first Shadow Ball doesn't flash an empty frame
+    const sprite = new window.Image();
+    sprite.src = "/shadowball-sprite.webp";
+
     const initialTimer = setTimeout(() => stepRoamRef.current(), 1000);
 
     return () => {
@@ -496,7 +500,7 @@ export default function GengarPet() {
                   alt=""
                   width={76}
                   height={76}
-                  priority
+                  loading="eager"
                   unoptimized
                   draggable={false}
                   style={{
@@ -619,20 +623,9 @@ export default function GengarPet() {
               zIndex: 10050,
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`/Shadowball.gif?t=${shadowBall.id}`}
-              alt=""
-              aria-hidden="true"
-              width={76}
-              height={76}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                pointerEvents: "none",
-              }}
-            />
+            {/* 16-frame sprite sheet, played by CSS steps(). Remounting per ball (key)
+                restarts it from frame 0 — no cache-busting re-download like the old GIF. */}
+            <span aria-hidden="true" className="shadowball-sprite" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -916,7 +909,7 @@ export default function GengarPet() {
                         aria-hidden="true"
                         width={580}
                         height={580}
-                        priority
+                        loading="eager"
                         unoptimized
                         style={{
                           width: "100%",

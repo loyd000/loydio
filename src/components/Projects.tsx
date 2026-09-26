@@ -1,10 +1,10 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { supabase, type Project } from "@/lib/supabase";
+import type { Project } from "@/lib/supabase";
 import ProjectModal from "./ProjectModal";
 import MagnifyImage from "./MagnifyImage";
 import SpotlightCard from "./SpotlightCard";
@@ -47,6 +47,8 @@ function DevProjectGrid({ projects, onModal }: { projects: Project[]; onModal: (
                   alt={p.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 420px"
+                  // First row of the grid is the LCP candidate right under the hero
+                  loading={i < 2 ? "eager" : "lazy"}
                   style={{ objectFit: "contain" }}
                   className="dev-project-img"
                 />
@@ -222,10 +224,13 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                       position: "absolute",
                       bottom: 0,
                       left: 0,
+                      width: "100%",
                       height: 2,
                       background: "var(--accent)",
-                      width: isActive ? "100%" : "0%",
-                      transition: "width 0.48s ease",
+                      // Grows via scaleX (compositor-only) instead of animating width
+                      transform: `scaleX(${isActive ? 1 : 0})`,
+                      transformOrigin: "left center",
+                      transition: "transform 0.48s cubic-bezier(0.16, 1, 0.3, 1)",
                       zIndex: 5,
                     }}
                   />
@@ -331,28 +336,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
     </div>
   );
 }
-function SkeletonGrid({ variant = "dev" }: { variant?: "dev" | "design" }) {
-  return (
-    <div className={variant === "dev" ? "dev-project-grid" : "project-grid"} role="status" aria-label="Loading projects">
-      {Array.from({ length: variant === "dev" ? 4 : 3 }).map((_, i) => (
-        <div
-          key={i}
-          className={variant === "dev" ? "dev-project-card liquid-glass-card project-skeleton-card" : "project-skeleton-card"}
-          style={{ animationDelay: `${i * 0.12}s` }}
-          aria-hidden
-        >
-          <div className="project-skeleton-block" style={{ aspectRatio: variant === "design" ? "4 / 3" : "16 / 9" }} />
-          <div style={{ padding: variant === "dev" ? "1.1rem 0 0" : "1.5rem" }}>
-            <div className="project-skeleton-title" />
-            <div className="project-skeleton-line" style={{ width: "85%" }} />
-            <div className="project-skeleton-line" style={{ width: "65%" }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-/* Ã¢â€â‚¬Ã¢â€â‚¬ Main section Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* ── Main section ── */
 function ProjectMessage({ children }: { children: React.ReactNode }) {
   return (
     <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, color: "var(--muted)", padding: "2rem 0", letterSpacing: "0.12em" }}>
@@ -361,33 +345,14 @@ function ProjectMessage({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Projects() {
+export default function Projects({ projects, loadError }: { projects: Project[]; loadError: boolean }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  const [devProjects, setDevProjects] = useState<Project[]>([]);
-  const [designProjects, setDesignProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
   const [modal, setModal] = useState<Project | null>(null);
 
-  useEffect(() => {
-    supabase
-      .from("projects")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          setLoadError(error.message);
-          setLoading(false);
-          return;
-        }
-
-        const all = data ?? [];
-        setDevProjects(all.filter((project) => project.type === "dev"));
-        setDesignProjects(all.filter((project) => project.type === "design"));
-        setLoading(false);
-      });
-  }, []);
+  // Data arrives server-rendered from page.tsx, so there is no client loading state
+  const devProjects = projects.filter((project) => project.type === "dev");
+  const designProjects = projects.filter((project) => project.type === "design");
 
   return (
     <section
@@ -422,9 +387,7 @@ export default function Projects() {
           </Link>
         </motion.div>
 
-        {loading ? (
-          <SkeletonGrid variant="dev" />
-        ) : loadError ? (
+        {loadError ? (
           <ProjectMessage>Unable to load projects. Please try again later.</ProjectMessage>
         ) : devProjects.length === 0 ? (
           <ProjectMessage>No development work uploaded yet.</ProjectMessage>
@@ -437,9 +400,7 @@ export default function Projects() {
             — Graphic Design
           </p>
 
-          {loading ? (
-            <SkeletonGrid variant="design" />
-          ) : loadError ? (
+          {loadError ? (
             <ProjectMessage>Unable to load projects. Please try again later.</ProjectMessage>
           ) : designProjects.length === 0 ? (
             <ProjectMessage>No design work uploaded yet.</ProjectMessage>
@@ -565,14 +526,6 @@ export default function Projects() {
         .dev-project-cta:hover svg {
           transform: translate(2px, -2px);
         }
-        .dev-project-grid .project-skeleton-card {
-          border-radius: 20px;
-          border: 1px solid var(--border);
-          min-height: auto;
-        }
-        .dev-project-grid .project-skeleton-block {
-          border-radius: 12px;
-        }
         @media (max-width: 640px) {
           .dev-project-grid {
             grid-template-columns: 1fr;
@@ -628,7 +581,8 @@ export default function Projects() {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          will-change: transform, opacity, filter;
+          /* No resting will-change: the browser promotes the layer for the length
+             of each transform transition, then releases the memory. */
           transition:
             opacity 0.34s ease,
             filter 0.34s ease,

@@ -146,7 +146,7 @@ export default function ProjectModal({
                       fill
                       sizes="(max-width: 720px) 100vw, 960px"
                       style={{ objectFit: "contain" }}
-                      priority={idx === 0}
+                      loading="eager"
                     />
                   </motion.div>
                 </AnimatePresence>

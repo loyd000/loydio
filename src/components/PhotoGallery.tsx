@@ -1,32 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase, type GalleryPhoto } from "@/lib/supabase";
+import type { GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
 const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 
-export default function PhotoGallery() {
-  const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false);
-
-  useEffect(() => {
-    supabase
-      .from("gallery_photos")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          setFetchError(true);
-        } else if (data) {
-          setPhotos(data);
-        }
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading || (photos.length === 0 && !fetchError)) return null;
+// Photos are fetched on the server in page.tsx, so the section renders in the
+// initial HTML instead of popping in (and shifting the page) after a client fetch.
+export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPhoto[]; fetchError: boolean }) {
+  if (photos.length === 0 && !fetchError) return null;
 
   const cards = photos.map((photo) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -48,7 +30,7 @@ export default function PhotoGallery() {
     <section id="photos" className="lean-section">
       <div className="section-container">
 
-        {/* Section header — CSS fade-in on mount (no inView needed, section only renders post-fetch) */}
+        {/* Section header — CSS fade-in on mount */}
         <div style={{ marginBottom: "2.5rem", animation: "pgFadeUp 0.5s ease forwards" }}>
           <p
             style={{
