@@ -48,19 +48,9 @@ export default function Certifications() {
             gap: "1rem",
           }}
         >
-          <p
-            className="section-kicker"
-            style={{
-              margin: 0,
-              fontFamily: "var(--font-mono)",
-              fontSize: "11px",
-              letterSpacing: "0.18em",
-              textTransform: "lowercase",
-              color: "var(--muted)",
-            }}
-          >
-            03 — certifications
-          </p>
+          <h2 className="section-kicker" style={{ margin: 0 }}>
+            <span aria-hidden="true">03 — </span>Certifications
+          </h2>
 
           <Link
             href="/certifications"

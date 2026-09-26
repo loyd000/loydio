@@ -70,7 +70,9 @@ export default function SkillsExperience() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <p className="section-kicker">02 — Technologies &amp; Tools</p>
+          <h2 className="section-kicker">
+            <span aria-hidden="true">02 — </span>Technologies &amp; Tools
+          </h2>
           <div className="tech-logo-loops" aria-label="Technologies and tools">
             {skillRows.map((row, rowIndex) => (
               <div className="tech-logo-loop" key={rowIndex}>

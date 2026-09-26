@@ -20,6 +20,8 @@ export type Project = {
 export type GalleryPhoto = {
   id: string;
   image_url: string;
+  /** Screen-reader description; null falls back to "Photo N of M". */
+  alt_text: string | null;
   sort_order: number;
   created_at: string;
 };

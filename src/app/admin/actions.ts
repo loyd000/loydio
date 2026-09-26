@@ -351,6 +351,16 @@ export async function savePhotoOrder(updates: { id: string; sort_order: number }
   if (errors.length) throw new Error(errors.join("; "));
 }
 
+export async function updateGalleryPhotoAlt(id: string, altText: string) {
+  await requireAdmin();
+  const trimmed = altText.trim().slice(0, 300);
+  const { error } = await adminSupabase()
+    .from("gallery_photos")
+    .update({ alt_text: trimmed || null })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 export async function deleteGalleryPhoto(id: string) {
   await requireAdmin();
   const { error } = await adminSupabase().from("gallery_photos").delete().eq("id", id);

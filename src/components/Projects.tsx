@@ -260,7 +260,7 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
                   )}
 
                   <div className="design-carousel-content">
-                    <h3 className="section-heading design-carousel-title">{p.title}</h3>
+                    <h4 className="section-heading design-carousel-title">{p.title}</h4>
 
                     {isActive && (
                       <div className="design-carousel-action">
@@ -366,9 +366,9 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           transition={{ duration: 0.5 }}
           style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}
         >
-          <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)" }}>
-            01 — Projects
-          </p>
+          <h2 className="section-kicker" style={{ marginBottom: 0 }}>
+            <span aria-hidden="true">01 — </span>Projects
+          </h2>
           <Link
             href="/projects"
             className="proj-view-all-link"
@@ -394,9 +394,9 @@ export default function Projects({ projects, loadError }: { projects: Project[];
         )}
 
         <div style={{ marginTop: "4rem", marginBottom: "1rem" }}>
-          <p style={{ fontFamily: DISPLAY_FONT, fontSize: 11, letterSpacing: "0.1em", textTransform: "lowercase", color: "var(--muted)", marginBottom: "1.5rem" }}>
-            — Graphic Design
-          </p>
+          <h3 className="section-kicker" style={{ marginBottom: "1.5rem" }}>
+            <span aria-hidden="true">— </span>Graphic Design
+          </h3>
 
           {loadError ? (
             <ProjectMessage>Unable to load projects. Please try again later.</ProjectMessage>
@@ -462,12 +462,16 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           top: 10px;
           right: 10px;
           font-family: var(--font-mono), monospace;
-          font-size: 9px;
+          font-size: 10px; /* tag step */
           letter-spacing: 0.14em;
           text-transform: uppercase;
+          /* Text over a photo: fixed white on a dark frosted chip, legible on any image */
           color: #fff;
-          opacity: 0.55;
-          text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+          padding: 3px 7px;
+          border-radius: 999px;
+          background: rgba(0, 0, 0, 0.42);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
         }
         .dev-project-body {
           padding: 1.1rem 0 0;
@@ -690,12 +694,6 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           outline: 2px solid var(--accent);
           outline-offset: 0;
           border-radius: 50%;
-        }
-        [data-theme="dark"] .design-carousel-shell::before {
-          background: linear-gradient(to right, var(--bg) 10%, rgba(9, 9, 11, 0));
-        }
-        [data-theme="dark"] .design-carousel-shell::after {
-          background: linear-gradient(to left, var(--bg) 10%, rgba(9, 9, 11, 0));
         }
         @media (max-width: 700px) {
           .design-carousel-shell {

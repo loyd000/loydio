@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { GalleryPhoto, Project, Credential } from "@/lib/supabase";
 import {
+  updateGalleryPhotoAlt,
   deleteGalleryPhoto,
   deleteProject,
   deleteCredential,
@@ -333,6 +334,18 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
     }
   };
 
+  const handleSavePhotoAlt = async (id: string, altText: string) => {
+    const current = photos.find((p) => p.id === id)?.alt_text ?? "";
+    if (altText.trim() === current) return;
+    setError("");
+    try {
+      await updateGalleryPhotoAlt(id, altText);
+      setPhotos((prev) => prev.map((p) => (p.id === id ? { ...p, alt_text: altText.trim() || null } : p)));
+    } catch (e) {
+      setError(errorMessage(e));
+    }
+  };
+
   const handleDeletePhoto = async (id: string) => {
     if (!confirm("Are you sure you want to delete this photo?")) return;
     setError("");
@@ -595,8 +608,8 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "1rem" }}>
                 {photos.map((p, i) => (
-                  <div 
-                    key={p.id} 
+                  <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div
                     draggable
                     onDragStart={(e) => {
                       setDraggedPhotoIdx(i);
@@ -616,7 +629,18 @@ export default function AdminClient({ initialData, initialError = "" }: { initia
                     style={{ position: "relative", border: "1px solid #ccc", aspectRatio: "1/1", cursor: "grab", opacity: draggedPhotoIdx === i ? 0.5 : 1 }}
                   >
                     <Image src={p.image_url} alt="" fill sizes="150px" style={{ objectFit: "cover", pointerEvents: "none" }} />
-                    <button onClick={() => handleDeletePhoto(p.id)} style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>✕</button>
+                    <button onClick={() => handleDeletePhoto(p.id)} aria-label="Delete photo" style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>✕</button>
+                  </div>
+                  {/* Saved on blur; shown to screen readers on the public gallery */}
+                  <textarea
+                    defaultValue={p.alt_text ?? ""}
+                    onBlur={(e) => handleSavePhotoAlt(p.id, e.target.value)}
+                    aria-label={`Description for photo ${i + 1}`}
+                    placeholder="Describe this photo for screen readers…"
+                    maxLength={300}
+                    rows={3}
+                    style={{ width: "100%", resize: "vertical", fontFamily: "inherit", fontSize: 11, lineHeight: 1.4, padding: "6px 8px", border: `1px solid ${p.alt_text ? "#ccc" : "#e0a100"}`, background: "#fff", color: "#000" }}
+                  />
                   </div>
                 ))}
               </div>

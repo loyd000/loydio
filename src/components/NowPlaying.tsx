@@ -209,7 +209,7 @@ export default function NowPlaying() {
 
         .np-bar {
           width: 2px;
-          background-color: #1ed760; /* Spotify Green */
+          background-color: var(--success); /* Signal Green: the site's one "live" color */
           border-radius: 1px;
           animation: eq-bounce 1s infinite alternate ease-in-out;
         }

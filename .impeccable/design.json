@@ -1,70 +1,319 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-26T05:46:43Z",
+  "generatedAt": "2026-09-26T05:56:29Z",
   "title": "Design System: Loyd.io",
   "extensions": {
     "colorMeta": {
-      "ink": { "role": "primary", "displayName": "Ink", "canonical": "#09090b", "cssVar": "--fg", "tonalRamp": ["oklch(15% 0.006 286)", "oklch(25% 0.006 286)", "oklch(37% 0.012 286)", "oklch(44% 0.014 286)", "oklch(55% 0.014 286)", "oklch(71% 0.013 286)", "oklch(87% 0.005 286)", "oklch(97% 0.001 286)"] },
-      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#fafafa", "cssVar": "--bg", "tonalRamp": ["oklch(15% 0 0)", "oklch(27% 0 0)", "oklch(40% 0 0)", "oklch(55% 0 0)", "oklch(70% 0 0)", "oklch(83% 0 0)", "oklch(92% 0 0)", "oklch(98.5% 0 0)"] },
-      "sheet": { "role": "neutral", "displayName": "Sheet", "canonical": "#ffffff", "cssVar": "--surface" },
-      "graphite": { "role": "neutral", "displayName": "Graphite", "canonical": "#71717a", "cssVar": "--muted", "tonalRamp": ["oklch(21% 0.006 286)", "oklch(27% 0.006 286)", "oklch(37% 0.012 286)", "oklch(44% 0.014 286)", "oklch(55% 0.014 286)", "oklch(71% 0.013 286)", "oklch(87% 0.005 286)", "oklch(96.7% 0.001 286)"] },
-      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(0.922 0 0)", "cssVar": "--border" },
-      "hairline-strong": { "role": "neutral", "displayName": "Hairline Strong", "canonical": "rgba(0, 0, 0, 0.18)", "cssVar": "--border-strong" },
-      "wash": { "role": "neutral", "displayName": "Wash", "canonical": "rgba(0, 0, 0, 0.04)", "cssVar": "--subtle-bg" },
-      "signal-green": { "role": "semantic", "displayName": "Signal Green", "canonical": "#22c55e", "cssVar": "--success", "tonalRamp": ["oklch(26% 0.06 150)", "oklch(35% 0.09 150)", "oklch(45% 0.13 150)", "oklch(56% 0.16 150)", "oklch(72% 0.19 150)", "oklch(80% 0.18 150)", "oklch(90% 0.09 150)", "oklch(96% 0.04 150)"] },
-      "paper-night": { "role": "neutral", "displayName": "Paper (Night)", "canonical": "#131316", "cssVar": "--bg", "theme": "dark" },
-      "ink-night": { "role": "primary", "displayName": "Ink (Night)", "canonical": "#f4f4f5", "cssVar": "--fg", "theme": "dark" },
-      "sheet-night": { "role": "neutral", "displayName": "Sheet (Night)", "canonical": "#1a1a1d", "cssVar": "--surface", "theme": "dark" },
-      "graphite-night": { "role": "neutral", "displayName": "Graphite (Night)", "canonical": "#a1a1aa", "cssVar": "--muted", "theme": "dark" },
-      "hairline-night": { "role": "neutral", "displayName": "Hairline (Night)", "canonical": "rgba(255, 255, 255, 0.08)", "cssVar": "--border", "theme": "dark" },
-      "hairline-strong-night": { "role": "neutral", "displayName": "Hairline Strong (Night)", "canonical": "rgba(255, 255, 255, 0.18)", "cssVar": "--border-strong", "theme": "dark" },
-      "wash-night": { "role": "neutral", "displayName": "Wash (Night)", "canonical": "rgba(255, 255, 255, 0.06)", "cssVar": "--subtle-bg", "theme": "dark" },
-      "glass-fill": { "role": "neutral", "displayName": "Glass Fill", "canonical": "rgba(255, 255, 255, 0.14)" },
-      "glass-fill-night": { "role": "neutral", "displayName": "Glass Fill (Night)", "canonical": "rgba(255, 255, 255, 0.04)", "theme": "dark" },
-      "glass-rim": { "role": "neutral", "displayName": "Glass Rim", "canonical": "rgba(255, 255, 255, 0.65)" },
-      "glass-rim-night": { "role": "neutral", "displayName": "Glass Rim (Night)", "canonical": "rgba(255, 255, 255, 0.25)", "theme": "dark" }
+      "ink": {
+        "role": "primary",
+        "displayName": "Ink",
+        "canonical": "#09090b",
+        "cssVar": "--fg",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(25% 0.006 286)",
+          "oklch(37% 0.012 286)",
+          "oklch(44% 0.014 286)",
+          "oklch(55% 0.014 286)",
+          "oklch(71% 0.013 286)",
+          "oklch(87% 0.005 286)",
+          "oklch(97% 0.001 286)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#fafafa",
+        "cssVar": "--bg",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(40% 0 0)",
+          "oklch(55% 0 0)",
+          "oklch(70% 0 0)",
+          "oklch(83% 0 0)",
+          "oklch(92% 0 0)",
+          "oklch(98.5% 0 0)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Sheet",
+        "canonical": "#ffffff",
+        "cssVar": "--surface"
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#71717a",
+        "cssVar": "--muted",
+        "tonalRamp": [
+          "oklch(21% 0.006 286)",
+          "oklch(27% 0.006 286)",
+          "oklch(37% 0.012 286)",
+          "oklch(44% 0.014 286)",
+          "oklch(55% 0.014 286)",
+          "oklch(71% 0.013 286)",
+          "oklch(87% 0.005 286)",
+          "oklch(96.7% 0.001 286)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.922 0 0)",
+        "cssVar": "--border"
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "rgba(0, 0, 0, 0.18)",
+        "cssVar": "--border-strong"
+      },
+      "wash": {
+        "role": "neutral",
+        "displayName": "Wash",
+        "canonical": "rgba(0, 0, 0, 0.04)",
+        "cssVar": "--subtle-bg"
+      },
+      "signal-green": {
+        "role": "semantic",
+        "displayName": "Signal Green",
+        "canonical": "#22c55e",
+        "cssVar": "--success",
+        "tonalRamp": [
+          "oklch(26% 0.06 150)",
+          "oklch(35% 0.09 150)",
+          "oklch(45% 0.13 150)",
+          "oklch(56% 0.16 150)",
+          "oklch(72% 0.19 150)",
+          "oklch(80% 0.18 150)",
+          "oklch(90% 0.09 150)",
+          "oklch(96% 0.04 150)"
+        ]
+      },
+      "paper-night": {
+        "role": "neutral",
+        "displayName": "Paper (Night)",
+        "canonical": "#131316",
+        "cssVar": "--bg",
+        "theme": "dark"
+      },
+      "ink-night": {
+        "role": "primary",
+        "displayName": "Ink (Night)",
+        "canonical": "#f4f4f5",
+        "cssVar": "--fg",
+        "theme": "dark"
+      },
+      "sheet-night": {
+        "role": "neutral",
+        "displayName": "Sheet (Night)",
+        "canonical": "#1a1a1d",
+        "cssVar": "--surface",
+        "theme": "dark"
+      },
+      "graphite-night": {
+        "role": "neutral",
+        "displayName": "Graphite (Night)",
+        "canonical": "#a1a1aa",
+        "cssVar": "--muted",
+        "theme": "dark"
+      },
+      "hairline-night": {
+        "role": "neutral",
+        "displayName": "Hairline (Night)",
+        "canonical": "rgba(255, 255, 255, 0.08)",
+        "cssVar": "--border",
+        "theme": "dark"
+      },
+      "hairline-strong-night": {
+        "role": "neutral",
+        "displayName": "Hairline Strong (Night)",
+        "canonical": "rgba(255, 255, 255, 0.18)",
+        "cssVar": "--border-strong",
+        "theme": "dark"
+      },
+      "wash-night": {
+        "role": "neutral",
+        "displayName": "Wash (Night)",
+        "canonical": "rgba(255, 255, 255, 0.06)",
+        "cssVar": "--subtle-bg",
+        "theme": "dark"
+      },
+      "glass-fill": {
+        "role": "neutral",
+        "displayName": "Glass Fill",
+        "canonical": "rgba(255, 255, 255, 0.14)"
+      },
+      "glass-fill-night": {
+        "role": "neutral",
+        "displayName": "Glass Fill (Night)",
+        "canonical": "rgba(255, 255, 255, 0.04)",
+        "theme": "dark"
+      },
+      "glass-rim": {
+        "role": "neutral",
+        "displayName": "Glass Rim",
+        "canonical": "rgba(255, 255, 255, 0.65)"
+      },
+      "glass-rim-night": {
+        "role": "neutral",
+        "displayName": "Glass Rim (Night)",
+        "canonical": "rgba(255, 255, 255, 0.25)",
+        "theme": "dark"
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Section headings, project and modal titles (Syne)." },
-      "headline": { "displayName": "Headline", "purpose": "The hero name only." },
-      "title": { "displayName": "Title", "purpose": "The hero role line." },
-      "body": { "displayName": "Body", "purpose": "Bio, descriptions and modal copy, in --muted." },
-      "kicker": { "displayName": "Kicker", "purpose": "Lowercase section labels with a leading em dash: '— projects', '03 — certifications'." },
-      "label": { "displayName": "Label", "purpose": "Buttons, CTAs and counters, UPPERCASE." },
-      "tag": { "displayName": "Tag", "purpose": "Tech chips, years and metadata, UPPERCASE." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Section headings, project and modal titles (Syne)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The hero name only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The hero role line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Bio, descriptions and modal copy, in --muted."
+      },
+      "kicker": {
+        "displayName": "Kicker",
+        "purpose": "Lowercase section labels with a leading em dash: '— projects', '03 — certifications'."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, CTAs and counters, UPPERCASE."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "Tech chips, years and metadata, UPPERCASE."
+      }
     },
     "shadows": [
-      { "name": "glass-card", "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 16px 0 rgba(255,255,255,0.16), 0 12px 36px 0 rgba(0,0,0,0.08)", "purpose": "Liquid-glass cards and carousels (light). Pair with backdrop-filter: blur(28px) saturate(210%)." },
-      { "name": "glass-card-night", "value": "inset 0 2px 0 0 rgba(255,255,255,0.72), inset 0 4px 10px -2px rgba(255,255,255,0.06), inset 2px 0 0 0 rgba(255,255,255,0.3), inset 0 -1px 0 0 rgba(0,0,0,0.65), inset -1px 0 0 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.16), 0 0 16px 0 rgba(255,255,255,0.06), 0 12px 36px 0 rgba(0,0,0,0.42)", "purpose": "Liquid-glass cards in dark mode. Pair with backdrop-filter: blur(28px) saturate(190%)." },
-      { "name": "glass-control", "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 14px 0 rgba(255,255,255,0.14), 0 4px 18px 0 rgba(0,0,0,0.08)", "purpose": "Glass buttons, pills and the nav capsule. Pair with blur(22px) saturate(190%)." },
-      { "name": "glass-chip", "value": "inset 0 1.5px 0 0 rgba(255,255,255,0.9), inset 1.5px 0 0 0 rgba(255,255,255,0.38), inset 0 -1px 0 0 rgba(0,0,0,0.04), inset -1px 0 0 0 rgba(0,0,0,0.02), 0 0 0 0.5px rgba(255,255,255,0.26), 0 2px 8px 0 rgba(0,0,0,0.05)", "purpose": "Small glass: tags and tech-logo tiles. Pair with blur(14-16px) saturate(170%)." },
-      { "name": "button-lift", "value": "0 4px 16px var(--border-mid)", "purpose": "Hover lift under square mono buttons." },
-      { "name": "modal", "value": "0 0 0 1px rgba(255,255,255,0.06) inset, 0 32px 80px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2)", "purpose": "The opaque project modal only; the one non-glass elevated surface." }
+      {
+        "name": "glass-card",
+        "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 16px 0 rgba(255,255,255,0.16), 0 12px 36px 0 rgba(0,0,0,0.08)",
+        "purpose": "Liquid-glass cards and carousels (light). Pair with backdrop-filter: blur(28px) saturate(210%)."
+      },
+      {
+        "name": "glass-card-night",
+        "value": "inset 0 2px 0 0 rgba(255,255,255,0.72), inset 0 4px 10px -2px rgba(255,255,255,0.06), inset 2px 0 0 0 rgba(255,255,255,0.3), inset 0 -1px 0 0 rgba(0,0,0,0.65), inset -1px 0 0 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.16), 0 0 16px 0 rgba(255,255,255,0.06), 0 12px 36px 0 rgba(0,0,0,0.42)",
+        "purpose": "Liquid-glass cards in dark mode. Pair with backdrop-filter: blur(28px) saturate(190%)."
+      },
+      {
+        "name": "glass-control",
+        "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 14px 0 rgba(255,255,255,0.14), 0 4px 18px 0 rgba(0,0,0,0.08)",
+        "purpose": "Glass buttons, pills and the nav capsule. Pair with blur(22px) saturate(190%)."
+      },
+      {
+        "name": "glass-chip",
+        "value": "inset 0 1.5px 0 0 rgba(255,255,255,0.9), inset 1.5px 0 0 0 rgba(255,255,255,0.38), inset 0 -1px 0 0 rgba(0,0,0,0.04), inset -1px 0 0 0 rgba(0,0,0,0.02), 0 0 0 0.5px rgba(255,255,255,0.26), 0 2px 8px 0 rgba(0,0,0,0.05)",
+        "purpose": "Small glass: tags and tech-logo tiles. Pair with blur(14-16px) saturate(170%)."
+      },
+      {
+        "name": "button-lift",
+        "value": "0 4px 16px var(--border-mid)",
+        "purpose": "Hover lift under square mono buttons."
+      },
+      {
+        "name": "modal",
+        "value": "0 0 0 1px rgba(255,255,255,0.06) inset, 0 32px 80px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2)",
+        "purpose": "The opaque project modal only; the one non-glass elevated surface."
+      }
     ],
     "motion": [
-      { "name": "settle", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The default curve for everything: state changes (0.2-0.35s), entrances (0.5-0.6s fade + 20px rise), carousels, modals. Framer: [0.16, 1, 0.3, 1]." },
-      { "name": "tactile-spring", "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "Controls only: small hover/press transforms such as the .btn lift and the logo badge straightening, at 0.35s or less and scale 1.08 or less. Never on entrances, layout, cards or modals." },
-      { "name": "nav-spring", "value": "spring(stiffness 380, damping 30)", "purpose": "Framer layoutId highlight sliding between nav links." },
-      { "name": "theme-wipe", "value": "1.8s cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "View Transition diagonal wipe when switching light/dark." },
-      { "name": "loop-spin", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Looping indicators only (chat thinking star)." },
-      { "name": "shadowball", "value": "3.2s steps(16, jump-none)", "purpose": "16-frame Shadow Ball sprite; matches the 1.0s charge, 1.4s flight and 0.8s impact in JS." },
-      { "name": "reduced-motion", "value": "MotionConfig reducedMotion=\"user\" + CSS prefers-reduced-motion", "purpose": "Framer skips transform animation for reduced-motion users; Gengar parks as a still sprite and the photo stack stops autoplaying." }
+      {
+        "name": "settle",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The default curve for everything: state changes (0.2-0.35s), entrances (0.5-0.6s fade + 20px rise), carousels, modals. Framer: [0.16, 1, 0.3, 1]."
+      },
+      {
+        "name": "tactile-spring",
+        "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "purpose": "Controls only: small hover/press transforms such as the .btn lift and the logo badge straightening, at 0.35s or less and scale 1.08 or less. Never on entrances, layout, cards or modals."
+      },
+      {
+        "name": "nav-spring",
+        "value": "spring(stiffness 380, damping 30)",
+        "purpose": "Framer layoutId highlight sliding between nav links."
+      },
+      {
+        "name": "theme-wipe",
+        "value": "1.8s cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "View Transition diagonal wipe when switching light/dark."
+      },
+      {
+        "name": "loop-spin",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Looping indicators only (chat thinking star)."
+      },
+      {
+        "name": "shadowball",
+        "value": "3.2s steps(16, jump-none)",
+        "purpose": "16-frame Shadow Ball sprite; matches the 1.0s charge, 1.4s flight and 0.8s impact in JS."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "MotionConfig reducedMotion=\"user\" + CSS prefers-reduced-motion",
+        "purpose": "Framer skips transform animation for reduced-motion users; Gengar parks as a still sprite and the photo stack stops autoplaying."
+      }
     ],
     "breakpoints": [
-      { "name": "tablet", "value": "900px" },
-      { "name": "phone", "value": "640px" },
-      { "name": "phone-legacy", "value": "600px" },
-      { "name": "small-phone", "value": "480px" },
-      { "name": "tiny-phone", "value": "380px" }
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "640px"
+      },
+      {
+        "name": "phone-legacy",
+        "value": "600px"
+      },
+      {
+        "name": "small-phone",
+        "value": "480px"
+      },
+      {
+        "name": "tiny-phone",
+        "value": "380px"
+      }
     ],
     "zIndex": [
-      { "name": "chat-stage", "value": "999999" },
-      { "name": "modal", "value": "10090" },
-      { "name": "corner-badges", "value": "10070" },
-      { "name": "nav", "value": "10060" },
-      { "name": "projectile", "value": "10050" },
-      { "name": "companion", "value": "10045" },
-      { "name": "utility", "value": "7990" }
+      {
+        "name": "chat-stage",
+        "value": "999999"
+      },
+      {
+        "name": "modal",
+        "value": "10090"
+      },
+      {
+        "name": "corner-badges",
+        "value": "10070"
+      },
+      {
+        "name": "nav",
+        "value": "10060"
+      },
+      {
+        "name": "projectile",
+        "value": "10050"
+      },
+      {
+        "name": "companion",
+        "value": "10045"
+      },
+      {
+        "name": "utility",
+        "value": "7990"
+      }
     ]
   },
   "components": [
@@ -143,15 +392,51 @@
       "44px touch targets and full keyboard reach, including the companion and every carousel."
     ],
     "rules": [
-      { "name": "The One Companion Color Rule", "body": "Gengar's purples (#9333ea glows, #f3e8ff speech text, the sprite itself) live inside the companion and its chat stage only. No button, link, tag or section ever borrows them.", "section": "colors" },
-      { "name": "The Invert, Don't Tint Rule", "body": "Dark mode swaps the neutral tokens under [data-theme=\"dark\"]; components never ship their own dark colors except the glass recipes, whose light physics differ at night. The single exception is the chat stage, which is always night (see Components).", "section": "colors" },
-      { "name": "The Token-Only Rule", "body": "Layout and text colors come from var(--bg), var(--fg), var(--muted), var(--border) and friends. Raw hex in a component is a bug unless it is glass physics (rgba white/black highlights) or Gengar.", "section": "colors" },
-      { "name": "The Three Voices Rule", "body": "Syne names things, Geist explains them, Mono is anything you press, count or date. If a string is interactive or numeric, it's Mono; if it's a heading or kicker, it's Syne; everything you read is Geist.", "section": "typography" },
-      { "name": "The Kicker Grammar Rule", "body": "Kickers are lowercase Syne with a leading em dash (— certifications); numbered sections put the index before the dash (03 — certifications). They never replace a real heading for screen readers.", "section": "typography" },
-      { "name": "The 44px Rule", "body": "Every tap target is at least 44×44px: nav links, theme toggle, logo, carousel arrows, social icons, buttons, close buttons. Where the visual must stay small (the 34px logo badge, 6px carousel dots), the hit area grows invisibly with padding plus negative margin, never with a bigger visual. Dots may drop to the WCAG AA floor of 24px.", "section": "layout" },
-      { "name": "The Bevel Before Shadow Rule", "body": "A surface earns depth from its highlights and rim first; the single outer drop shadow is the last layer and grows with size, never stacks. The only exception is the opaque project modal, which floats on a deep two-layer shadow because it replaces the page rather than sitting on it.", "section": "elevation" },
-      { "name": "The Glass Means Touch Rule", "body": "Liquid glass is for things you interact with or read inside (buttons, pills, tags, cards, the nav, the contact frame). Plain text sections, headings and backgrounds stay on the flat bench.", "section": "elevation" },
-      { "name": "The Square-Or-Capsule Rule", "body": "A control is either a square mono button or a round glass capsule. A rounded-rectangle button is off-system.", "section": "shapes" }
+      {
+        "name": "The One Companion Color Rule",
+        "body": "Gengar's purples (#9333ea glows, #f3e8ff speech text, the sprite itself) live inside the companion and its chat stage only. No button, link, tag or section ever borrows them.",
+        "section": "colors"
+      },
+      {
+        "name": "The Invert, Don't Tint Rule",
+        "body": "Dark mode swaps the neutral tokens under [data-theme=\"dark\"]; components never ship their own dark colors except the glass recipes, whose light physics differ at night. The single exception is the chat stage, which is always night (see Components).",
+        "section": "colors"
+      },
+      {
+        "name": "The Token-Only Rule",
+        "body": "Layout and text colors come from var(--bg), var(--fg), var(--muted), var(--border) and friends. Raw hex in a component is a bug unless it is glass physics (rgba white/black highlights), Gengar, or text over a photo. Text over photos is always white on a dark frosted chip (rgba(0,0,0,0.42) + 6px blur), as on project year labels, so it reads on any image. Marks inside an inverted button use currentColor.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "Syne names things, Geist explains them, Mono is anything you press, count or date. If a string is interactive or numeric, it's Mono; if it's a heading or kicker, it's Syne; everything you read is Geist.",
+        "section": "typography"
+      },
+      {
+        "name": "The Kicker Grammar Rule",
+        "body": "Kickers are lowercase Syne with a leading em dash (— certifications); numbered sections put the index before the dash (03 — certifications). A section's kicker is its heading: render it as the h2 (sub-blocks h3) with .section-kicker, and wrap the index and dash in aria-hidden so screen readers hear \"Certifications\", not \"zero three dash\".",
+        "section": "typography"
+      },
+      {
+        "name": "The 44px Rule",
+        "body": "Every tap target is at least 44×44px: nav links, theme toggle, logo, carousel arrows, social icons, buttons, close buttons. Where the visual must stay small (the 34px logo badge, 6px carousel dots), the hit area grows invisibly with padding plus negative margin, never with a bigger visual. Dots may drop to the WCAG AA floor of 24px.",
+        "section": "layout"
+      },
+      {
+        "name": "The Bevel Before Shadow Rule",
+        "body": "A surface earns depth from its highlights and rim first; the single outer drop shadow is the last layer and grows with size, never stacks. The only exception is the opaque project modal, which floats on a deep two-layer shadow because it replaces the page rather than sitting on it.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Glass Means Touch Rule",
+        "body": "Liquid glass is for things you interact with or read inside (buttons, pills, tags, cards, the nav, the contact frame). Plain text sections, headings and backgrounds stay on the flat bench.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Square-Or-Capsule Rule",
+        "body": "A control is either a square mono button or a round glass capsule. A rounded-rectangle button is off-system.",
+        "section": "shapes"
+      }
     ],
     "dos": [
       "Do use var(--bg), var(--fg), var(--muted), var(--border), var(--surface), var(--subtle-bg) for every layout and text color.",

@@ -76,14 +76,14 @@ export default function HeroAbout() {
           </motion.div>
 
           {/* Role Title */}
-          <motion.h2
+          <motion.p
             className="hero-role"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             Computer Engineer <span className="hero-role-divider">—</span> Full-Stack, Mobile & Embedded
-          </motion.h2>
+          </motion.p>
 
           {/* Bio Description */}
           <motion.p

@@ -42,7 +42,7 @@ export default function GitHubContributions() {
     <section className="github-contributions" aria-labelledby="github-contributions-heading">
       <div className="github-contributions-heading">
         <div>
-          <p id="github-contributions-heading">— GitHub contributions</p>
+          <h3 id="github-contributions-heading"><span aria-hidden="true">— </span>GitHub contributions</h3>
           <a href="https://github.com/loyd000" target="_blank" rel="noreferrer">github.com/loyd000</a>
         </div>
         {calendar && <strong>{calendar.totalContributions.toLocaleString()} contributions</strong>}

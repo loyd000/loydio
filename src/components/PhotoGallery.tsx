@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { GalleryPhoto } from "@/lib/supabase";
 import Stack from "./Stack";
 
@@ -10,12 +11,17 @@ const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPhoto[]; fetchError: boolean }) {
   if (photos.length === 0 && !fetchError) return null;
 
+  // next/image serves a ~320px (2x on retina) resize instead of the 1-1.6MB originals.
+  // Alt text comes from the admin panel; numbered fallback until one is written.
   const cards = photos.map((photo, i) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       key={photo.id}
       src={photo.image_url}
-      alt={`Photo ${i + 1} of ${photos.length}`}
+      alt={photo.alt_text?.trim() || `Photo ${i + 1} of ${photos.length}`}
+      width={640}
+      height={640}
+      sizes="(max-width: 400px) 80vw, 320px"
+      draggable={false}
       style={{
         width: "100%",
         height: "100%",

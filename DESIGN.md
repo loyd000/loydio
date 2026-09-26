@@ -151,14 +151,14 @@ A neutral zinc scale on near-white paper, inverted wholesale for night; color ca
 - **Glass Fill / Glass Rim** (`glass-fill`, `glass-rim` + night variants): The translucent body and bright 1px rim of every liquid-glass surface.
 
 ### Semantic
-- **Signal Green** (`signal-green`): The live/online dot and "now playing" state. Nothing decorative is ever green.
+- **Signal Green** (`signal-green`): The live/online dot, the chat status dot and the "now playing" equalizer bars (`var(--success)`, not Spotify's own green). Nothing decorative is ever green.
 
 ### Named Rules
 **The One Companion Color Rule.** Gengar's purples (`#9333ea` glows, `#f3e8ff` speech text, the sprite itself) live inside the companion and its chat stage only. No button, link, tag or section ever borrows them.
 
 **The Invert, Don't Tint Rule.** Dark mode swaps the neutral tokens under `[data-theme="dark"]`; components never ship their own dark colors except the glass recipes, whose light physics differ at night. The single exception is the chat stage, which is always night (see Components).
 
-**The Token-Only Rule.** Layout and text colors come from `var(--bg)`, `var(--fg)`, `var(--muted)`, `var(--border)` and friends. Raw hex in a component is a bug unless it is glass physics (rgba white/black highlights) or Gengar.
+**The Token-Only Rule.** Layout and text colors come from `var(--bg)`, `var(--fg)`, `var(--muted)`, `var(--border)` and friends. Raw hex in a component is a bug unless it is glass physics (rgba white/black highlights), Gengar, or text over a photo. Text over photos is always white on a dark frosted chip (`rgba(0,0,0,0.42)` + 6px blur), as on project year labels, so it reads on any image. Marks inside an inverted button use `currentColor`.
 
 ## Typography
 
@@ -180,7 +180,7 @@ A neutral zinc scale on near-white paper, inverted wholesale for night; color ca
 ### Named Rules
 **The Three Voices Rule.** Syne names things, Geist explains them, Mono is anything you press, count or date. If a string is interactive or numeric, it's Mono; if it's a heading or kicker, it's Syne; everything you read is Geist.
 
-**The Kicker Grammar Rule.** Kickers are lowercase Syne with a leading em dash (`— certifications`); numbered sections put the index before the dash (`03 — certifications`). They never replace a real heading for screen readers.
+**The Kicker Grammar Rule.** Kickers are lowercase Syne with a leading em dash (`— certifications`); numbered sections put the index before the dash (`03 — certifications`). A section's kicker *is* its heading: render it as the `h2` (sub-blocks `h3`) with `.section-kicker`, and wrap the index and dash in `aria-hidden` so screen readers hear "Certifications", not "zero three dash".
 
 ## Layout
 

@@ -72,7 +72,7 @@ export default function Contact() {
               href={`mailto:${EMAIL}`}
               className="btn btn-accent"
             >
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#fff", display: "inline-block", opacity: 0.8 }} />
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "currentColor", display: "inline-block", opacity: 0.8 }} aria-hidden="true" />
               Send an Email
             </a>
             <button

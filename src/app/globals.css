@@ -100,7 +100,7 @@ p {
 
 ::selection {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--bg); /* inverts with --accent so selections stay legible in both themes */
 }
 
 /* ── Focus visible ring ── */
@@ -185,18 +185,6 @@ p {
   background: var(--accent-subtle);
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 4px 16px var(--accent-border);
-}
-
-.btn-outline-white {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-}
-
-.btn-outline-white:hover {
-  border-color: #fff;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
 }
 
 /* ── Lean section layout ────────────────────── */
@@ -379,7 +367,7 @@ p {
   margin-bottom: 1rem;
 }
 
-.github-contributions-heading p,
+.github-contributions-heading h3,
 .github-contributions-heading a,
 .github-contributions-heading strong {
   font-family: var(--font-display), 'Syne', sans-serif;
@@ -388,7 +376,7 @@ p {
   text-transform: lowercase;
 }
 
-.github-contributions-heading p {
+.github-contributions-heading h3 {
   color: var(--muted);
   letter-spacing: 0.1em;
   margin-bottom: 0.45rem;
@@ -2268,7 +2256,7 @@ p {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--success);
   box-shadow: 0 0 6px #22c55e;
   animation: dotPulse 2s infinite;
   flex-shrink: 0;

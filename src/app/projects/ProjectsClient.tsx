@@ -365,11 +365,15 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           top: 10px;
           right: 10px;
           font-family: ${MONO};
-          font-size: 9px;
-          opacity: 0.5;
-          color: #fff;
+          font-size: 10px; /* tag step */
           letter-spacing: 0.12em;
-          text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+          /* Text over a photo: fixed white on a dark frosted chip, legible on any image */
+          color: #fff;
+          padding: 3px 7px;
+          border-radius: 999px;
+          background: rgba(0, 0, 0, 0.42);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
         }
 
         /* ── Card body ── */
