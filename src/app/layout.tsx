@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import GengarPet from "@/components/GengarPet";
+import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -99,8 +100,10 @@ export default function RootLayout({
             </filter>
           </defs>
         </svg>
-        {children}
-        <GengarPet />
+        <MotionProvider>
+          {children}
+          <GengarPet />
+        </MotionProvider>
       </body>
     </html>
   );

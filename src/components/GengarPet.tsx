@@ -3,8 +3,21 @@
 import { useEffect, useState, useRef, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { motion, AnimatePresence, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useSpring, useReducedMotion } from "framer-motion";
 import { useChatStream } from "@/lib/useChatStream";
+import { useFocusTrap } from "@/lib/useFocusTrap";
+
+const SR_ONLY: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0, 0, 0, 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
 
 function useIsClient() {
   return useSyncExternalStore(
@@ -16,6 +29,8 @@ function useIsClient() {
 
 export default function GengarPet() {
   const isClient = useIsClient();
+  // Reduced motion: Gengar parks in the corner as a still sprite — no roaming, no Shadow Balls.
+  const reduceMotion = useReducedMotion() ?? false;
   const [direction, setDirection] = useState<1 | -1>(1); // 1 = right, -1 = left
   const [isWalking, setIsWalking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -35,7 +50,7 @@ export default function GengarPet() {
   const [castSpeech, setCastSpeech] = useState<string | null>(null);
 
   const isCastingRef = useRef(false);
-  const lastCastTimeRef = useRef(Date.now());
+  const lastCastTimeRef = useRef(0); // stamped on mount so the first cast waits its cooldown
   const mousePosRef = useRef<{ x: number; y: number }>({
     x: typeof window !== "undefined" ? window.innerWidth / 2 : 500,
     y: typeof window !== "undefined" ? window.innerHeight / 2 : 400,
@@ -59,6 +74,8 @@ export default function GengarPet() {
   const walkEndTimerRef = useRef<NodeJS.Timeout | null>(null);
   const stepRoamRef = useRef<() => void>(() => {});
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const returnFocusToTriggerRef = useRef(false);
 
   // Chat Streaming Hook
   const { messages, input, setInput, streaming, sendMessage } = useChatStream();
@@ -78,6 +95,7 @@ export default function GengarPet() {
   const shootShadowBall = useCallback(() => {
     if (
       typeof window === "undefined" ||
+      reduceMotion ||
       chatOpen ||
       isInteracting ||
       isCastingRef.current
@@ -167,14 +185,15 @@ export default function GengarPet() {
           setCastSpeech(null);
           // Resume roaming after attack
           if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
-          roamLoopRef.current = setTimeout(stepRoam, 1200);
+          roamLoopRef.current = setTimeout(() => stepRoamRef.current(), 1200);
         }, DISAPPEAR_TIME);
       }, TRAVEL_TIME);
     }, CHARGE_DELAY);
-  }, [chatOpen, isInteracting, x, y]);
+  }, [chatOpen, isInteracting, reduceMotion, x, y]);
 
   // Periodic Shadow Ball firing routine (autonomous ambush)
   useEffect(() => {
+    if (reduceMotion) return;
     const shootInterval = setInterval(() => {
       if (chatOpen || isInteracting || isCastingRef.current) return;
       if (Date.now() - lastCastTimeRef.current < 12000) return;
@@ -185,7 +204,7 @@ export default function GengarPet() {
     }, 6000);
 
     return () => clearInterval(shootInterval);
-  }, [chatOpen, isInteracting, shootShadowBall]);
+  }, [chatOpen, isInteracting, reduceMotion, shootShadowBall]);
 
   // Walk or float to a new coordinate on screen
   const walkToSpot = useCallback((targetX: number, targetY: number, travelDurationMs: number) => {
@@ -210,6 +229,7 @@ export default function GengarPet() {
 
   // Main active roaming AI
   const stepRoam = useCallback(() => {
+    if (reduceMotion) return;
     if (typeof window === "undefined" || isInteracting || isHovered || chatOpen || isCastingRef.current) {
       if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
       roamLoopRef.current = setTimeout(() => stepRoamRef.current(), 1500);
@@ -263,19 +283,23 @@ export default function GengarPet() {
     const pauseTime = 1200 + Math.random() * 1200;
     if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
     roamLoopRef.current = setTimeout(() => stepRoamRef.current(), travelTime + pauseTime);
-  }, [x, y, isInteracting, isHovered, chatOpen, walkToSpot, shootShadowBall]);
+  }, [x, y, isInteracting, isHovered, chatOpen, reduceMotion, walkToSpot, shootShadowBall]);
 
   useEffect(() => {
     stepRoamRef.current = stepRoam;
   }, [stepRoam]);
 
   useEffect(() => {
+    lastCastTimeRef.current = Date.now();
     if (typeof window !== "undefined") {
       const initialX = Math.max(60, window.innerWidth - 150);
       const initialY = Math.max(140, window.innerHeight - 200);
       x.set(initialX);
       y.set(initialY);
     }
+
+    // Reduced motion: stay parked at the starting corner.
+    if (reduceMotion) return;
 
     const initialTimer = setTimeout(() => stepRoamRef.current(), 1000);
 
@@ -284,28 +308,39 @@ export default function GengarPet() {
       if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
       if (walkEndTimerRef.current) clearTimeout(walkEndTimerRef.current);
     };
-  }, [x, y]);
+  }, [x, y, reduceMotion]);
 
-  // Auto-focus input when chat opens
-  useEffect(() => {
-    if (chatOpen) {
-      setTimeout(() => inputRef.current?.focus(), 200);
-    }
-  }, [chatOpen]);
+  // Trap focus in the chat dialog and start on the input. The trigger unmounts while
+  // the dialog is open, so focus is returned to it manually via returnFocusToTriggerRef.
+  useFocusTrap(dialogRef, chatOpen, { initialFocusRef: inputRef, restoreFocus: false });
+
+  const handleCloseChat = useCallback(() => {
+    returnFocusToTriggerRef.current = true;
+    setChatOpen(false);
+    if (reduceMotion) return;
+    if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
+    roamLoopRef.current = setTimeout(() => stepRoamRef.current(), 1000);
+  }, [reduceMotion]);
 
   // Close on Escape key
   useEffect(() => {
     if (!chatOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setChatOpen(false);
-      }
+      if (e.key === "Escape") handleCloseChat();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [chatOpen]);
+  }, [chatOpen, handleCloseChat]);
+
+  // Re-focus the trigger when it remounts after the dialog closes
+  const triggerRefCallback = useCallback((el: HTMLButtonElement | null) => {
+    if (el && returnFocusToTriggerRef.current) {
+      returnFocusToTriggerRef.current = false;
+      el.focus({ preventScroll: true });
+    }
+  }, []);
 
   const handleGengarClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -313,12 +348,6 @@ export default function GengarPet() {
       setChatOpen(true);
       setIsWalking(false);
     }
-  };
-
-  const handleCloseChat = () => {
-    setChatOpen(false);
-    if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
-    roamLoopRef.current = setTimeout(stepRoam, 1000);
   };
 
   const handleSend = () => {
@@ -332,6 +361,9 @@ export default function GengarPet() {
   const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
   const lastAssistantMessage = [...messages].reverse().find((m) => m.role === "assistant");
   const currentDialogue = lastAssistantMessage?.content || "*materializes from the shadows* Boo! What do you want to know about my trainer Loyd, mortal?";
+  // Announced once per reply (not per streamed token) via the polite live region.
+  const announcement = streaming ? "Gengar is replying…" : lastAssistantMessage?.content ?? "";
+  const gengarSprite = reduceMotion ? "/gengar-still.png" : "/gengar.gif";
 
   return (
     <>
@@ -339,7 +371,6 @@ export default function GengarPet() {
       <AnimatePresence>
         {!chatOpen && (
           <div
-            aria-hidden="true"
             style={{
               position: "fixed",
               inset: 0,
@@ -348,7 +379,15 @@ export default function GengarPet() {
               overflow: "hidden",
             }}
           >
-            <motion.div
+            <motion.button
+              ref={triggerRefCallback}
+              type="button"
+              className="gengar-trigger"
+              aria-label="Chat with Gengar, Loyd's AI assistant"
+              aria-haspopup="dialog"
+              aria-expanded={chatOpen}
+              onFocus={() => setIsHovered(true)}
+              onBlur={() => setIsHovered(false)}
               drag
               dragMomentum={false}
               dragElastic={0.1}
@@ -363,14 +402,21 @@ export default function GengarPet() {
                 x.set(x.get() + info.offset.x);
                 y.set(y.get() + info.offset.y);
                 if (roamLoopRef.current) clearTimeout(roamLoopRef.current);
-                roamLoopRef.current = setTimeout(stepRoam, 1500);
+                roamLoopRef.current = setTimeout(() => stepRoamRef.current(), 1500);
               }}
               style={{
                 position: "absolute",
+                top: 0,
+                left: 0,
                 x,
                 y,
                 width: 76,
                 height: 76,
+                padding: 0,
+                background: "none",
+                border: "none",
+                borderRadius: 20,
+                color: "inherit",
                 pointerEvents: "auto",
                 cursor: "pointer",
                 userSelect: "none",
@@ -385,18 +431,24 @@ export default function GengarPet() {
               onClick={handleGengarClick}
             >
               {/* Dynamic Ground Oval Shadow */}
-              <motion.div
-                animate={{
-                  scaleX: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
-                  scaleY: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
-                  opacity: isWalking ? [0.65, 0.38, 0.65, 0.38, 0.65] : [0.6, 0.42, 0.6],
-                }}
-                transition={{
-                  duration: isWalking ? 0.6 : 2.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+              <motion.span
+                aria-hidden="true"
+                animate={
+                  reduceMotion
+                    ? { scaleX: 1, scaleY: 1, opacity: 0.55 }
+                    : {
+                        scaleX: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
+                        scaleY: isWalking ? [1, 0.84, 1, 0.84, 1] : [1, 0.88, 1],
+                        opacity: isWalking ? [0.65, 0.38, 0.65, 0.38, 0.65] : [0.6, 0.42, 0.6],
+                      }
+                }
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { duration: isWalking ? 0.6 : 2.2, repeat: Infinity, ease: "easeInOut" }
+                }
                 style={{
+                  display: "block",
                   position: "absolute",
                   bottom: -1,
                   left: 0,
@@ -414,18 +466,23 @@ export default function GengarPet() {
               />
 
               {/* Walking Waddle / Ghost Bobbing / Attack Stance */}
-              <motion.div
-                animate={{
-                  y: isCasting ? 0 : isWalking ? [0, -6, 0, -6, 0] : [0, -4, 0],
-                  rotate: isCasting ? 0 : isWalking ? [-6, 6, -6, 6, 0] : [0, -2, 2, 0],
-                  scale: 1,
-                }}
-                transition={{
-                  duration: isWalking ? 0.6 : 2.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+              <motion.span
+                animate={
+                  reduceMotion
+                    ? { y: 0, rotate: 0, scale: 1 }
+                    : {
+                        y: isCasting ? 0 : isWalking ? [0, -6, 0, -6, 0] : [0, -4, 0],
+                        rotate: isCasting ? 0 : isWalking ? [-6, 6, -6, 6, 0] : [0, -2, 2, 0],
+                        scale: 1,
+                      }
+                }
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { duration: isWalking ? 0.6 : 2.2, repeat: Infinity, ease: "easeInOut" }
+                }
                 style={{
+                  display: "block",
                   position: "relative",
                   width: "100%",
                   height: "100%",
@@ -435,26 +492,29 @@ export default function GengarPet() {
                 }}
               >
                 <Image
-                  src="/gengar.gif"
-                  alt="Gengar AI Companion"
+                  src={gengarSprite}
+                  alt=""
                   width={76}
                   height={76}
                   priority
                   unoptimized
+                  draggable={false}
                   style={{
                     objectFit: "contain",
                     pointerEvents: "none",
                   }}
                 />
-              </motion.div>
+              </motion.span>
 
-              {/* Cast Speech / Battle Cry */}
+              {/* Cast Speech / Battle Cry (decorative) */}
               {castSpeech && !isHovered && (
-                <motion.div
+                <motion.span
+                  aria-hidden="true"
                   initial={{ opacity: 0, y: 6, scale: 0.8 }}
                   animate={{ opacity: 1, y: -8, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   style={{
+                    display: "block",
                     position: "absolute",
                     bottom: "100%",
                     left: 0,
@@ -479,16 +539,18 @@ export default function GengarPet() {
                   }}
                 >
                   {castSpeech}
-                </motion.div>
+                </motion.span>
               )}
 
-              {/* Hover Tooltip Hint */}
+              {/* Hover / focus hint (the button's aria-label carries the same meaning) */}
               {isHovered && !castSpeech && (
-                <motion.div
+                <motion.span
+                  aria-hidden="true"
                   initial={{ opacity: 0, y: 4, scale: 0.9 }}
                   animate={{ opacity: 1, y: -6, scale: 1 }}
                   exit={{ opacity: 0 }}
                   style={{
+                    display: "block",
                     position: "absolute",
                     bottom: "100%",
                     left: 0,
@@ -512,9 +574,9 @@ export default function GengarPet() {
                   }}
                 >
                   Talk with Gengar 💬
-                </motion.div>
+                </motion.span>
               )}
-            </motion.div>
+            </motion.button>
           </div>
         )}
       </AnimatePresence>
@@ -560,7 +622,8 @@ export default function GengarPet() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/Shadowball.gif?t=${shadowBall.id}`}
-              alt="Gengar Shadow Ball"
+              alt=""
+              aria-hidden="true"
               width={76}
               height={76}
               style={{
@@ -587,6 +650,7 @@ export default function GengarPet() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   onClick={handleCloseChat}
+                  aria-hidden="true"
                   style={{
                     position: "fixed",
                     top: 0,
@@ -603,8 +667,15 @@ export default function GengarPet() {
                   }}
                 />
 
-                {/* Floating Content Stage */}
+                {/* Floating Content Stage — the dialog */}
                 <div
+                  ref={dialogRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="gengar-chat-title"
+                  aria-describedby="gengar-chat-dialogue"
+                  tabIndex={-1}
+                  className="gengar-dialog"
                   style={{
                     position: "fixed",
                     top: 0,
@@ -624,6 +695,25 @@ export default function GengarPet() {
                     pointerEvents: "none",
                   }}
                 >
+                  <h2 id="gengar-chat-title" style={SR_ONLY}>
+                    Chat with Gengar, Loyd&apos;s AI assistant
+                  </h2>
+                  <p role="status" aria-live="polite" style={SR_ONLY}>
+                    {announcement}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={handleCloseChat}
+                    aria-label="Close chat"
+                    className="gengar-close"
+                  >
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                    </svg>
+                    <span className="gengar-close-hint">esc</span>
+                  </button>
+
                   {/* ── PURE FLOATING TEXT DIALOGUE ── */}
                   <motion.div
                     initial={{ opacity: 0, y: -16 }}
@@ -646,22 +736,26 @@ export default function GengarPet() {
                     {lastUserMessage && (
                       <motion.div
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.55 }}
+                        animate={{ opacity: 1 }}
                         style={{
                           fontFamily: "var(--font-mono)",
                           fontSize: "13px",
                           letterSpacing: "0.02em",
-                          color: "rgba(255, 255, 255, 0.7)",
+                          color: "rgba(255, 255, 255, 0.6)",
                           marginBottom: "10px",
                           textAlign: "left",
                         }}
                       >
-                        &gt; {lastUserMessage.content}
+                        <span aria-hidden="true">&gt; </span>
+                        <span style={SR_ONLY}>You asked: </span>
+                        {lastUserMessage.content}
                       </motion.div>
                     )}
 
                     {/* Floating Gengar Speech Text (Left-aligned) */}
                     <div
+                      id="gengar-chat-dialogue"
+                      aria-busy={streaming}
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "clamp(16px, 2.4vw, 23px)",
@@ -679,6 +773,7 @@ export default function GengarPet() {
                       {currentDialogue}
                       {streaming && (
                         <span
+                          aria-hidden="true"
                           style={{
                             display: "inline-block",
                             width: "2px",
@@ -702,17 +797,9 @@ export default function GengarPet() {
                         alignItems: "center",
                       }}
                     >
-                      <div
-                        style={{
-                          width: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          borderBottom: "1.5px solid rgba(255, 255, 255, 0.22)",
-                          padding: "6px 0",
-                          transition: "border-color 0.2s ease",
-                        }}
-                      >
+                      <div className="gengar-input-line">
                         <span
+                          aria-hidden="true"
                           style={{
                             fontFamily: "var(--font-mono)",
                             fontSize: "15px",
@@ -726,6 +813,9 @@ export default function GengarPet() {
                         <input
                           ref={inputRef}
                           type="text"
+                          className="gengar-input"
+                          aria-label="Ask Gengar about Loyd"
+                          autoComplete="off"
                           value={input}
                           onChange={(e) => setInput(e.target.value)}
                           onKeyDown={(e) => {
@@ -735,31 +825,16 @@ export default function GengarPet() {
                             }
                           }}
                           placeholder={streaming ? "Gengar is speaking..." : "ask something and hit enter..."}
-                          disabled={streaming}
-                          style={{
-                            flex: 1,
-                            background: "transparent",
-                            border: "none",
-                            color: "#ffffff",
-                            fontSize: "15px",
-                            fontFamily: "var(--font-mono)",
-                            outline: "none",
-                            caretColor: "#ffffff",
-                          }}
+                          // readOnly (not disabled) so keyboard focus stays in the field while Gengar replies
+                          readOnly={streaming}
+                          aria-busy={streaming}
                         />
                         {input.trim() && !streaming && (
                           <button
+                            type="button"
                             onClick={handleSend}
-                            style={{
-                              background: "none",
-                              border: "none",
-                              color: "#fff",
-                              fontFamily: "var(--font-mono)",
-                              fontSize: "12px",
-                              cursor: "pointer",
-                              padding: "2px 6px",
-                              opacity: 0.8,
-                            }}
+                            aria-label="Send message"
+                            className="gengar-send"
                           >
                             [ENTER ↵]
                           </button>
@@ -806,15 +881,19 @@ export default function GengarPet() {
                     >
                       {/* Giant Gengar Oval Ground Shadow / Base Glow */}
                       <motion.div
-                        animate={{
-                          scaleX: streaming ? [1, 0.9, 1, 0.9, 1] : [1, 0.96, 1],
-                          opacity: streaming ? [0.75, 0.5, 0.75, 0.5, 0.75] : [0.7, 0.55, 0.7],
-                        }}
-                        transition={{
-                          duration: streaming ? 0.6 : 4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
+                        animate={
+                          reduceMotion
+                            ? { scaleX: 1, opacity: 0.65 }
+                            : {
+                                scaleX: streaming ? [1, 0.9, 1, 0.9, 1] : [1, 0.96, 1],
+                                opacity: streaming ? [0.75, 0.5, 0.75, 0.5, 0.75] : [0.7, 0.55, 0.7],
+                              }
+                        }
+                        transition={
+                          reduceMotion
+                            ? { duration: 0 }
+                            : { duration: streaming ? 0.6 : 4, repeat: Infinity, ease: "easeInOut" }
+                        }
                         style={{
                           position: "absolute",
                           bottom: "clamp(25px, 6vw, 55px)",
@@ -832,8 +911,9 @@ export default function GengarPet() {
                         }}
                       />
                       <Image
-                        src="/gengar.gif"
-                        alt="Giant Looming Gengar"
+                        src={gengarSprite}
+                        alt=""
+                        aria-hidden="true"
                         width={580}
                         height={580}
                         priority

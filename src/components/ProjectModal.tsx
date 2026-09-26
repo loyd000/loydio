@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/lib/supabase";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 const MONO = "var(--font-mono), monospace";
 const DISPLAY = "var(--font-display), 'Syne', sans-serif";
@@ -17,6 +18,7 @@ export default function ProjectModal({
 }) {
   const [idx, setIdx] = useState(0);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
   const dragStartX = useRef<number | null>(null);
 
   const handleClose = useCallback(() => {
@@ -30,13 +32,15 @@ export default function ProjectModal({
     ? [project.image_url]
     : [];
 
-  // Lock body scroll + focus close button on open
+  // Lock body scroll while open
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    closeBtnRef.current?.focus();
     return () => { document.body.style.overflow = prev; };
   }, []);
+
+  // Keep Tab inside the dialog, start on Close, hand focus back to the opener on unmount
+  useFocusTrap(shellRef, true, { initialFocusRef: closeBtnRef });
 
   const prevImg = useCallback(() => {
     if (images.length < 2) return;
@@ -90,11 +94,12 @@ export default function ProjectModal({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
         onClick={handleClose}
-        aria-label="Close modal"
       >
         {/* ── Modal shell ── */}
         <motion.div
           key="pm-shell"
+          ref={shellRef}
+          tabIndex={-1}
           className="pm-shell"
           initial={{ opacity: 0, y: 32, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}

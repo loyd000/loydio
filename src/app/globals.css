@@ -2602,6 +2602,117 @@ p {
 .chat-send-btn:hover:not(:disabled) { transform: scale(1.08); }
 .chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
+/* ── Gengar companion: trigger + chat dialog ──
+   The dialog stage is always dark (it sits on its own near-black backdrop),
+   so its controls use fixed light-on-dark values rather than theme tokens. */
+.gengar-trigger {
+  -webkit-tap-highlight-color: transparent;
+}
+.gengar-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Containers only take focus as a trap fallback; they don't need a ring */
+.gengar-dialog:focus-visible,
+.pm-shell:focus-visible {
+  outline: none;
+}
+
+.gengar-close {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 40;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.gengar-close:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+}
+.gengar-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+.gengar-close-hint {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+@media (hover: none) {
+  .gengar-close { padding: 0; }
+  .gengar-close-hint { display: none; }
+}
+
+.gengar-input-line {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.22);
+  transition: border-color 0.2s ease;
+}
+/* The underline is the input's focus indicator */
+.gengar-input-line:focus-within {
+  border-bottom-color: rgba(255, 255, 255, 0.85);
+}
+.gengar-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  caret-color: #fff;
+  font-family: var(--font-mono), monospace;
+  font-size: 16px; /* ≥16px stops iOS Safari from zooming on focus */
+}
+.gengar-input:focus-visible {
+  outline: none;
+}
+.gengar-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.gengar-input[aria-busy="true"] {
+  cursor: progress;
+}
+.gengar-send {
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.gengar-send:hover {
+  color: #fff;
+}
+.gengar-send:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 
 
 
