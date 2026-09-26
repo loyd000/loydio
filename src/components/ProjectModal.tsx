@@ -270,7 +270,7 @@ const STYLES = `
   .pm-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 10090; /* above nav (10060), corner badges (10070), Gengar (10045) */
     background: rgba(0, 0, 0, 0.72);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);

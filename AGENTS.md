@@ -5,5 +5,5 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # Design System & UI Rules
-When adding or modifying UI components, sections, pages, styles, animations, or features, ALWAYS consult and adhere to [DESIGN_SYSTEM.md](file:///c:/Users/deguz/OneDrive/Pictures/PROJECTS/loydio/DESIGN_SYSTEM.md). Follow the liquid-glass recipes, typography hierarchy (Syne, Geist, Geist Mono), theme tokens, motion curves, and sound engine guidelines defined there.
+When adding or modifying UI components, sections, pages, styles, animations, or features, ALWAYS consult and adhere to [DESIGN.md](DESIGN.md). Follow the liquid-glass recipes, typography voices (Syne, Geist, Geist Mono), theme tokens, the Settle easing curve (and its narrow Tactile Spring exception), the 44px target and keyboard rules, and the z-index layers defined there. Machine-readable extensions (motion, shadows, breakpoints, component snippets) live in [.impeccable/design.json](.impeccable/design.json); keep both in sync when the system changes.
 

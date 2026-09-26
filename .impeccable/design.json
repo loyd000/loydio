@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T05:46:43Z",
+  "title": "Design System: Loyd.io",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Ink", "canonical": "#09090b", "cssVar": "--fg", "tonalRamp": ["oklch(15% 0.006 286)", "oklch(25% 0.006 286)", "oklch(37% 0.012 286)", "oklch(44% 0.014 286)", "oklch(55% 0.014 286)", "oklch(71% 0.013 286)", "oklch(87% 0.005 286)", "oklch(97% 0.001 286)"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#fafafa", "cssVar": "--bg", "tonalRamp": ["oklch(15% 0 0)", "oklch(27% 0 0)", "oklch(40% 0 0)", "oklch(55% 0 0)", "oklch(70% 0 0)", "oklch(83% 0 0)", "oklch(92% 0 0)", "oklch(98.5% 0 0)"] },
+      "sheet": { "role": "neutral", "displayName": "Sheet", "canonical": "#ffffff", "cssVar": "--surface" },
+      "graphite": { "role": "neutral", "displayName": "Graphite", "canonical": "#71717a", "cssVar": "--muted", "tonalRamp": ["oklch(21% 0.006 286)", "oklch(27% 0.006 286)", "oklch(37% 0.012 286)", "oklch(44% 0.014 286)", "oklch(55% 0.014 286)", "oklch(71% 0.013 286)", "oklch(87% 0.005 286)", "oklch(96.7% 0.001 286)"] },
+      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(0.922 0 0)", "cssVar": "--border" },
+      "hairline-strong": { "role": "neutral", "displayName": "Hairline Strong", "canonical": "rgba(0, 0, 0, 0.18)", "cssVar": "--border-strong" },
+      "wash": { "role": "neutral", "displayName": "Wash", "canonical": "rgba(0, 0, 0, 0.04)", "cssVar": "--subtle-bg" },
+      "signal-green": { "role": "semantic", "displayName": "Signal Green", "canonical": "#22c55e", "cssVar": "--success", "tonalRamp": ["oklch(26% 0.06 150)", "oklch(35% 0.09 150)", "oklch(45% 0.13 150)", "oklch(56% 0.16 150)", "oklch(72% 0.19 150)", "oklch(80% 0.18 150)", "oklch(90% 0.09 150)", "oklch(96% 0.04 150)"] },
+      "paper-night": { "role": "neutral", "displayName": "Paper (Night)", "canonical": "#131316", "cssVar": "--bg", "theme": "dark" },
+      "ink-night": { "role": "primary", "displayName": "Ink (Night)", "canonical": "#f4f4f5", "cssVar": "--fg", "theme": "dark" },
+      "sheet-night": { "role": "neutral", "displayName": "Sheet (Night)", "canonical": "#1a1a1d", "cssVar": "--surface", "theme": "dark" },
+      "graphite-night": { "role": "neutral", "displayName": "Graphite (Night)", "canonical": "#a1a1aa", "cssVar": "--muted", "theme": "dark" },
+      "hairline-night": { "role": "neutral", "displayName": "Hairline (Night)", "canonical": "rgba(255, 255, 255, 0.08)", "cssVar": "--border", "theme": "dark" },
+      "hairline-strong-night": { "role": "neutral", "displayName": "Hairline Strong (Night)", "canonical": "rgba(255, 255, 255, 0.18)", "cssVar": "--border-strong", "theme": "dark" },
+      "wash-night": { "role": "neutral", "displayName": "Wash (Night)", "canonical": "rgba(255, 255, 255, 0.06)", "cssVar": "--subtle-bg", "theme": "dark" },
+      "glass-fill": { "role": "neutral", "displayName": "Glass Fill", "canonical": "rgba(255, 255, 255, 0.14)" },
+      "glass-fill-night": { "role": "neutral", "displayName": "Glass Fill (Night)", "canonical": "rgba(255, 255, 255, 0.04)", "theme": "dark" },
+      "glass-rim": { "role": "neutral", "displayName": "Glass Rim", "canonical": "rgba(255, 255, 255, 0.65)" },
+      "glass-rim-night": { "role": "neutral", "displayName": "Glass Rim (Night)", "canonical": "rgba(255, 255, 255, 0.25)", "theme": "dark" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Section headings, project and modal titles (Syne)." },
+      "headline": { "displayName": "Headline", "purpose": "The hero name only." },
+      "title": { "displayName": "Title", "purpose": "The hero role line." },
+      "body": { "displayName": "Body", "purpose": "Bio, descriptions and modal copy, in --muted." },
+      "kicker": { "displayName": "Kicker", "purpose": "Lowercase section labels with a leading em dash: '— projects', '03 — certifications'." },
+      "label": { "displayName": "Label", "purpose": "Buttons, CTAs and counters, UPPERCASE." },
+      "tag": { "displayName": "Tag", "purpose": "Tech chips, years and metadata, UPPERCASE." }
+    },
+    "shadows": [
+      { "name": "glass-card", "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 16px 0 rgba(255,255,255,0.16), 0 12px 36px 0 rgba(0,0,0,0.08)", "purpose": "Liquid-glass cards and carousels (light). Pair with backdrop-filter: blur(28px) saturate(210%)." },
+      { "name": "glass-card-night", "value": "inset 0 2px 0 0 rgba(255,255,255,0.72), inset 0 4px 10px -2px rgba(255,255,255,0.06), inset 2px 0 0 0 rgba(255,255,255,0.3), inset 0 -1px 0 0 rgba(0,0,0,0.65), inset -1px 0 0 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.16), 0 0 16px 0 rgba(255,255,255,0.06), 0 12px 36px 0 rgba(0,0,0,0.42)", "purpose": "Liquid-glass cards in dark mode. Pair with backdrop-filter: blur(28px) saturate(190%)." },
+      { "name": "glass-control", "value": "inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 14px 0 rgba(255,255,255,0.14), 0 4px 18px 0 rgba(0,0,0,0.08)", "purpose": "Glass buttons, pills and the nav capsule. Pair with blur(22px) saturate(190%)." },
+      { "name": "glass-chip", "value": "inset 0 1.5px 0 0 rgba(255,255,255,0.9), inset 1.5px 0 0 0 rgba(255,255,255,0.38), inset 0 -1px 0 0 rgba(0,0,0,0.04), inset -1px 0 0 0 rgba(0,0,0,0.02), 0 0 0 0.5px rgba(255,255,255,0.26), 0 2px 8px 0 rgba(0,0,0,0.05)", "purpose": "Small glass: tags and tech-logo tiles. Pair with blur(14-16px) saturate(170%)." },
+      { "name": "button-lift", "value": "0 4px 16px var(--border-mid)", "purpose": "Hover lift under square mono buttons." },
+      { "name": "modal", "value": "0 0 0 1px rgba(255,255,255,0.06) inset, 0 32px 80px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2)", "purpose": "The opaque project modal only; the one non-glass elevated surface." }
+    ],
+    "motion": [
+      { "name": "settle", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The default curve for everything: state changes (0.2-0.35s), entrances (0.5-0.6s fade + 20px rise), carousels, modals. Framer: [0.16, 1, 0.3, 1]." },
+      { "name": "tactile-spring", "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "purpose": "Controls only: small hover/press transforms such as the .btn lift and the logo badge straightening, at 0.35s or less and scale 1.08 or less. Never on entrances, layout, cards or modals." },
+      { "name": "nav-spring", "value": "spring(stiffness 380, damping 30)", "purpose": "Framer layoutId highlight sliding between nav links." },
+      { "name": "theme-wipe", "value": "1.8s cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "View Transition diagonal wipe when switching light/dark." },
+      { "name": "loop-spin", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Looping indicators only (chat thinking star)." },
+      { "name": "shadowball", "value": "3.2s steps(16, jump-none)", "purpose": "16-frame Shadow Ball sprite; matches the 1.0s charge, 1.4s flight and 0.8s impact in JS." },
+      { "name": "reduced-motion", "value": "MotionConfig reducedMotion=\"user\" + CSS prefers-reduced-motion", "purpose": "Framer skips transform animation for reduced-motion users; Gengar parks as a still sprite and the photo stack stops autoplaying." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "900px" },
+      { "name": "phone", "value": "640px" },
+      { "name": "phone-legacy", "value": "600px" },
+      { "name": "small-phone", "value": "480px" },
+      { "name": "tiny-phone", "value": "380px" }
+    ],
+    "zIndex": [
+      { "name": "chat-stage", "value": "999999" },
+      { "name": "modal", "value": "10090" },
+      { "name": "corner-badges", "value": "10070" },
+      { "name": "nav", "value": "10060" },
+      { "name": "projectile", "value": "10050" },
+      { "name": "companion", "value": "10045" },
+      { "name": "utility", "value": "7990" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Square ink button with a Mono label; inverts to an outline and lifts on hover.",
+      "html": "<button class=\"ds-btn-primary\">SEND AN EMAIL</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 12px 28px; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; background: var(--fg, #09090b); color: var(--bg, #fafafa); border: 1px solid var(--fg, #09090b); border-radius: 0; cursor: pointer; transition: background 0.22s ease, color 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease; } .ds-btn-primary:hover { background: transparent; color: var(--fg, #09090b); transform: translateY(-2px) scale(1.02); box-shadow: 0 4px 16px rgba(0,0,0,0.10); } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent, #09090b); outline-offset: 3px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Square hairline button; the secondary action.",
+      "html": "<button class=\"ds-btn-outline\">COPY EMAIL</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 12px 28px; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; background: transparent; color: var(--fg, #09090b); border: 1px solid var(--border-strong, rgba(0,0,0,0.18)); border-radius: 0; cursor: pointer; transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); } .ds-btn-outline:hover { border-color: var(--accent, #09090b); background: var(--accent-subtle, rgba(0,0,0,0.05)); transform: translateY(-2px) scale(1.02); } .ds-btn-outline:focus-visible { outline: 2px solid var(--accent, #09090b); outline-offset: 3px; }"
+    },
+    {
+      "name": "Glass Capsule Button",
+      "kind": "button",
+      "refersTo": "button-glass",
+      "description": "Round liquid-glass CTA (View Resume) and icon buttons.",
+      "html": "<a class=\"ds-btn-glass\" href=\"#\">View Resume <span class=\"ds-btn-glass-mono\">&gt;</span></a>",
+      "css": ".ds-btn-glass { display: inline-flex; align-items: center; gap: 0.5rem; padding: 12px 32px; min-height: 44px; font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; color: var(--fg, #09090b); text-decoration: none; border-radius: 999px; background: rgba(255,255,255,0.14); backdrop-filter: blur(22px) saturate(190%); -webkit-backdrop-filter: blur(22px) saturate(190%); border: 1px solid rgba(255,255,255,0.65); box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 14px 0 rgba(255,255,255,0.14), 0 4px 18px 0 rgba(0,0,0,0.08); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-glass:hover { background: rgba(255,255,255,0.28); transform: scale(1.08); } .ds-btn-glass:focus-visible { outline: 2px solid var(--accent, #09090b); outline-offset: 3px; } .ds-btn-glass-mono { font-family: 'Geist Mono', monospace; }"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Square frosted Mono chip for tech stacks, categories and years.",
+      "html": "<span class=\"ds-tag\">Next.js</span> <span class=\"ds-tag\">Supabase</span>",
+      "css": ".ds-tag { display: inline-block; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 14px; color: var(--fg, #09090b); border-radius: 0; background: rgba(255,255,255,0.14); backdrop-filter: blur(16px) saturate(170%); -webkit-backdrop-filter: blur(16px) saturate(170%); border: 1px solid rgba(255,255,255,0.5); box-shadow: inset 0 1.5px 0 0 rgba(255,255,255,0.9), inset 1.5px 0 0 0 rgba(255,255,255,0.38), inset 0 -1px 0 0 rgba(0,0,0,0.04), inset -1px 0 0 0 rgba(0,0,0,0.02), 0 0 0 0.5px rgba(255,255,255,0.26), 0 2px 8px 0 rgba(0,0,0,0.05); }"
+    },
+    {
+      "name": "Dev Project Card",
+      "kind": "card",
+      "refersTo": "card-glass",
+      "description": "20px liquid-glass card: 16:9 media well, Syne title, 2-line description, Mono CTA.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-media\"><span class=\"ds-card-year\">2026</span></div><h3 class=\"ds-card-title\">Lampara EIS</h3><p class=\"ds-card-desc\">A professional company website built for Lampara, a solar energy installation company.</p><a class=\"ds-card-cta\" href=\"#\">View Project <svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 7h10v10\"/><path d=\"M7 17 17 7\"/></svg></a></article>",
+      "css": ".ds-card { max-width: 380px; display: flex; flex-direction: column; gap: 0.6rem; padding: 1rem; border-radius: 20px; background: rgba(255,255,255,0.14); backdrop-filter: blur(28px) saturate(210%); -webkit-backdrop-filter: blur(28px) saturate(210%); border: 1px solid rgba(255,255,255,0.65); box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.95), inset 0 4px 10px -2px rgba(255,255,255,0.16), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), inset -1px 0 0 0 rgba(0,0,0,0.03), 0 0 0 1px rgba(255,255,255,0.38), 0 0 16px 0 rgba(255,255,255,0.16), 0 12px 36px 0 rgba(0,0,0,0.08); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); } .ds-card:hover { transform: translateY(-3px); } .ds-card-media { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; background: var(--subtle-bg, rgba(0,0,0,0.04)); margin-bottom: 0.5rem; } .ds-card-year { position: absolute; top: 10px; right: 10px; font-family: 'Geist Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: var(--muted, #71717a); } .ds-card-title { margin: 0; font-family: 'Syne', sans-serif; font-weight: 400; font-size: 20px; line-height: 1.2; color: var(--fg, #09090b); } .ds-card-desc { margin: 0; font-family: 'Geist', sans-serif; font-size: 12.5px; line-height: 1.7; color: var(--muted, #71717a); } .ds-card-cta { align-self: center; display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--muted, #71717a); transition: color 0.2s ease; } .ds-card-cta:hover { color: var(--fg, #09090b); } .ds-card-cta svg { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); } .ds-card-cta:hover svg { transform: translate(2px, -2px); } .ds-card-cta:focus-visible { outline: 2px solid var(--accent, #09090b); outline-offset: 3px; }"
+    },
+    {
+      "name": "Pill Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Floating glass capsule; Syne links with a 32px active highlight inside 44px targets, plus the theme toggle.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a class=\"ds-nav-link is-active\" href=\"#about\" aria-current=\"page\">About</a><a class=\"ds-nav-link\" href=\"#projects\">Projects</a><a class=\"ds-nav-link\" href=\"#contact\">Contact</a><span class=\"ds-nav-divider\"></span><button class=\"ds-nav-toggle\" aria-label=\"Switch to dark mode\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"/></svg></button></nav>",
+      "css": ".ds-nav { display: inline-flex; align-items: center; gap: 2px; padding: 0 6px; border-radius: 999px; background: rgba(255,255,255,0.14); backdrop-filter: blur(22px) saturate(190%); -webkit-backdrop-filter: blur(22px) saturate(190%); border: 1px solid rgba(255,255,255,0.65); box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.95), inset 2px 0 0 0 rgba(255,255,255,0.45), inset 0 -1px 0 0 rgba(0,0,0,0.05), 0 0 0 1px rgba(255,255,255,0.38), 0 4px 18px 0 rgba(0,0,0,0.08); } .ds-nav-link { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 14px; font-family: 'Syne', sans-serif; font-size: 13px; letter-spacing: 0.05em; color: var(--fg, #09090b); text-decoration: none; opacity: 0.55; transition: opacity 0.2s ease; } .ds-nav-link:hover { opacity: 0.9; } .ds-nav-link.is-active { opacity: 1; } .ds-nav-link.is-active::before { content: ''; position: absolute; inset: 6px 0; border-radius: 999px; background: rgba(0,0,0,0.07); z-index: -1; } .ds-nav-link:focus-visible, .ds-nav-toggle:focus-visible { outline: 2px solid var(--accent, #09090b); outline-offset: 3px; border-radius: 999px; } .ds-nav-divider { width: 1px; height: 18px; margin: 0 4px; background: var(--border-strong, rgba(0,0,0,0.18)); opacity: 0.45; } .ds-nav-toggle { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: 999px; color: var(--fg, #09090b); opacity: 0.7; cursor: pointer; transition: opacity 0.18s ease; } .ds-nav-toggle:hover { opacity: 1; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "description": "Capsule filter input used on the /projects and /certifications subpages.",
+      "html": "<input class=\"ds-search\" type=\"search\" placeholder=\"Search projects…\" aria-label=\"Search projects\" />",
+      "css": ".ds-search { font-family: 'Geist', sans-serif; font-size: 13px; padding: 7px 14px; min-width: 220px; min-height: 36px; border-radius: 999px; border: 1px solid var(--border-strong, rgba(0,0,0,0.18)); background: var(--subtle-bg, rgba(0,0,0,0.04)); color: var(--fg, #09090b); outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; } .ds-search::placeholder { color: var(--muted, #71717a); } .ds-search:focus { border-color: var(--fg, #09090b); box-shadow: 0 0 0 1px var(--fg, #09090b); }"
+    },
+    {
+      "name": "Section Kicker",
+      "kind": "custom",
+      "description": "Lowercase Syne section label with a leading em dash, optionally numbered, above a Syne heading.",
+      "html": "<div class=\"ds-section\"><p class=\"ds-kicker\">02 — technologies &amp; tools</p><h2 class=\"ds-heading\">Stack &amp; Journey</h2></div>",
+      "css": ".ds-kicker { margin: 0 0 1rem; font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: lowercase; color: var(--muted, #71717a); } .ds-heading { margin: 0; font-family: 'Syne', sans-serif; font-weight: 400; font-size: clamp(24px, 3vw, 32px); line-height: 1.15; color: var(--fg, #09090b); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Glass Workbench",
+    "overview": "An engineer's bench under a sheet of liquid glass. The work (web platforms, mobile apps, embedded hardware, graphic design) is laid out on a quiet monochrome surface with the precision of a spec sheet, and every control you can touch is a piece of beveled, lit glass sitting on top of it. The bench is paper-white by day and graphite by night; the glass is the same in both, only its light changes.\n\nThe system is two materials meeting. The bench is editorial and brutalist: square mono buttons and tags, lowercase Syne kickers with an em dash, numbered sections, generous whitespace, no decoration that isn't typography. The glass is tactile: capsules and cards with a razor top highlight, a left bevel, a darker bottom edge and a soft drop shadow, blurred and saturated over whatever sits behind. Glass means you can touch or read this; the bench is where the content rests.\n\nOne thing breaks the monochrome on purpose: Gengar, the pixel-art AI companion who roams the page, throws Shadow Balls at the cursor and opens a full-screen chat. He is the only chromatic voice on the site, and his mischief is the personality; the rest of the interface stays out of his way.",
+    "keyCharacteristics": [
+      "Monochrome paper/ink palette with a single semantic green; purple belongs to Gengar alone.",
+      "Three type voices: Syne for headings and kickers, Geist for reading, Geist Mono for anything pressed or measured.",
+      "Two shape families: square mono controls (0 radius) vs. fully round glass capsules.",
+      "Depth from multi-layer glass bevels, not from stacked drop shadows.",
+      "One easing curve for everything, with a small spring allowed only in hover/press feedback.",
+      "44px touch targets and full keyboard reach, including the companion and every carousel."
+    ],
+    "rules": [
+      { "name": "The One Companion Color Rule", "body": "Gengar's purples (#9333ea glows, #f3e8ff speech text, the sprite itself) live inside the companion and its chat stage only. No button, link, tag or section ever borrows them.", "section": "colors" },
+      { "name": "The Invert, Don't Tint Rule", "body": "Dark mode swaps the neutral tokens under [data-theme=\"dark\"]; components never ship their own dark colors except the glass recipes, whose light physics differ at night. The single exception is the chat stage, which is always night (see Components).", "section": "colors" },
+      { "name": "The Token-Only Rule", "body": "Layout and text colors come from var(--bg), var(--fg), var(--muted), var(--border) and friends. Raw hex in a component is a bug unless it is glass physics (rgba white/black highlights) or Gengar.", "section": "colors" },
+      { "name": "The Three Voices Rule", "body": "Syne names things, Geist explains them, Mono is anything you press, count or date. If a string is interactive or numeric, it's Mono; if it's a heading or kicker, it's Syne; everything you read is Geist.", "section": "typography" },
+      { "name": "The Kicker Grammar Rule", "body": "Kickers are lowercase Syne with a leading em dash (— certifications); numbered sections put the index before the dash (03 — certifications). They never replace a real heading for screen readers.", "section": "typography" },
+      { "name": "The 44px Rule", "body": "Every tap target is at least 44×44px: nav links, theme toggle, logo, carousel arrows, social icons, buttons, close buttons. Where the visual must stay small (the 34px logo badge, 6px carousel dots), the hit area grows invisibly with padding plus negative margin, never with a bigger visual. Dots may drop to the WCAG AA floor of 24px.", "section": "layout" },
+      { "name": "The Bevel Before Shadow Rule", "body": "A surface earns depth from its highlights and rim first; the single outer drop shadow is the last layer and grows with size, never stacks. The only exception is the opaque project modal, which floats on a deep two-layer shadow because it replaces the page rather than sitting on it.", "section": "elevation" },
+      { "name": "The Glass Means Touch Rule", "body": "Liquid glass is for things you interact with or read inside (buttons, pills, tags, cards, the nav, the contact frame). Plain text sections, headings and backgrounds stay on the flat bench.", "section": "elevation" },
+      { "name": "The Square-Or-Capsule Rule", "body": "A control is either a square mono button or a round glass capsule. A rounded-rectangle button is off-system.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do use var(--bg), var(--fg), var(--muted), var(--border), var(--surface), var(--subtle-bg) for every layout and text color.",
+      "Do build new containers from .liquid-glass-card / .liquid-glass-btn / .tag, or reproduce the full 8-layer glass shadow with both light and [data-theme=\"dark\"] values.",
+      "Do ease everything with the Settle curve cubic-bezier(0.16, 1, 0.3, 1) (Framer: [0.16, 1, 0.3, 1]): 0.2–0.35s for state changes, 0.5–0.6s for entrances (fade + 20px rise, useInView once, margin: \"-60px\"), staggered ~0.07s per item.",
+      "Do keep the Tactile Spring cubic-bezier(0.34, 1.56, 0.64, 1) for small hover/press transforms on controls only (the .btn lift, the logo badge straightening), at ≤0.35s and ≤1.08 scale. Framer springs are allowed for the same job (nav active highlight, photo stack).",
+      "Do animate with transform and opacity; grow bars with scaleX, not width; leave will-change off at rest.",
+      "Do wrap motion in the global MotionConfig reducedMotion=\"user\" (already in layout.tsx) and give custom JS motion an explicit reduced path, as Gengar and the photo stack do.",
+      "Do give every control a 44px target, a visible :focus-visible ring (2px --accent, 3px offset), and keyboard parity: dialogs use useFocusTrap, carousels and stacks take arrow keys.",
+      "Do fetch content on the server (page.tsx, revalidate = 60) and pass it down as props, so it ships in the HTML."
+    ],
+    "donts": [
+      "Don't use the Tactile Spring (or any overshoot) on entrances, page transitions, layout, cards or modals. Only controls spring.",
+      "Don't introduce a second accent color, gradients as decoration, or Gengar's purple outside the companion.",
+      "Don't hardcode #000, #fff, #111 for layout or text in components; glass highlights and the always-dark chat stage are the only exceptions.",
+      "Don't make a rounded-rectangle button; controls are square mono or round glass.",
+      "Don't add sound or autoplaying audio; the site is silent.",
+      "Don't stack multiple drop shadows or put glass on non-interactive text sections.",
+      "Don't fetch page content client-side in a useEffect when the server can render it.",
+      "Don't let fixed chrome sit above a modal; new overlays go at or above z-index 10090."
+    ]
+  }
+}
