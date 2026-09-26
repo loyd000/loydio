@@ -10,12 +10,12 @@ const DISPLAY_FONT = "var(--font-display), 'Syne', sans-serif";
 export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPhoto[]; fetchError: boolean }) {
   if (photos.length === 0 && !fetchError) return null;
 
-  const cards = photos.map((photo) => (
+  const cards = photos.map((photo, i) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       key={photo.id}
       src={photo.image_url}
-      alt="Gallery photo"
+      alt={`Photo ${i + 1} of ${photos.length}`}
       style={{
         width: "100%",
         height: "100%",
@@ -51,6 +51,7 @@ export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPh
             Photo Gallery
           </h2>
           <p
+            id="photo-gallery-hint"
             style={{
               fontFamily: DISPLAY_FONT,
               fontSize: 11,
@@ -58,7 +59,7 @@ export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPh
               letterSpacing: "0.05em",
             }}
           >
-            Drag or swipe to cycle through
+            Drag, swipe, or use the arrow keys to cycle through
           </p>
         </div>
 
@@ -87,6 +88,8 @@ export default function PhotoGallery({ photos, fetchError }: { photos: GalleryPh
               >
                 <Stack
                   cards={cards}
+                  ariaLabel="Photo gallery"
+                  ariaDescribedBy="photo-gallery-hint"
                   randomRotation
                   sensitivity={150}
                   sendToBackOnClick

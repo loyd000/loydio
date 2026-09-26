@@ -3,10 +3,23 @@
 import {
   motion,
   useMotionValue,
+  useReducedMotion,
   useTransform,
   type PanInfo,
 } from "framer-motion";
 import { useState, useEffect, useMemo, useCallback } from "react";
+
+const SR_ONLY: React.CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: "hidden",
+  clip: "rect(0, 0, 0, 0)",
+  whiteSpace: "nowrap",
+  border: 0,
+};
 
 interface CardRotateProps {
   children: React.ReactNode;
@@ -91,6 +104,10 @@ interface StackProps {
   pauseOnHover?: boolean;
   mobileClickOnly?: boolean;
   mobileBreakpoint?: number;
+  /** Accessible name for the stack, e.g. "Photo gallery". */
+  ariaLabel?: string;
+  /** Id of visible instructions to announce on focus. */
+  ariaDescribedBy?: string;
 }
 
 export default function Stack({
@@ -104,9 +121,16 @@ export default function Stack({
   pauseOnHover = false,
   mobileClickOnly = false,
   mobileBreakpoint = 768,
+  ariaLabel = "Card stack",
+  ariaDescribedBy,
 }: StackProps) {
   const [isMobile, setIsMobile] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  // Auto-advancing motion is skipped entirely for reduced-motion users
+  const reduceMotion = useReducedMotion() ?? false;
+  const isPaused = hoverPaused || focusPaused;
   const [order, setOrder] = useState<number[]>(() => cards.map((_, index) => index));
 
   useEffect(() => {
@@ -141,8 +165,27 @@ export default function Stack({
     });
   }, []);
 
+  // Keyboard: → / ↓ / Enter / Space send the top card to the back (next);
+  // ← / ↑ bring the bottom card to the top (previous).
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (currentOrder.length <= 1) return;
+    let next: number[] | null = null;
+
+    if (["ArrowRight", "ArrowDown", "Enter", " "].includes(e.key)) {
+      next = [currentOrder[currentOrder.length - 1], ...currentOrder.slice(0, -1)];
+    } else if (["ArrowLeft", "ArrowUp"].includes(e.key)) {
+      next = [...currentOrder.slice(1), currentOrder[0]];
+    }
+    if (!next) return;
+
+    e.preventDefault();
+    setOrder(next);
+    // The last entry renders on top
+    setAnnouncement(`Photo ${next[next.length - 1] + 1} of ${cards.length}`);
+  };
+
   useEffect(() => {
-    if (!autoplay || currentOrder.length <= 1 || isPaused) return;
+    if (!autoplay || reduceMotion || currentOrder.length <= 1 || isPaused) return;
     const interval = setInterval(() => {
       setOrder((prev) => {
         if (prev.length <= 1) return prev;
@@ -152,21 +195,34 @@ export default function Stack({
       });
     }, autoplayDelay);
     return () => clearInterval(interval);
-  }, [autoplay, autoplayDelay, isPaused, currentOrder.length]);
+  }, [autoplay, autoplayDelay, reduceMotion, isPaused, currentOrder.length]);
 
   if (cards.length === 0) return null;
 
   return (
     <div
+      role="group"
+      aria-roledescription="photo stack"
+      aria-label={`${ariaLabel}, ${cards.length} ${cards.length === 1 ? "photo" : "photos"}`}
+      aria-describedby={ariaDescribedBy}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      // Hold still while someone is reading or navigating it by keyboard
+      onFocus={() => setFocusPaused(true)}
+      onBlur={() => setFocusPaused(false)}
       style={{
         position: "relative",
         width: "100%",
         height: "100%",
         perspective: 600,
+        borderRadius: 16,
       }}
-      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
+      onMouseEnter={() => pauseOnHover && setHoverPaused(true)}
+      onMouseLeave={() => pauseOnHover && setHoverPaused(false)}
     >
+      <span role="status" aria-live="polite" style={SR_ONLY}>
+        {announcement}
+      </span>
       {currentOrder.map((cardIndex, stackPosition) => {
         const cardContent = cards[cardIndex];
         const rotation = rotations[cardIndex] ?? 0;

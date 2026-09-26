@@ -1938,6 +1938,9 @@ p {
   left: 24px;
   z-index: 10070;
   text-decoration: none;
+  /* 34px badge + 5px invisible padding = 44px target; the negative margin keeps it in place */
+  padding: 5px;
+  margin: -5px;
 }
 .logo-badge {
   width: 34px;
@@ -2276,16 +2279,21 @@ p {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 5px 6px;
+  padding: 0 6px;
 }
 
+/* Links fill the pill's full height so each target is 44px tall;
+   the active highlight is inset to keep its original ~32px look. */
 .pill-link {
   position: relative;
   display: flex;
   align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
   text-decoration: none;
   color: var(--fg);
-  padding: 6px 14px;
+  padding: 0 14px;
   border-radius: 999px;
   font-family: var(--font-display), 'Syne', sans-serif;
   font-size: 13px;
@@ -2301,7 +2309,7 @@ p {
 
 .pill-active-bg {
   position: absolute;
-  inset: 0;
+  inset: 6px 0;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.07);
   z-index: 0;
@@ -2734,6 +2742,8 @@ p {
   .logo-corner {
     top: 14px;
     left: 16px;
+    padding: 8px; /* 28px badge → 44px target */
+    margin: -8px;
   }
   .logo-badge {
     width: 28px;
@@ -2759,13 +2769,16 @@ p {
     max-width: 420px;
   }
   .pill-nav-inner {
-    padding: 6px 8px;
+    padding: 3px 8px;
     gap: 2px;
     width: 100%;
     justify-content: space-between;
   }
+  .pill-active-bg {
+    inset: 3px 0; /* mobile keeps its taller, thumb-sized highlight */
+  }
   .pill-link {
-    padding: 12px 12px;
+    padding: 0 12px;
     font-size: 12px;
     letter-spacing: 0.05em;
     flex: 1;

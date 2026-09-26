@@ -306,20 +306,18 @@ function DesignCarousel({ projects, onModal }: { projects: Project[]; onModal: (
               &lt;
             </button>
 
-            <div className="liquid-glass-pill" aria-label="Graphic design project navigation">
+            <div className="liquid-glass-pill design-carousel-dots" role="group" aria-label="Graphic design project navigation">
               {projects.map((p, i) => (
                 <button
                   key={p.id ?? p.title}
+                  type="button"
                   onClick={() => goToIndex(i)}
                   aria-label={`Show ${p.title}`}
-                  aria-current={i === currentIndex}
+                  aria-current={i === currentIndex ? "true" : undefined}
                   className="design-carousel-dot"
-                  style={{
-                    background: i === currentIndex ? "var(--fg)" : "var(--muted)",
-                    transform: i === currentIndex ? "scale(1.4)" : "scale(1)",
-                    opacity: i === currentIndex ? 1 : 0.4,
-                  }}
-                />
+                >
+                  <span className="design-carousel-dot-mark" aria-hidden="true" />
+                </button>
               ))}
             </div>
 
@@ -645,8 +643,8 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           z-index: 10;
         }
         .design-carousel-controls .liquid-glass-btn {
-          width: 42px;
-          height: 42px;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           font-size: 14px;
           font-family: var(--font-mono), monospace;
@@ -655,14 +653,43 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           justify-content: center;
           cursor: pointer;
         }
+        /* Each dot is a 24px target (WCAG 2.5.8) drawing a 6px mark; the pill's
+           own padding and gap shrink so the row keeps its compact rhythm. */
+        .design-carousel-dots {
+          padding: 3px 8px;
+          gap: 0;
+        }
         .design-carousel-dot {
-          width: 6px;
-          height: 6px;
+          width: 24px;
+          height: 24px;
+          display: grid;
+          place-items: center;
+          background: none;
           border: 0;
           border-radius: 50%;
           padding: 0;
           cursor: pointer;
-          transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
+        }
+        .design-carousel-dot-mark {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--muted);
+          opacity: 0.4;
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, background 0.25s ease;
+        }
+        .design-carousel-dot:hover .design-carousel-dot-mark {
+          opacity: 0.75;
+        }
+        .design-carousel-dot[aria-current="true"] .design-carousel-dot-mark {
+          background: var(--fg);
+          opacity: 1;
+          transform: scale(1.4);
+        }
+        .design-carousel-dot:focus-visible {
+          outline: 2px solid var(--accent);
+          outline-offset: 0;
+          border-radius: 50%;
         }
         [data-theme="dark"] .design-carousel-shell::before {
           background: linear-gradient(to right, var(--bg) 10%, rgba(9, 9, 11, 0));
