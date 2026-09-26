@@ -30,7 +30,7 @@ export default function ScrollToTop() {
             zIndex: 7990,
             width: 44,
             height: 44,
-            borderRadius: 10,
+            borderRadius: 999, // round glass capsule, per the Square-Or-Capsule rule
             border: "1px solid var(--border-strong)",
             background: "var(--surface)",
             backdropFilter: "blur(16px) saturate(160%)",

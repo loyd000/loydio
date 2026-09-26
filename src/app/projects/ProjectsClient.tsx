@@ -325,7 +325,7 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
           top: 10px;
           left: 10px;
           font-family: ${MONO};
-          font-size: 9px;
+          font-size: 10px;
           font-weight: 600;
           letter-spacing: 0.16em;
           text-transform: uppercase;
@@ -414,11 +414,11 @@ export default function ProjectsClient({ initialProjects }: { initialProjects: P
         }
         .proj-tag {
           font-family: ${MONO};
-          font-size: 9px;
+          font-size: 10px;
           color: var(--muted);
           border: 1px solid var(--border);
           padding: 2px 7px;
-          border-radius: 2px;
+          border-radius: 0;
           letter-spacing: 0.08em;
         }
         .proj-card-link {

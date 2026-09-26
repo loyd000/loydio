@@ -22,11 +22,41 @@ colors:
   glass-rim: "rgba(255, 255, 255, 0.65)"
   glass-rim-night: "rgba(255, 255, 255, 0.25)"
 typography:
+  display-xl:
+    fontFamily: "Geist Mono, monospace"
+    fontSize: "clamp(32px, 7vw, 72px)"
+    fontWeight: 500
+    lineHeight: 1
+  statement:
+    fontFamily: "Syne, sans-serif"
+    fontSize: "clamp(22px, 5vw, 52px)"
+    fontWeight: 400
+    lineHeight: 1.15
   display:
     fontFamily: "Syne, sans-serif"
     fontSize: "clamp(24px, 3vw, 32px)"
     fontWeight: 400
     lineHeight: 1.15
+  feature-title:
+    fontFamily: "Syne, sans-serif"
+    fontSize: "clamp(20px, 2.8vw, 30px)"
+    fontWeight: 400
+    lineHeight: 1.1
+  card-title:
+    fontFamily: "Syne, sans-serif"
+    fontSize: "clamp(17px, 1.9vw, 21px)"
+    fontWeight: 400
+    lineHeight: 1.2
+  card-title-compact:
+    fontFamily: "Syne, sans-serif"
+    fontSize: "clamp(15px, 1.6vw, 18px)"
+    fontWeight: 400
+    lineHeight: 1.2
+  speech:
+    fontFamily: "Geist, sans-serif"
+    fontSize: "clamp(16px, 2.4vw, 23px)"
+    fontWeight: 500
+    lineHeight: 1.55
   headline:
     fontFamily: "Geist, sans-serif"
     fontSize: "clamp(28px, 5vw, 40px)"
@@ -37,11 +67,31 @@ typography:
     fontSize: "clamp(18px, 3vw, 24px)"
     fontWeight: 500
     lineHeight: 1.3
+  base:
+    fontFamily: "Geist, sans-serif"
+    fontSize: "16px"
+    fontWeight: 500
+    lineHeight: 1.7
   body:
     fontFamily: "Geist, sans-serif"
     fontSize: "15px"
     fontWeight: 500
     lineHeight: 1.8
+  small:
+    fontFamily: "Geist, sans-serif"
+    fontSize: "14px"
+    fontWeight: 500
+    lineHeight: 1.7
+  compact:
+    fontFamily: "Geist, sans-serif"
+    fontSize: "13px"
+    fontWeight: 500
+    lineHeight: 1.7
+  caption:
+    fontFamily: "Geist, sans-serif"
+    fontSize: "12px"
+    fontWeight: 500
+    lineHeight: 1.6
   kicker:
     fontFamily: "Syne, sans-serif"
     fontSize: "11px"
@@ -60,6 +110,7 @@ typography:
     letterSpacing: "0.15em"
 rounded:
   none: "0px"
+  xs: "2px"
   sm: "4px"
   md: "8px"
   lg: "12px"
@@ -169,13 +220,27 @@ A neutral zinc scale on near-white paper, inverted wholesale for night; color ca
 **Character:** Syne's wide, slightly eccentric geometry gives headings and kickers an editorial, poster-like voice; Geist reads clean and technical at paragraph length; Geist Mono turns every control and number into a spec-sheet annotation.
 
 ### Hierarchy
-- **Display** (Syne 400, `clamp(24px, 3vw, 32px)`, 1.15): Section headings ("Photo Gallery", "Selected Works"), project titles, modal titles.
-- **Headline** (Geist 700, `clamp(28px, 5vw, 40px)`, 1): The hero name only.
-- **Title** (Geist 500, `clamp(18px, 3vw, 24px)`, 1.3): The hero role line ("Computer Engineer — Full-Stack, Mobile & Embedded").
-- **Body** (Geist 500, 15px, 1.8): Bio, descriptions, modal copy, in `--muted`. Keep measure under ~70ch; cards clamp descriptions to 2 lines.
-- **Kicker** (Syne 400, 11px, 0.1em, lowercase): Section labels in the form `— projects` or `01 — projects`, in `--muted`.
-- **Label** (Geist Mono 500, 11px, 0.18em, UPPERCASE): Buttons, CTAs ("VIEW PROJECT ↗"), counters.
-- **Tag** (Geist Mono, 10px, 0.15em, UPPERCASE): Tech chips, years, metadata.
+
+**Display tier** (fluid, every size a `clamp()`):
+- **Display XL** (Geist Mono 500, `clamp(32px, 7vw, 72px)`, 1): 404 and error pages only.
+- **Statement** (Syne 400, `clamp(22px, 5vw, 52px)`, 1.15): The contact call ("Built something in mind? Let's make it real.").
+- **Headline** (Geist 700, `clamp(28px, 5vw, 40px)`, 1): Page-level `h1`s: the hero name and the `/projects` and `/certifications` titles.
+- **Display** (Syne 400, `clamp(24px, 3vw, 32px)`, 1.15): Visible section headings ("Photo Gallery").
+- **Feature title** (Syne 400, `clamp(20px, 2.8vw, 30px)`, 1.1; 20px on phones): Design-carousel titles and the project-modal title. The modal sets it at weight 800 as the one bold variant, since it heads an interrupting surface.
+- **Title** (Geist 500, `clamp(18px, 3vw, 24px)`, 1.3): The hero role line.
+- **Card title** (Syne 400, `clamp(17px, 1.9vw, 21px)`, 1.2): Home dev-project cards. **Card title compact** (`clamp(15px, 1.6vw, 18px)`) is its dense-grid variant on `/projects`.
+- **Speech** (Geist 500, `clamp(16px, 2.4vw, 23px)`, 1.55): Gengar's lines on the chat stage.
+
+**Reading and UI tier** (fixed px, one step per role, nothing between):
+- **Base** (16px): The `body` default, form inputs (16px also stops iOS zoom), certification titles.
+- **Body** (15px, 1.8): Bio and long descriptions, in `--muted`. Keep measure under ~70ch.
+- **Small** (14px): Journey entries, icon glyphs in controls.
+- **Compact** (13px): Card and modal descriptions, nav links, search inputs, Now Playing. The floor for anything read as a sentence.
+- **Caption** (12px): Dense-grid card descriptions, phone nav links.
+- **Label** (Geist Mono 500, 11px, 0.18em, UPPERCASE): Buttons, CTAs ("VIEW PROJECT ↗"), filter tabs, counters. **Kicker** shares the 11px step in Syne, lowercase, 0.1em.
+- **Tag** (Geist Mono, 10px, 0.15em, UPPERCASE): Tech chips, years, badges, counts. The smallest step.
+
+**The Seven Steps Rule.** Fixed text sizes are 10, 11, 12, 13, 14, 15 and 16px, and nothing else: no half pixels, no 9px. Pick the role, not the pixel. One documented exception: the 7px hover caption inside 58px tech-logo tiles, which only replaces the logo on hover and whose name is already the tile's accessible label.
 
 ### Named Rules
 **The Three Voices Rule.** Syne names things, Geist explains them, Mono is anything you press, count or date. If a string is interactive or numeric, it's Mono; if it's a heading or kicker, it's Syne; everything you read is Geist.
@@ -225,9 +290,11 @@ Depth comes from **glass physics, not stacked shadows**. Every glass surface is 
 
 Two families that never mix on one element:
 - **Square** (0 radius): `.btn` mono buttons and `.tag` chips. Editorial, brutalist, spec-sheet.
-- **Capsule** (999px / 50%): glass buttons, the nav pill and its active highlight, the visitor counter, icon buttons, carousel dots.
+- **Capsule** (999px / 50%): glass buttons, the nav pill and its active highlight, the visitor counter, icon buttons, scroll-to-top, carousel dots, status pills (`.liquid-glass-pill`).
 
-Containers sit between, softening with size: 4px (small media), 8px (journey rows), 12px (contact frame, media wells), 16px (modal shell, design carousel cards, gallery photos), 18px (58px tech-logo tiles), 20px (dev project cards). The logo monogram is a square badge rotated 12°, straightening on hover.
+Tags follow the square family everywhere, including the `/projects` card tags and project-modal tags.
+
+Containers sit between, softening with size: 2px (focus rings, contribution-calendar cells, footer icon squares), 4px (small media), 8px (journey rows, carousel image wells), 12px (contact frame, media wells, loading blocks), 16px (modal shell, design carousel cards, gallery photos, certification badges), 18px (58px tech-logo tiles), 20px (dev project cards, the contribution calendar). Nothing sits between steps. The logo monogram is a square badge rotated 12°, straightening on hover.
 
 **The Square-Or-Capsule Rule.** A control is either a square mono button or a round glass capsule. A rounded-rectangle button is off-system.
 

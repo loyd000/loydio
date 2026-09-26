@@ -210,7 +210,7 @@ export default function NowPlaying() {
         .np-bar {
           width: 2px;
           background-color: var(--success); /* Signal Green: the site's one "live" color */
-          border-radius: 1px;
+          border-radius: 999px;
           animation: eq-bounce 1s infinite alternate ease-in-out;
         }
 
@@ -266,7 +266,7 @@ export default function NowPlaying() {
           }
 
           .np-artist {
-            font-size: 9px;
+            font-size: 10px;
             max-width: 108px;
           }
 

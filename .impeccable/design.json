@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-26T05:56:29Z",
+  "generatedAt": "2026-09-26T06:07:20Z",
   "title": "Design System: Loyd.io",
   "extensions": {
     "colorMeta": {
@@ -167,11 +167,11 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Section headings, project and modal titles (Syne)."
+        "purpose": "Visible section headings."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "The hero name only."
+        "purpose": "Page-level h1s: hero name, /projects and /certifications titles."
       },
       "title": {
         "displayName": "Title",
@@ -191,7 +191,47 @@
       },
       "tag": {
         "displayName": "Tag",
-        "purpose": "Tech chips, years and metadata, UPPERCASE."
+        "purpose": "Tech chips, years, badges, counts. The smallest step."
+      },
+      "display-xl": {
+        "displayName": "Display XL",
+        "purpose": "404 and error pages only (Geist Mono)."
+      },
+      "statement": {
+        "displayName": "Statement",
+        "purpose": "The contact call to action."
+      },
+      "feature-title": {
+        "displayName": "Feature Title",
+        "purpose": "Design-carousel titles and the project-modal title (modal at weight 800); 20px on phones."
+      },
+      "card-title": {
+        "displayName": "Card Title",
+        "purpose": "Home dev-project card titles."
+      },
+      "card-title-compact": {
+        "displayName": "Card Title Compact",
+        "purpose": "Dense /projects grid card titles."
+      },
+      "speech": {
+        "displayName": "Speech",
+        "purpose": "Gengar dialogue on the chat stage."
+      },
+      "base": {
+        "displayName": "Base",
+        "purpose": "Body default, form inputs, certification titles."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Journey entries, icon glyphs in controls."
+      },
+      "compact": {
+        "displayName": "Compact",
+        "purpose": "Card/modal descriptions, nav links, search. Floor for sentences."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Dense-grid card descriptions, phone nav links."
       }
     },
     "shadows": [
@@ -415,6 +455,11 @@
       {
         "name": "The Kicker Grammar Rule",
         "body": "Kickers are lowercase Syne with a leading em dash (— certifications); numbered sections put the index before the dash (03 — certifications). A section's kicker is its heading: render it as the h2 (sub-blocks h3) with .section-kicker, and wrap the index and dash in aria-hidden so screen readers hear \"Certifications\", not \"zero three dash\".",
+        "section": "typography"
+      },
+      {
+        "name": "The Seven Steps Rule",
+        "body": "Fixed text sizes are 10, 11, 12, 13, 14, 15 and 16px, and nothing else: no half pixels, no 9px. Pick the role, not the pixel. One documented exception: the 7px hover caption inside 58px tech-logo tiles, which only replaces the logo on hover and whose name is already the tile's accessible label.",
         "section": "typography"
       },
       {

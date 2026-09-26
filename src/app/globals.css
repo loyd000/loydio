@@ -402,7 +402,7 @@ p {
 
 .github-calendar-glass {
   border: 1px solid rgba(255, 255, 255, 0.52);
-  border-radius: 24px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(18px) saturate(170%);
   -webkit-backdrop-filter: blur(18px) saturate(170%);
@@ -467,7 +467,7 @@ p {
 }
 
 .github-calendar-loading {
-  border-radius: 10px;
+  border-radius: 12px;
   height: 88px;
   background: linear-gradient(90deg, transparent, rgba(127, 127, 127, 0.12), transparent);
   background-size: 200% 100%;
@@ -1015,27 +1015,6 @@ p {
   border: 0;
 }
 
-/* Grain overlay removed for performance */
-
-.vertical-label {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: var(--muted);
-  opacity: 0.6;
-  font-family: var(--font-mono), monospace;
-}
-
-@media (max-width: 600px) {
-  .vertical-label {
-    display: none;
-  }
-}
-
 .plus-marker {
   position: absolute;
   font-size: 16px;
@@ -1512,7 +1491,7 @@ p {
 
 .liquid-glass-pill {
   padding: 8px 16px;
-  border-radius: 30px;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1946,7 +1925,7 @@ p {
 
 .vc-overflow-label {
   font-family: var(--font-mono);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--fg);
   letter-spacing: -0.02em;
@@ -1989,21 +1968,6 @@ p {
   pointer-events: none;
 }
 
-/* Strip positioning from the nav itself when inside the wrapper */
-.pill-nav-wrapped {
-  position: relative !important;
-  top: auto !important;
-  left: auto !important;
-  z-index: auto !important;
-  pointer-events: auto;
-}
-
-/* Double-class specificity beats .pill-nav's translateX(-50%).
-   No !important so Framer Motion's inline style still wins on hover. */
-.pill-nav.pill-nav-wrapped {
-  transform: none;
-}
-
 /* Relative anchor container so hint can position relative to navbar */
 .pill-nav-relative-anchor {
   position: relative;
@@ -2011,60 +1975,6 @@ p {
   justify-content: center;
   align-items: center;
   pointer-events: none;
-}
-
-/* ── Floating Idle Hint (Text only + monochrome star) ── */
-.nav-hint-floating {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-  animation: hintFloat 3.2s ease-in-out infinite;
-  z-index: 10065;
-}
-
-[data-theme="dark"] .nav-hint-floating {
-  background: transparent;
-  box-shadow: none;
-}
-
-@keyframes hintFloat {
-  0%, 100% {
-    transform: translateY(-50%) translateX(0);
-  }
-  50% {
-    transform: translateY(-50%) translateX(4px);
-  }
-}
-
-.nav-hint-sparkle-svg {
-  width: 11px;
-  height: 11px;
-  color: var(--fg);
-  opacity: 0.8;
-  flex-shrink: 0;
-}
-
-.nav-hint-text {
-  font-family: var(--font-mono), monospace;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--fg);
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  opacity: 0.7;
 }
 
 .pill-nav {
@@ -2199,284 +2109,6 @@ p {
   margin: 0 4px;
   flex-shrink: 0;
 }
-
-/* ── Long-press holding state — pulse glow ── */
-@keyframes navHoldPulse {
-  0%   { box-shadow: 0 0 0 0   rgba(255,255,255,0.35), 0 4px 24px rgba(0,0,0,0.06); }
-  50%  { box-shadow: 0 0 0 6px rgba(255,255,255,0.12), 0 4px 32px rgba(0,0,0,0.12); }
-  100% { box-shadow: 0 0 0 0   rgba(255,255,255,0.35), 0 4px 24px rgba(0,0,0,0.06); }
-}
-[data-theme="dark"] .pill-nav-holding {
-  animation: navHoldPulse 0.6s ease-out forwards;
-}
-/* ── Expanded chat state — pill blooms into panel ── */
-.pill-nav-chat {
-  width: 420px !important;
-  max-width: calc(100vw - 32px) !important;
-  height: 480px !important;
-  border-radius: 22px !important;
-  cursor: default !important;
-  overflow: hidden !important;
-}
-
-@media (max-width: 640px) {
-  .pill-nav-chat {
-    width: calc(100vw - 32px) !important;
-    height: min(440px, 75vh) !important;
-    border-radius: 20px !important;
-  }
-}
-
-/* ── Chat panel inner layout ── */
-.chat-panel-inner {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-/* Chat header */
-.chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.chat-header-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.chat-header-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 6px #22c55e;
-  animation: dotPulse 2s infinite;
-  flex-shrink: 0;
-}
-@keyframes dotPulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
-}
-.chat-header-title {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--fg);
-}
-.chat-close-btn {
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: var(--subtle-bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-  flex-shrink: 0;
-}
-.chat-close-btn:hover {
-  background: var(--hover-bg);
-  color: var(--fg);
-}
-
-/* Scrollable messages area */
-.chat-messages {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  scroll-behavior: smooth;
-}
-.chat-messages::-webkit-scrollbar { width: 4px; }
-.chat-messages::-webkit-scrollbar-track { background: transparent; }
-.chat-messages::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
-
-/* Empty state */
-.chat-empty {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 8px 0 4px;
-}
-.chat-empty-title {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--fg);
-}
-.chat-empty-sub {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* Suggestion chips */
-.chat-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-.chat-chip {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--fg);
-  background: var(--subtle-bg);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-  white-space: nowrap;
-}
-.chat-chip:hover {
-  background: var(--hover-bg);
-  border-color: var(--fg);
-}
-
-/* Message bubbles */
-.chat-bubble {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.55;
-  padding: 9px 13px;
-  border-radius: 16px;
-  max-width: 88%;
-  word-break: break-word;
-  white-space: pre-wrap;
-  position: relative;
-}
-.chat-bubble-user {
-  align-self: flex-end;
-  background: var(--fg);
-  color: var(--bg);
-  border-bottom-right-radius: 4px;
-}
-.chat-bubble-ai {
-  align-self: flex-start;
-  background: var(--subtle-bg);
-  border: 1px solid var(--border);
-  color: var(--fg);
-  border-bottom-left-radius: 4px;
-}
-
-/* Streaming cursor blink */
-.chat-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 13px;
-  background: var(--fg);
-  border-radius: 1px;
-  margin-left: 2px;
-  vertical-align: middle;
-  animation: cursorBlink 0.8s steps(1) infinite;
-}
-@keyframes cursorBlink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
-/* Custom Thinking Indicator (rotating sparkle + words) */
-.chat-thinking {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 3px 2px;
-  color: var(--muted);
-  user-select: none;
-}
-
-.chat-thinking-star {
-  width: 13px;
-  height: 13px;
-  color: var(--fg);
-  opacity: 0.8;
-  animation: thinkingSpin 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  flex-shrink: 0;
-}
-
-@keyframes thinkingSpin {
-  0%   { transform: rotate(0deg) scale(0.85); opacity: 0.5; }
-  50%  { transform: rotate(180deg) scale(1.15); opacity: 1; }
-  100% { transform: rotate(360deg) scale(0.85); opacity: 0.5; }
-}
-
-.chat-thinking-text {
-  font-family: var(--font-mono), monospace;
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  animation: thinkingPulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes thinkingPulse {
-  0%   { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-/* Input row */
-.chat-input-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 10px 14px 14px;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.chat-input {
-  flex: 1;
-  resize: none;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--fg);
-  background: var(--subtle-bg);
-  border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  padding: 9px 12px;
-  outline: none;
-  line-height: 1.5;
-  max-height: 100px;
-  overflow-y: auto;
-  transition: border-color 0.15s ease;
-}
-.chat-input::placeholder { color: var(--muted); }
-.chat-input:focus { border-color: var(--fg); }
-.chat-input:disabled { opacity: 0.5; }
-.chat-send-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: var(--fg);
-  color: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-.chat-send-btn:hover:not(:disabled) { transform: scale(1.08); }
-.chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* ── Gengar companion: trigger + chat dialog ──
    The dialog stage is always dark (it sits on its own near-black backdrop),
@@ -2656,22 +2288,6 @@ p {
     height: 18px;
     margin: 0 2px;
   }
-  .nav-hint-floating {
-    left: 10px;
-    right: auto;
-    top: auto;
-    bottom: calc(100% + 10px);
-    transform: none;
-    animation: hintFloatMobile 3s ease-in-out infinite;
-  }
-  @keyframes hintFloatMobile {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-3px);
-    }
-  }
 }
 
 main, footer { margin-left: 0 !important; }
@@ -2717,7 +2333,7 @@ body { padding-top: 0 !important; }
 
 .subpage-title {
   font-family: var(--font-sans);
-  font-size: clamp(28px, 5vw, 42px);
+  font-size: clamp(28px, 5vw, 40px);
   font-weight: 700;
   line-height: 1.1;
   color: var(--fg);
@@ -2726,7 +2342,7 @@ body { padding-top: 0 !important; }
 
 .subpage-subtitle {
   font-family: var(--font-sans);
-  font-size: 14.5px;
+  font-size: 15px;
   line-height: 1.75;
   color: var(--muted);
   max-width: 540px;
@@ -2761,7 +2377,7 @@ body { padding-top: 0 !important; }
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -2789,7 +2405,7 @@ body { padding-top: 0 !important; }
 }
 
 .subpage-filter-count {
-  font-size: 9px;
+  font-size: 10px;
   opacity: 0.45;
   font-weight: 600;
 }
@@ -2889,7 +2505,7 @@ body { padding-top: 0 !important; }
 .cert-badge-wrapper {
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid var(--border-strong);
   background: var(--subtle-bg);
   display: flex;

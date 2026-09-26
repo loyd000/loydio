@@ -469,11 +469,11 @@ const STYLES = `
   }
   .pm-tag {
     font-family: ${MONO};
-    font-size: 9.5px;
+    font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--muted);
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 0;
     padding: 3px 8px;
   }
 
@@ -511,7 +511,7 @@ const STYLES = `
     align-items: center;
     gap: 6px;
     font-family: ${MONO};
-    font-size: 9.5px;
+    font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--muted);
@@ -539,7 +539,7 @@ const STYLES = `
       padding: 1.25rem 1.25rem 1.5rem;
     }
     .pm-title {
-      font-size: clamp(18px, 5vw, 24px);
+      font-size: 20px; /* matches the carousel title on phones */
     }
   }
 `;

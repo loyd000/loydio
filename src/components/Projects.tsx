@@ -490,7 +490,7 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           overflow: hidden;
         }
         .dev-project-desc {
-          font-size: 12.5px;
+          font-size: 13px;
           color: var(--muted);
           line-height: 1.7;
           margin: 0;
@@ -593,7 +593,7 @@ export default function Projects({ projects, loadError }: { projects: Project[];
         .design-carousel-image {
           width: 100%;
           height: clamp(300px, 40vw, 430px);
-          border-radius: 6px;
+          border-radius: 8px;
           overflow: hidden;
           flex-shrink: 0;
         }
@@ -604,7 +604,7 @@ export default function Projects({ projects, loadError }: { projects: Project[];
         .design-carousel-placeholder {
           width: 100%;
           height: clamp(300px, 40vw, 430px);
-          border-radius: 6px;
+          border-radius: 8px;
           background: var(--subtle-bg);
           display: flex;
           align-items: center;
@@ -622,7 +622,7 @@ export default function Projects({ projects, loadError }: { projects: Project[];
           padding: 1rem 0 0;
         }
         .design-carousel-title {
-          font-size: clamp(20px, 2.8vw, 31px);
+          font-size: clamp(20px, 2.8vw, 30px);
           line-height: 1.1;
           margin: 0;
           max-width: 420px;
