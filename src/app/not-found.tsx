@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-sans), sans-serif";
 
 export default function NotFound() {
   return (
@@ -21,7 +21,7 @@ export default function NotFound() {
         <p style={{ fontSize: 13, opacity: 0.55, lineHeight: 1.8, marginBottom: "2rem" }}>
           The page you are looking for does not exist or has moved.
         </p>
-        <Link href="/" className="btn btn-primary">
+        <Link href="/" className="btn">
           Return Home
         </Link>
       </div>

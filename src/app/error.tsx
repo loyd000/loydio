@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-sans), sans-serif";
 
 export default function ErrorPage({
   error,
@@ -35,7 +35,7 @@ export default function ErrorPage({
         <p style={{ fontSize: 13, opacity: 0.55, lineHeight: 1.8, marginBottom: "2rem" }}>
           Try reloading this view. If it keeps failing, check the server logs with the error digest.
         </p>
-        <button onClick={() => reset()} className="btn btn-primary">
+        <button onClick={() => reset()} className="btn">
           Try Again
         </button>
       </div>

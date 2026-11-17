@@ -5,5 +5,5 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # Design System & UI Rules
-When adding or modifying UI components, sections, pages, styles, animations, or features, ALWAYS consult and adhere to [DESIGN.md](DESIGN.md). Follow the liquid-glass recipes, typography voices (Syne, Geist, Geist Mono), theme tokens, the Settle easing curve (and its narrow Tactile Spring exception), the 44px target and keyboard rules, and the z-index layers defined there. Machine-readable extensions (motion, shadows, breakpoints, component snippets) live in [.impeccable/design.json](.impeccable/design.json); keep both in sync when the system changes.
+When adding or modifying UI components, sections, pages, styles, animations, or features, ALWAYS consult and adhere to [DESIGN.md](DESIGN.md). Follow the flat surfaces (no glass, blur or shadows), the single Inter 15px type scale, the light-only color tokens, the Settle easing curve, the 44px target and keyboard rules, and the z-index layers defined there. Machine-readable extensions (motion, shadows, breakpoints, component snippets) live in [.impeccable/design.json](.impeccable/design.json); keep both in sync when the system changes.
 

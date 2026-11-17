@@ -1,133 +1,63 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import ThemeToggle from "./ThemeToggle";
-import VisitCounter from "./VisitCounter";
+import { FolderClosed, BriefcaseBusiness, Mail } from "lucide-react";
 
 const links = [
-  { label: "About",    href: "#about",    route: false },
-  { label: "Projects", href: "/projects", route: true  },
-  { label: "Contact",  href: "#contact",  route: false },
+  { label: "Work",       id: "work",       Icon: FolderClosed },
+  { label: "Experience", id: "experience", Icon: BriefcaseBusiness },
+  { label: "Contact",    id: "contact",    Icon: Mail },
 ];
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const isProjectsRoute = pathname === "/projects";
-  const [activeSection, setActiveSection] = useState("");
-  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState("");
 
-  const effectiveActiveSection = isProjectsRoute ? "projects" : activeSection;
-  const effectiveScrolled = isProjectsRoute ? true : scrolled;
-
-  // ── Scroll tracking ──────────────────────────────────────────────────
+  // Highlight the section crossing the middle of the viewport. Contact sits inside
+  // Experience, so the later match wins.
   useEffect(() => {
-    if (isProjectsRoute) return;
-
-    const allSections = ["about", "projects", "contact"];
     const onScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const mid = window.innerHeight / 2;
       let current = "";
-      allSections.forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 250 && rect.bottom >= 250) current = id;
-        }
-      });
-      if (current) setActiveSection(current);
+      for (const { id } of links) {
+        const rect = document.getElementById(id)?.getBoundingClientRect();
+        if (rect && rect.top <= mid && rect.bottom >= mid) current = id;
+      }
+      // Contact is too short to reach the middle at the end of the page
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8) current = "contact";
+      setActive(current);
     };
-
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isProjectsRoute]);
-
-  // ── Nav click handler ────────────────────────────────────────────────
-  const handleNavClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string, isRoute: boolean) => {
-      if (isRoute) return;
-      e.preventDefault();
-      if (pathname !== "/") {
-        window.location.assign(`/${href}`);
-        return;
-      }
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    },
-    [pathname]
-  );
+  }, []);
 
   return (
-    <>
-      {/* LOGO - fixed top-left */}
-      <a
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
-        aria-label="Loyd - back to top"
-        className="logo-corner"
-      >
-        <div className="logo-badge backdrop-blur-[12px]">
-          <span>L</span>
-        </div>
+    <motion.nav
+      className="dock"
+      aria-label="Main navigation"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <a href="#top" className="dock-item dock-logo" aria-label="Back to top">
+        <span aria-hidden="true">L</span>
+        <span className="dock-tip" aria-hidden="true">Top</span>
       </a>
 
-      {/* Centered Pill Navigation */}
-      <div className="pill-nav-wrapper">
-        <div className="pill-nav-relative-anchor">
-          <motion.nav
-            layout
-            transition={{
-              layout: { type: "spring", stiffness: 280, damping: 24, mass: 0.85 },
-            }}
-            className={[
-              "pill-nav",
-              "backdrop-blur-[22px] backdrop-saturate-[1.9]",
-              effectiveScrolled ? "pill-nav-scrolled" : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            aria-label="Main navigation"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="pill-nav-inner">
-              {links.map((l) => {
-                const isActive = l.route
-                  ? pathname === l.href || pathname.startsWith(l.href + "/")
-                  : effectiveActiveSection === l.href.slice(1);
-                return (
-                  <a
-                    key={l.href}
-                    href={l.href}
-                    onClick={(e) => handleNavClick(e, l.href, l.route)}
-                    className={`pill-link${isActive ? " active" : ""}`}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="pill-indicator"
-                        className="pill-active-bg"
-                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      />
-                    )}
-                    <span className="pill-link-label">{l.label}</span>
-                  </a>
-                );
-              })}
-              <div className="pill-divider" />
-              <ThemeToggle />
-            </div>
-          </motion.nav>
-        </div>
-      </div>
+      <span className="dock-divider" aria-hidden="true" />
 
-      {/* VISIT COUNTER - fixed top-right */}
-      <div className="visit-counter-corner">
-        <VisitCounter />
-      </div>
-    </>
+      {links.map(({ label, id, Icon }) => (
+        <a
+          key={id}
+          href={`#${id}`}
+          className={`dock-item${active === id ? " active" : ""}`}
+          aria-label={label}
+          aria-current={active === id ? "location" : undefined}
+        >
+          <Icon size={20} strokeWidth={2} aria-hidden="true" />
+          <span className="dock-tip" aria-hidden="true">{label}</span>
+        </a>
+      ))}
+    </motion.nav>
   );
 }

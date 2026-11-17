@@ -40,15 +40,13 @@ export default function GitHubContributions() {
 
   return (
     <section className="github-contributions" aria-labelledby="github-contributions-heading">
-      <div className="github-contributions-heading">
-        <div>
-          <h3 id="github-contributions-heading"><span aria-hidden="true">— </span>GitHub contributions</h3>
-          <a href="https://github.com/loyd000" target="_blank" rel="noreferrer">github.com/loyd000</a>
-        </div>
-        {calendar && <strong>{calendar.totalContributions.toLocaleString()} contributions</strong>}
-      </div>
+      <h2 id="github-contributions-heading" className="heading heading-center">GitHub activity</h2>
+      <p className="github-contributions-meta">
+        {calendar ? `${calendar.totalContributions.toLocaleString()} contributions in the last year · ` : ""}
+        <a href="https://github.com/loyd000" target="_blank" rel="noopener noreferrer">loyd000</a>
+      </p>
 
-      <div className="github-calendar-glass">
+      <div className="github-calendar-card">
         {calendar ? (
           <div className="github-calendar-scroll">
             <div

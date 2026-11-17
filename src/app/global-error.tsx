@@ -3,7 +3,7 @@
 import "./globals.css";
 import { useEffect } from "react";
 
-const MONO = "var(--font-mono), monospace";
+const MONO = "var(--font-sans), sans-serif";
 
 export default function GlobalError({
   error,
@@ -39,7 +39,7 @@ export default function GlobalError({
             <p style={{ fontSize: 13, opacity: 0.55, lineHeight: 1.8, marginBottom: "2rem" }}>
               Reload the app shell and try again.
             </p>
-            <button onClick={() => reset()} className="btn btn-primary">
+            <button onClick={() => reset()} className="btn">
               Try Again
             </button>
           </div>
