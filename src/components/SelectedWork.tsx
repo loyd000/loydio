@@ -24,7 +24,7 @@ export default function SelectedWork({ projects }: { projects: Project[] }) {
   if (projects.length === 0) return null;
 
   return (
-    <section id="work" className="work" aria-labelledby="work-heading">
+    <section id="work" className="work" data-section="Work" aria-labelledby="work-heading">
       <h2 id="work-heading" className="heading heading-center">Selected work</h2>
 
       <ul ref={track} className="work-track" aria-label="Selected work" tabIndex={0}>

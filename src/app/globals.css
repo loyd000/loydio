@@ -75,15 +75,6 @@ body {
   }
 }
 
-/* ── Hatched band pinned to the top edge ── */
-.top-band {
-  position: fixed;
-  inset: 0 0 auto;
-  height: 12px;
-  z-index: 50;
-  background: repeating-linear-gradient(-45deg, #dcdcdc 0 6px, var(--bg) 6px 14px);
-}
-
 /* ── Layout ── */
 .column {
   width: min(var(--column), calc(100vw - 32px));
@@ -330,7 +321,7 @@ body {
 /* Scrolls away by default; pinned only when the margins beside the 782px column fit it */
 .project-bar {
   position: absolute;
-  inset: 12px 0 auto;
+  inset: 0 0 auto;
   z-index: 40;
   display: flex;
   justify-content: space-between;
@@ -410,6 +401,92 @@ body {
   text-underline-offset: 3px;
 }
 
+/* ── ScrollMeter.tsx: section ruler on the right edge (desktop only) ──
+   Hairline minor ticks every 10px on a 1px spine, a longer tick per section at --at,
+   and an ink marker at scroll progress --p. Labels appear on hover. */
+.ruler {
+  --p: 0;
+  --len: 240px;
+  display: none;
+  position: fixed;
+  top: 50%;
+  right: 24px;
+  z-index: 90;
+  width: 28px;
+  height: var(--len);
+  translate: 0 -50%;
+}
+@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+  .ruler { display: block; }
+}
+/* spine + minor ticks */
+.ruler::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 6px;
+  border-right: 1px solid var(--border-strong);
+  background: repeating-linear-gradient(to bottom, var(--border-strong) 0 1px, transparent 1px 10px);
+}
+.ruler-mark {
+  position: absolute;
+  right: 0;
+  top: calc(var(--at) * (var(--len) - 1px));
+  translate: 0 -50%;
+  width: 28px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+/* major tick */
+.ruler-mark::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 14px;
+  height: 1px;
+  background: var(--faint);
+  transition: background-color 0.2s var(--settle), width 0.2s var(--settle);
+}
+.ruler-mark.is-active::after,
+.ruler-mark:hover::after { background: var(--fg); width: 18px; }
+.ruler-label {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  translate: 4px -50%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--settle), translate 0.2s var(--settle), color 0.2s var(--settle);
+}
+.ruler:hover .ruler-label {
+  opacity: 1;
+  translate: 0 -50%;
+  pointer-events: auto;
+}
+.ruler-mark.is-active .ruler-label,
+.ruler-mark:hover .ruler-label { color: var(--fg); }
+.ruler-marker {
+  position: absolute;
+  right: 0;
+  top: calc(var(--p) * (var(--len) - 2px));
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--fg);
+  pointer-events: none;
+}
+
 /* Error / 404 pages */
 .btn {
   display: inline-flex;
@@ -481,10 +558,6 @@ body {
 }
 .dock-logo {
   color: var(--dock-fg);
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
 }
 .dock-divider {
   width: 1px;

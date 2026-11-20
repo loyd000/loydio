@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import MotionProvider from "@/components/MotionProvider";
+import ScrollMeter from "@/components/ScrollMeter";
 import "./globals.css";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
@@ -67,6 +68,7 @@ export default function RootLayout({
         <MotionProvider>
           {children}
         </MotionProvider>
+        <ScrollMeter />
       </body>
     </html>
   );

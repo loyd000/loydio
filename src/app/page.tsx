@@ -32,9 +32,8 @@ function InfoSection({ id, title, rows, children }: { id?: string; title: string
 export default function Home() {
   return (
     <>
-      <div id="top" className="top-band" aria-hidden="true" />
-      <main>
-        <section id="about" className="intro column">
+      <main id="top">
+        <section id="about" className="intro column" data-section="Intro">
           <h1 className="heading">Loyd De Guzman</h1>
           <p>
             Computer engineer from the Philippines building across web, mobile and embedded
@@ -54,7 +53,7 @@ export default function Home() {
 
         <GitHubContributions />
 
-        <div id="experience" className="column stack">
+        <div id="experience" className="column stack" data-section="Experience">
           <InfoSection title="Work" rows={work} />
           <InfoSection title="Recognition" rows={recognition} />
           <InfoSection id="research" title="Research" rows={research} />

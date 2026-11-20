@@ -39,7 +39,7 @@ export default function GitHubContributions() {
   }, []);
 
   return (
-    <section className="github-contributions" aria-labelledby="github-contributions-heading">
+    <section className="github-contributions" data-section="GitHub" aria-labelledby="github-contributions-heading">
       <h2 id="github-contributions-heading" className="heading heading-center">GitHub activity</h2>
       <p className="github-contributions-meta">
         {calendar ? `${calendar.totalContributions.toLocaleString()} contributions in the last year · ` : ""}

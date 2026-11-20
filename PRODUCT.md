@@ -37,7 +37,7 @@ One person who can take a job from hardware to interface: TinyML firmware on an 
 
 ## Brand Commitments
 
-- Name and handle: **Loyd** (full name John Lloyd De Guzman); the "L" monogram.
+- Name and handle: **Loyd** (full name John Lloyd De Guzman); the logo mark in `public/logo.svg` (an L inside a tilted frame), used in the dock.
 - The site's visual identity must be **Loyd's own**. The owner chose a pixel / retro-hardware direction for the redesign, but it must be an original world, not a Pokémon look.
 - Nothing in the identity borrows Pokémon assets, colors or UI.
 - Voice: casual, self-deprecating and honest ("figuring out life one day at a time"), confident about the work.

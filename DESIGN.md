@@ -38,11 +38,6 @@ typography:
     fontSize: "12px"
     fontWeight: 500
     lineHeight: 1.5
-  monogram:
-    fontFamily: "Inter, sans-serif"
-    fontSize: "20px"
-    fontWeight: 800
-    lineHeight: 1
 rounded:
   sm: "2px"
   md: "16px"
@@ -83,7 +78,7 @@ One narrow column of text on soft grey paper, read top to bottom like a well-set
 - One typeface, one size: Inter 15px, tight tracking (`-0.03em`).
 - A 576px reading column; the carousel and GitHub calendar widen to 782px.
 - Flat: no blur, no glass, no shadows. Depth is tone plus a 1px hairline.
-- A hatched band pinned to the top edge, and a dark dock pinned to the bottom.
+- A dark dock pinned to the bottom; nothing pinned to the top.
 
 ## Colors
 
@@ -105,13 +100,13 @@ Everything is Inter (self-hosted via `next/font`, exposed as `--font-sans`) at *
 - **Heading** (600, 1.5): Name and section titles. Table sections are left-aligned; wide sections (Selected work, GitHub activity) are centered.
 - **Prose** (500, 1.625, graphite): The two intro paragraphs, max 512px wide.
 - **Body** (500, 1.5): Table rows, card titles, meta.
-- **Tip** (12px): Dock tooltips. **Monogram** (20px / 800): The "L" in the dock.
+- **Tip** (12px): Dock tooltips.
 
 **The One Size Rule.** Don't add a bigger heading. Emphasis is weight or ink, never size.
 
 ## Layout
 
-Routes: `/` and `/work/[id]`. Home, top to bottom: hatched band → intro (`#about`) → Selected work (`#work`) → GitHub activity → info tables (`#experience`: Work, Recognition, Research, Contact `#contact`) → footer row → dock.
+Routes: `/` and `/work/[id]`. Home, top to bottom: intro (`#about`) → Selected work (`#work`) → GitHub activity → info tables (`#experience`: Work, Recognition, Research, Contact `#contact`) → footer row → dock.
 
 - **Column** (`.column`): `min(576px, 100vw - 32px)`, centered. Intro starts 148px from the top (96px on phones).
 - **Wide** (`--card`): `min(782px, 100vw - 32px)` for carousel cards and the calendar.
@@ -123,7 +118,7 @@ Routes: `/` and `/work/[id]`. Home, top to bottom: hatched band → intro (`#abo
 | Layer | z-index | Element |
 |---|---|---|
 | Dock | 100 | Bottom icon dock |
-| Band | 50 | Hatched top band (12px) |
+| Ruler | 90 | Section ruler (desktop only) |
 | Project bar | 40 | Back / Visit site on project pages |
 
 The body pads its bottom by 120px so the dock never covers the footer.
@@ -140,15 +135,15 @@ None. Surfaces are flat fills with at most a 1px hairline. No `backdrop-filter`,
 
 ## Components
 
-- **Hatched band** (`.top-band`): Fixed 12px strip, `repeating-linear-gradient(-45deg, #dcdcdc 0 6px, paper 6px 14px)`.
 - **Inline links** (intro, table values, calendar meta): Ink text with a 1px underline at 3px offset. Prose links rest on the strong hairline; table links rest invisible. Both turn ink on hover.
 - **Selected work** (`SelectedWork.tsx`): Native scroll-snap track (`scroll-snap-type: x mandatory`, hidden scrollbar), cards centered, 20px gap. Each card is an image well (782:407, screenshot anchored to the top) with its title below, and the whole card links to its project page. On hover or focus the screenshot scales to 1.04 inside the clipped well (0.6s Settle); the card itself never moves. Prev/next are `.round-btn`s: a 44px hit area drawing a 32px sheet circle with a strong hairline. They scroll to the neighbouring card's center.
 - **GitHub activity** (`GitHubContributions.tsx`): Centered heading, graphite meta line with the total and profile link, then the calendar in a sheet card.
 - **Info tables** (`InfoSection` in `page.tsx`): `<dl>` rows of label / text / aside. Data lives in `src/lib/content.ts`.
 - **Project page** (`src/app/work/[id]/page.tsx`, one static page per project in `content.ts`): Fixed bar with ← Back (to `/#work`) left and Visit site ↗ right (pinned from 1100px up, where it clears the column; below that it scrolls away). Then, in the 782px wide column: faint role / period, title, graphite summary, faint stack line joined with " · ", a `.pill-btn` Visit site (44px, strong hairline, ink on hover), the screenshot well, a "What I did" list in graphite, and a hairline-topped "Next project" row (title left, faint role right). No dock on this page.
+- **Section ruler** (`ScrollMeter.tsx`, `.ruler`, mounted in the root layout): A 240px hairline ruler fixed at the right edge, vertically centered: a 1px spine with 6px minor ticks every 10px, a longer 14px tick for each `[data-section]` element (home: Intro, Work, GitHub, Experience; project pages: Overview, What I did, Next), and a 24×2px ink marker at scroll progress (`--p`). A section's tick sits where the marker will be when that section reaches the top; the section you're in turns its tick ink. On hover, 12px labels fade in to the left of the ticks (on a paper pill); clicking one scrolls there. Positions re-measure when the page height changes. Shown only at 1100px+ with a fine pointer that can hover. It's a mouse-only shortcut (`aria-hidden`, buttons untabbable) because the dock is the accessible navigation.
 - **Copy button** (`.text-btn`): Faint text "Copy" → "Copied" (polite live region), hit area grown to 44px with padding plus negative margin.
 - **Footer**: One info row: © year / name / place.
-- **Icon dock** (`Navbar.tsx`, `.dock`): A solid dark capsule fixed bottom-center at `max(20px, safe-area + 12px)`, centered with auto margins so Framer can animate `y`. Order: "L" monogram (back to top), a 1px divider, then Work, Experience and Contact icons (lucide, 20px, stroke 2). Each item is a 48×44px target; icons rest at 55% white and go full white on hover or when their section crosses the viewport middle (Contact also wins at the bottom of the page). Icon-only, so every item has an `aria-label` plus a tooltip (`.dock-tip`) on hover and keyboard focus, hidden on touch. Inset 2px white focus ring.
+- **Icon dock** (`Navbar.tsx`, `.dock`): A solid dark capsule fixed bottom-center at `max(20px, safe-area + 12px)`, centered with auto margins so Framer can animate `y`. Order: the Loyd logo mark (back to top; `public/logo.svg` inlined at 24px with `currentColor`), a 1px divider, then Work, Experience and Contact icons (lucide, 20px, stroke 2). Each item is a 48×44px target; icons rest at 55% white and go full white on hover or when their section crosses the viewport middle (Contact also wins at the bottom of the page). Icon-only, so every item has an `aria-label` plus a tooltip (`.dock-tip`) on hover and keyboard focus, hidden on touch. Inset 2px white focus ring.
 
 ## Motion
 
