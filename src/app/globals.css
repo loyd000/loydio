@@ -598,4 +598,7 @@ body {
 @media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
   .dock { display: none; }
   body { padding-bottom: 96px; }
+  /* The section ruler stands in for the scrollbar; wheel, keys and trackpad still scroll */
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar { display: none; }
 }
