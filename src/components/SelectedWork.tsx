@@ -1,7 +1,8 @@
 "use client";
 import { useRef } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Project } from "@/lib/content";
 
 export default function SelectedWork({ projects }: { projects: Project[] }) {
@@ -37,26 +38,17 @@ export default function SelectedWork({ projects }: { projects: Project[] }) {
                   fill
                   sizes="(max-width: 640px) 88vw, 780px"
                   loading={i === 0 ? "eager" : "lazy"}
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: "cover", objectPosition: "top" }}
                 />
               )}
             </div>
           );
           return (
             <li key={p.id} className="work-card">
-              {p.link ? (
-                <a href={p.link} target="_blank" rel="noopener noreferrer" className="work-link">
-                  {media}
-                  <span className="work-title">
-                    {p.title} <ArrowUpRight size={14} aria-hidden="true" />
-                  </span>
-                </a>
-              ) : (
-                <>
-                  {media}
-                  <span className="work-title">{p.title}</span>
-                </>
-              )}
+              <Link href={`/work/${p.id}`} className="work-link">
+                {media}
+                <span className="work-title">{p.title}</span>
+              </Link>
             </li>
           );
         })}

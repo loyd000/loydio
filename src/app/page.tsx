@@ -41,8 +41,8 @@ export default function Home() {
             hardware, with a designer&apos;s eye for how things should look and feel.
           </p>
           <p>
-            Lately I&apos;ve been assessing claims remotely and taking freelance builds on the
-            side. My thesis, <a href="#research">CATOK</a>, taught a microcontroller to tell if a
+            Lately I&apos;ve been building Lampara App for solar installers and taking freelance
+            builds on the side. My thesis, <a href="#research">CATOK</a>, taught a microcontroller to tell if a
             young coconut is ripe by listening to it, and won Best Thesis. My{" "}
             <a href="/RESUME_DE_GUZMAN.pdf" target="_blank" rel="noopener noreferrer">resume</a> has
             the rest.

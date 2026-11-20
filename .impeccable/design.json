@@ -113,6 +113,11 @@
         "purpose": "Every transition (0.2s) and the dock entrance (0.5s fade + 20px rise). CSS var --settle; Framer [0.16, 1, 0.3, 1]."
       },
       {
+        "name": "screenshot-zoom",
+        "value": "transform: scale(1.04), 0.6s var(--settle)",
+        "purpose": "Carousel screenshot on card hover/focus, clipped inside its well; the card never moves."
+      },
+      {
         "name": "smooth-anchor",
         "value": "scroll-behavior: smooth; scroll-padding-top: 48px",
         "purpose": "Dock and inline anchor links."
@@ -137,6 +142,10 @@
       {
         "name": "top-band",
         "value": "50"
+      },
+      {
+        "name": "project-bar",
+        "value": "40"
       }
     ]
   },
@@ -153,8 +162,8 @@
       "name": "Work Card",
       "kind": "card",
       "refersTo": "work-card",
-      "description": "Carousel item: 782:407 image well, 24px radius, title below with a faint arrow when linked.",
-      "html": "<a class=\"ds-work\" href=\"#\"><div class=\"ds-work-media\"></div><span class=\"ds-work-title\">Project One ↗</span></a>",
+      "description": "Carousel item linking to /work/<id>: 782:407 image well, 24px radius, title below; the screenshot zooms to 1.04 inside the well on hover.",
+      "html": "<a class=\"ds-work\" href=\"#\"><div class=\"ds-work-media\"></div><span class=\"ds-work-title\">Project One</span></a>",
       "css": ".ds-work { display: block; width: 390px; text-decoration: none; color: #0a0a0a; font: 500 15px/1.5 Inter, sans-serif; letter-spacing: -0.03em; } .ds-work-media { aspect-ratio: 782 / 407; border: 1px solid #e5e5e5; border-radius: 24px; background: #e9e9e9; } .ds-work-title { display: inline-block; margin-top: 12px; }"
     },
     {
@@ -216,7 +225,7 @@
       "Don't add dark mode, a theme toggle, or any accent color.",
       "Don't use backdrop-filter, glass, translucency, glows or shadows.",
       "Don't add headline sizes, numbered section kickers or uppercase labels.",
-      "Don't lift or scale things on hover; change ink or hairline instead.",
+      "Don't lift or scale things on hover; change ink or hairline instead. Only a carousel screenshot zooms, inside its clipped well.",
       "Don't let fixed chrome cover content; pad for the dock."
     ]
   }

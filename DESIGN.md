@@ -111,7 +111,7 @@ Everything is Inter (self-hosted via `next/font`, exposed as `--font-sans`) at *
 
 ## Layout
 
-Top to bottom: hatched band → intro (`#about`) → Selected work (`#work`) → GitHub activity → info tables (`#experience`: Work, Recognition, Research, Contact `#contact`) → footer row → dock.
+Routes: `/` and `/work/[id]`. Home, top to bottom: hatched band → intro (`#about`) → Selected work (`#work`) → GitHub activity → info tables (`#experience`: Work, Recognition, Research, Contact `#contact`) → footer row → dock.
 
 - **Column** (`.column`): `min(576px, 100vw - 32px)`, centered. Intro starts 148px from the top (96px on phones).
 - **Wide** (`--card`): `min(782px, 100vw - 32px)` for carousel cards and the calendar.
@@ -124,6 +124,7 @@ Top to bottom: hatched band → intro (`#about`) → Selected work (`#work`) →
 |---|---|---|
 | Dock | 100 | Bottom icon dock |
 | Band | 50 | Hatched top band (12px) |
+| Project bar | 40 | Back / Visit site on project pages |
 
 The body pads its bottom by 120px so the dock never covers the footer.
 
@@ -141,16 +142,17 @@ None. Surfaces are flat fills with at most a 1px hairline. No `backdrop-filter`,
 
 - **Hatched band** (`.top-band`): Fixed 12px strip, `repeating-linear-gradient(-45deg, #dcdcdc 0 6px, paper 6px 14px)`.
 - **Inline links** (intro, table values, calendar meta): Ink text with a 1px underline at 3px offset. Prose links rest on the strong hairline; table links rest invisible. Both turn ink on hover.
-- **Selected work** (`SelectedWork.tsx`): Native scroll-snap track (`scroll-snap-type: x mandatory`, hidden scrollbar), cards centered, 20px gap. Each card is an image well (782:407) with its title below; linked cards add a faint ↗ that turns ink on hover. Prev/next are `.round-btn`s: a 44px hit area drawing a 32px sheet circle with a strong hairline. They scroll to the neighbouring card's center.
+- **Selected work** (`SelectedWork.tsx`): Native scroll-snap track (`scroll-snap-type: x mandatory`, hidden scrollbar), cards centered, 20px gap. Each card is an image well (782:407, screenshot anchored to the top) with its title below, and the whole card links to its project page. On hover or focus the screenshot scales to 1.04 inside the clipped well (0.6s Settle); the card itself never moves. Prev/next are `.round-btn`s: a 44px hit area drawing a 32px sheet circle with a strong hairline. They scroll to the neighbouring card's center.
 - **GitHub activity** (`GitHubContributions.tsx`): Centered heading, graphite meta line with the total and profile link, then the calendar in a sheet card.
 - **Info tables** (`InfoSection` in `page.tsx`): `<dl>` rows of label / text / aside. Data lives in `src/lib/content.ts`.
+- **Project page** (`src/app/work/[id]/page.tsx`, one static page per project in `content.ts`): Fixed bar with ← Back (to `/#work`) left and Visit site ↗ right (pinned from 1100px up, where it clears the column; below that it scrolls away). Then, in the 782px wide column: faint role / period, title, graphite summary, faint stack line joined with " · ", a `.pill-btn` Visit site (44px, strong hairline, ink on hover), the screenshot well, a "What I did" list in graphite, and a hairline-topped "Next project" row (title left, faint role right). No dock on this page.
 - **Copy button** (`.text-btn`): Faint text "Copy" → "Copied" (polite live region), hit area grown to 44px with padding plus negative margin.
 - **Footer**: One info row: © year / name / place.
 - **Icon dock** (`Navbar.tsx`, `.dock`): A solid dark capsule fixed bottom-center at `max(20px, safe-area + 12px)`, centered with auto margins so Framer can animate `y`. Order: "L" monogram (back to top), a 1px divider, then Work, Experience and Contact icons (lucide, 20px, stroke 2). Each item is a 48×44px target; icons rest at 55% white and go full white on hover or when their section crosses the viewport middle (Contact also wins at the bottom of the page). Icon-only, so every item has an `aria-label` plus a tooltip (`.dock-tip`) on hover and keyboard focus, hidden on touch. Inset 2px white focus ring.
 
 ## Motion
 
-- **Settle** `cubic-bezier(0.16, 1, 0.3, 1)` (`--settle`) for every transition (0.2s) and the dock entrance (0.5s fade + 20px rise).
+- **Settle** `cubic-bezier(0.16, 1, 0.3, 1)` (`--settle`) for every transition (0.2s), the dock entrance (0.5s fade + 20px rise) and the carousel screenshot zoom (0.6s, scale 1.04 inside its well).
 - Anchor links scroll smoothly (`scroll-behavior: smooth`, `scroll-padding-top: 48px`).
 - `MotionConfig reducedMotion="user"` wraps the app; the CSS reduced-motion block kills transitions, animations and smooth scrolling.
 
@@ -166,5 +168,5 @@ None. Surfaces are flat fills with at most a 1px hairline. No `backdrop-filter`,
 - **Don't** add dark mode, a theme toggle, or any accent color.
 - **Don't** use `backdrop-filter`, glass, translucency, glows or shadows.
 - **Don't** add headline sizes, numbered section kickers or uppercase labels.
-- **Don't** lift or scale things on hover; change ink or hairline instead.
+- **Don't** lift or scale things on hover; change ink or hairline instead. The one exception is the screenshot inside a carousel well, which zooms within its clipped frame.
 - **Don't** let fixed chrome cover content; pad for the dock.

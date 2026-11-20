@@ -31,7 +31,7 @@ One person who can take a job from hardware to interface: TinyML firmware on an 
 ## Capabilities and Constraints
 
 - Next.js 16 (App Router, Turbopack), React 19, Tailwind v4, Framer Motion; every page is statically prerendered.
-- Routes: `/` only. A single page: intro, Selected work, GitHub activity, Work, Recognition, Research, Contact.
+- Routes: `/` and `/work/[id]` (one page per project). A single page: intro, Selected work, GitHub activity, Work, Recognition, Research, Contact.
 - Content types: projects and info-table rows, all defined in `src/lib/content.ts` (projects and recognition are placeholders awaiting real entries).
 - Accessibility work already shipped and must be preserved: 44px targets, keyboard-operable carousel and dock, reduced-motion paths.
 

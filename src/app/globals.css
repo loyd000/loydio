@@ -168,17 +168,19 @@ body {
   overflow: hidden;
 }
 .work-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  display: block;
   margin-top: 12px;
   color: var(--fg);
 }
-.work-link .work-title svg {
-  color: var(--faint);
-  transition: color 0.2s var(--settle);
+/* Hover: the screenshot drifts in slowly inside its well (the card itself never moves) */
+.work-media img {
+  transition: transform 0.6s var(--settle);
 }
-.work-link:hover .work-title svg { color: var(--fg); }
+.work-link:hover .work-media img,
+.work-link:focus-visible .work-media img {
+  transform: scale(1.04);
+}
+.work-link:focus-visible { outline-offset: 4px; border-radius: 24px; }
 
 .work-controls {
   display: flex;
@@ -324,6 +326,90 @@ body {
 }
 .text-btn:hover { color: var(--fg); }
 
+/* ── Project page (/work/[id]) ── */
+/* Scrolls away by default; pinned only when the margins beside the 782px column fit it */
+.project-bar {
+  position: absolute;
+  inset: 12px 0 auto;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 32px;
+  pointer-events: none;
+}
+@media (min-width: 1100px) {
+  .project-bar { position: fixed; }
+}
+.project-bar-link {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--fg);
+  text-decoration: none;
+}
+.project-bar-link svg { transition: transform 0.2s var(--settle); }
+.project-bar-link:first-child:hover svg { transform: translateX(-2px); }
+.project-bar-link:last-child:hover svg { transform: translate(2px, -2px); }
+
+.project {
+  width: var(--card);
+  margin-inline: auto;
+  padding-top: 148px;
+}
+.project .heading { margin-bottom: 12px; }
+.project-meta { color: var(--faint); }
+.project-summary {
+  color: var(--muted);
+  line-height: 1.625;
+  margin-bottom: 12px;
+}
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 0 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 0.2s var(--settle);
+}
+.pill-btn:hover { border-color: var(--fg); }
+.project-shot { margin: 56px 0 72px; }
+.project-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--muted);
+  line-height: 1.625;
+}
+.project-next {
+  margin-top: 96px;
+  padding-top: 72px;
+  border-top: 1px solid var(--border);
+}
+.project-next-link {
+  display: block;
+  width: var(--card);
+  margin-inline: auto;
+  color: var(--fg);
+  text-decoration: none;
+}
+.project-next-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.project-next-link:hover .project-next-row > span:first-child {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Error / 404 pages */
 .btn {
   display: inline-flex;
@@ -346,6 +432,9 @@ body {
   .info-row { grid-template-columns: 96px 1fr auto; column-gap: 12px; }
   .work-media { border-radius: 16px; }
   .github-calendar-card { padding: 1rem; }
+  .project-bar { padding: 8px 16px; }
+  .project { padding-top: 96px; }
+  .project-shot { margin: 40px 0 56px; }
 }
 
 /* ── Navbar.tsx: floating icon dock ──
