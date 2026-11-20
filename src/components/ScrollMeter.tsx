@@ -7,9 +7,9 @@ type Mark = { label: string; at: number; el: HTMLElement };
 // Desktop-only section ruler: hairline ticks down the right edge, a longer tick per
 // [data-section] element, and a marker that slides with scroll progress. Hover shows
 // the section names; click one to jump there.
-// Mouse-only extra (aria-hidden, untabbable): the dock is the accessible navigation.
+// On desktop it replaces the dock, so it is real navigation: tabbable buttons, labels on focus too.
 export default function ScrollMeter() {
-  const root = useRef<HTMLDivElement>(null);
+  const root = useRef<HTMLElement>(null);
   const [marks, setMarks] = useState<Mark[]>([]);
   const [active, setActive] = useState(-1);
   const pathname = usePathname();
@@ -55,20 +55,20 @@ export default function ScrollMeter() {
   }, [pathname]);
 
   return (
-    <div ref={root} className="ruler" aria-hidden="true">
+    <nav ref={root} className="ruler" aria-label="Page sections">
       {marks.map((m, i) => (
         <button
           key={m.label}
           type="button"
-          tabIndex={-1}
           className={i === active ? "ruler-mark is-active" : "ruler-mark"}
+          aria-current={i === active ? "location" : undefined}
           style={{ "--at": m.at } as React.CSSProperties}
           onClick={() => m.el.scrollIntoView()}
         >
           <span className="ruler-label">{m.label}</span>
         </button>
       ))}
-      <span className="ruler-marker" />
-    </div>
+      <span className="ruler-marker" aria-hidden="true" />
+    </nav>
   );
 }

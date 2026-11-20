@@ -17,6 +17,7 @@
   --success:     #22c55e;
 
   --dock-bg:     #18181b;
+  --dock-capsule: rgba(24, 24, 27, 0.9); /* dock fill at 90% */
   --dock-fg:     #fafafa;
   --dock-border: rgba(255, 255, 255, 0.12);
 
@@ -469,7 +470,8 @@ body {
   pointer-events: none;
   transition: opacity 0.2s var(--settle), translate 0.2s var(--settle), color 0.2s var(--settle);
 }
-.ruler:hover .ruler-label {
+.ruler:hover .ruler-label,
+.ruler:focus-within .ruler-label {
   opacity: 1;
   translate: 0 -50%;
   pointer-events: auto;
@@ -527,9 +529,9 @@ body {
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 6px 10px;
-  background: var(--dock-bg);
+  gap: 0;
+  padding: 3px 6px;
+  background: var(--dock-capsule);
   border: 1px solid var(--dock-border);
   border-radius: 999px;
   color: var(--dock-fg);
@@ -539,7 +541,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  width: 40px;
   height: 44px;
   border-radius: 999px;
   color: color-mix(in srgb, var(--dock-fg) 55%, transparent);
@@ -561,8 +563,8 @@ body {
 }
 .dock-divider {
   width: 1px;
-  height: 24px;
-  margin: 0 6px;
+  height: 20px;
+  margin: 0 4px;
   background: color-mix(in srgb, var(--dock-fg) 20%, transparent);
   flex-shrink: 0;
 }
@@ -591,4 +593,9 @@ body {
 }
 @media (hover: none) {
   .dock-tip { display: none; }
+}
+/* Desktop gets the section ruler instead (same query as .ruler) */
+@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+  .dock { display: none; }
+  body { padding-bottom: 96px; }
 }

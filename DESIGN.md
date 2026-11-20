@@ -54,7 +54,7 @@ components:
     backgroundColor: "{colors.dock}"
     textColor: "{colors.dock-ink}"
     rounded: "{rounded.full}"
-    width: "48px"
+    width: "40px"
     height: "44px"
   work-card:
     backgroundColor: "{colors.well}"
@@ -71,14 +71,14 @@ components:
 
 **Creative North Star: "The Quiet Column"**
 
-One narrow column of text on soft grey paper, read top to bottom like a well-set résumé. Everything is 15px Inter; hierarchy comes from weight (600 headings, 500 body) and ink tone (ink, graphite, faint), never from size. Images are the only large things on the page, and they live in a single sideways carousel. A dark icon dock floats at the bottom as the one heavy object.
+One narrow column of text on soft grey paper, read top to bottom like a well-set résumé. Everything is 15px Inter; hierarchy comes from weight (600 headings, 500 body) and ink tone (ink, graphite, faint), never from size. Images are the only large things on the page, and they live in a single sideways carousel. On phones and tablets a dark icon dock floats at the bottom as the one heavy object; on desktop a hairline section ruler on the right edge takes its place.
 
 **Key Characteristics:**
 - Light only. One paper tone (`#f6f6f6`), three ink tones, no dark mode.
 - One typeface, one size: Inter 15px, tight tracking (`-0.03em`).
 - A 576px reading column; the carousel and GitHub calendar widen to 782px.
 - Flat: no blur, no glass, no shadows. Depth is tone plus a 1px hairline.
-- A dark dock pinned to the bottom; nothing pinned to the top.
+- Navigation is a dark dock at the bottom on touch and small screens, and a section ruler on the right edge on desktop; nothing pinned to the top.
 
 ## Colors
 
@@ -90,7 +90,7 @@ One narrow column of text on soft grey paper, read top to bottom like a well-set
 - **Well** (`--well` `#e9e9e9`): Empty image wells in the carousel.
 - **Hairline** (`--border` `#e5e5e5`) / **Strong** (`--border-strong` `#d4d4d4`): Card edges; button circles and link underlines.
 - **Signal Green** (`--success`): Only the "now playing" equalizer.
-- **Dock** (`--dock-bg` `#18181b`, `--dock-fg` `#fafafa`, `--dock-border` 12% white): The bottom navigation dock only.
+- **Dock** (`--dock-bg` `#18181b`, filled at 90% as `--dock-capsule`; `--dock-fg` `#fafafa`; `--dock-border` 12% white): The bottom navigation dock only.
 
 **The Three Inks Rule.** Text is ink, graphite or faint. Nothing else, no accent color.
 
@@ -121,7 +121,7 @@ Routes: `/` and `/work/[id]`. Home, top to bottom: intro (`#about`) → Selected
 | Ruler | 90 | Section ruler (desktop only) |
 | Project bar | 40 | Back / Visit site on project pages |
 
-The body pads its bottom by 120px so the dock never covers the footer.
+The body pads its bottom by 120px so the dock never covers the footer (96px on desktop, where there is no dock).
 
 ## Elevation & Depth
 
@@ -140,10 +140,10 @@ None. Surfaces are flat fills with at most a 1px hairline. No `backdrop-filter`,
 - **GitHub activity** (`GitHubContributions.tsx`): Centered heading, graphite meta line with the total and profile link, then the calendar in a sheet card.
 - **Info tables** (`InfoSection` in `page.tsx`): `<dl>` rows of label / text / aside. Data lives in `src/lib/content.ts`.
 - **Project page** (`src/app/work/[id]/page.tsx`, one static page per project in `content.ts`): Fixed bar with ← Back (to `/#work`) left and Visit site ↗ right (pinned from 1100px up, where it clears the column; below that it scrolls away). Then, in the 782px wide column: faint role / period, title, graphite summary, faint stack line joined with " · ", a `.pill-btn` Visit site (44px, strong hairline, ink on hover), the screenshot well, a "What I did" list in graphite, and a hairline-topped "Next project" row (title left, faint role right). No dock on this page.
-- **Section ruler** (`ScrollMeter.tsx`, `.ruler`, mounted in the root layout): A 240px hairline ruler fixed at the right edge, vertically centered: a 1px spine with 6px minor ticks every 10px, a longer 14px tick for each `[data-section]` element (home: Intro, Work, GitHub, Experience; project pages: Overview, What I did, Next), and a 24×2px ink marker at scroll progress (`--p`). A section's tick sits where the marker will be when that section reaches the top; the section you're in turns its tick ink. On hover, 12px labels fade in to the left of the ticks (on a paper pill); clicking one scrolls there. Positions re-measure when the page height changes. Shown only at 1100px+ with a fine pointer that can hover. It's a mouse-only shortcut (`aria-hidden`, buttons untabbable) because the dock is the accessible navigation.
+- **Section ruler** (`ScrollMeter.tsx`, `.ruler`, mounted in the root layout): A 240px hairline ruler fixed at the right edge, vertically centered: a 1px spine with 6px minor ticks every 10px, a longer 14px tick for each `[data-section]` element (home: Intro, Work, GitHub, Experience; project pages: Overview, What I did, Next), and a 24×2px ink marker at scroll progress (`--p`). A section's tick sits where the marker will be when that section reaches the top; the section you're in turns its tick ink. On hover, 12px labels fade in to the left of the ticks (on a paper pill); clicking one scrolls there. Positions re-measure when the page height changes. Shown only at 1100px+ with a fine pointer that can hover. On desktop it replaces the dock, so it is real navigation: a `<nav aria-label="Page sections">` of tabbable buttons with `aria-current` on the active section, and labels also appear on keyboard focus (`:focus-within`).
 - **Copy button** (`.text-btn`): Faint text "Copy" → "Copied" (polite live region), hit area grown to 44px with padding plus negative margin.
 - **Footer**: One info row: © year / name / place.
-- **Icon dock** (`Navbar.tsx`, `.dock`): A solid dark capsule fixed bottom-center at `max(20px, safe-area + 12px)`, centered with auto margins so Framer can animate `y`. Order: the Loyd logo mark (back to top; `public/logo.svg` inlined at 24px with `currentColor`), a 1px divider, then Work, Experience and Contact icons (lucide, 20px, stroke 2). Each item is a 48×44px target; icons rest at 55% white and go full white on hover or when their section crosses the viewport middle (Contact also wins at the bottom of the page). Icon-only, so every item has an `aria-label` plus a tooltip (`.dock-tip`) on hover and keyboard focus, hidden on touch. Inset 2px white focus ring.
+- **Icon dock** (`Navbar.tsx`, `.dock`): A dark capsule at 90% opacity (`--dock-capsule`, no blur) fixed bottom-center, shown only below the desktop query (hidden at 1100px+ with a fine hover pointer, where the section ruler takes over), at `max(20px, safe-area + 12px)`, centered with auto margins so Framer can animate `y`. Order: the Loyd logo mark (back to top; `public/logo.svg` inlined at 20px with `currentColor`), a 20px divider, then Work, Experience and Contact as solid icons (hand-drawn filled folder, briefcase and envelope, 18px; lucide has no filled set). Padding 3px 6px; each item is a 40×44px target; icons rest at 55% white and go full white on hover or when their section crosses the viewport middle (Contact also wins at the bottom of the page). Icon-only, so every item has an `aria-label` plus a tooltip (`.dock-tip`) on hover and keyboard focus, hidden on touch. Inset 2px white focus ring.
 
 ## Motion
 

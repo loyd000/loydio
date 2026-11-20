@@ -174,7 +174,7 @@
       "name": "Icon Dock",
       "kind": "nav",
       "refersTo": "dock-item",
-      "description": "Solid dark capsule fixed bottom-center: logo mark, divider, then Work / Experience / Contact icons; 48x44px targets with label tooltips on hover/focus. No blur, no shadow.",
+      "description": "Dark capsule at 90% opacity fixed bottom-center on phones and tablets (hidden on desktop, where the section ruler takes over): logo mark, divider, then solid Work / Experience / Contact icons; 40x44px targets with label tooltips on hover/focus. No blur, no shadow.",
       "html": "<nav class=\"ds-dock\" aria-label=\"Main navigation\"><a class=\"ds-dock-item ds-dock-logo\" href=\"/\" aria-label=\"Home\"><img src=\"/logo.svg\" width=\"24\" height=\"24\" alt=\"\"></a><span class=\"ds-dock-divider\" aria-hidden=\"true\"></span><a class=\"ds-dock-item is-active\" href=\"#about\" aria-label=\"About\" aria-current=\"page\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"5\"/><path d=\"M20 21a8 8 0 0 0-16 0\"/></svg></a><a class=\"ds-dock-item\" href=\"#contact\" aria-label=\"Contact\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"m22 7-10 6L2 7\"/></svg></a></nav>",
       "css": ".ds-dock { display: inline-flex; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 999px; background: #18181b; border: 1px solid rgba(255,255,255,0.12); color: #fafafa; } .ds-dock-item { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 44px; border-radius: 999px; color: rgba(250,250,250,0.55); text-decoration: none; transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1); } .ds-dock-item:hover, .ds-dock-item.is-active { color: #fafafa; } .ds-dock-item:focus-visible { outline: 2px solid #fafafa; outline-offset: -2px; } .ds-dock-logo { color: #fafafa; font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; } .ds-dock-divider { width: 1px; height: 24px; margin: 0 6px; background: rgba(250,250,250,0.2); }"
     },
@@ -182,7 +182,7 @@
       "name": "Section Ruler",
       "kind": "navigation",
       "refersTo": "ruler",
-      "description": "Desktop-only ruler at the right edge: hairline minor ticks, a longer tick per page section, an ink marker at scroll progress; section labels fade in on hover and jump on click. Mouse-only shortcut; the dock is the accessible nav.",
+      "description": "Desktop navigation at the right edge (replaces the dock there): hairline minor ticks, a longer tick per page section, an ink marker at scroll progress; section labels fade in on hover or keyboard focus and jump on click. Tabbable buttons with aria-current.",
       "html": "<div class=\"ds-ruler\"><span class=\"ds-tick\" style=\"top:0\"><span class=\"ds-lbl\">Intro</span></span><span class=\"ds-tick on\" style=\"top:30%\"><span class=\"ds-lbl\">Work</span></span><span class=\"ds-tick\" style=\"top:60%\"><span class=\"ds-lbl\">GitHub</span></span><span class=\"ds-marker\" style=\"top:40%\"></span></div>",
       "css": ".ds-ruler { position: relative; width: 28px; height: 200px; margin-left: 80px; font: 500 12px/1.5 Inter, sans-serif; } .ds-ruler::before { content: ''; position: absolute; inset: 0 0 0 auto; width: 6px; border-right: 1px solid #d4d4d4; background: repeating-linear-gradient(to bottom, #d4d4d4 0 1px, transparent 1px 10px); } .ds-tick { position: absolute; right: 0; width: 14px; height: 1px; background: #6e6e6e; } .ds-tick.on { background: #0a0a0a; width: 18px; } .ds-lbl { position: absolute; right: 30px; top: -9px; color: #6e6e6e; white-space: nowrap; } .ds-tick.on .ds-lbl { color: #0a0a0a; } .ds-marker { position: absolute; right: 0; width: 24px; height: 2px; border-radius: 1px; background: #0a0a0a; }"
     }
@@ -195,7 +195,7 @@
       "One typeface, one size: Inter 15px, tight tracking (-0.03em).",
       "A 576px reading column; the carousel and GitHub calendar widen to 782px.",
       "Flat: no blur, no glass, no shadows. Depth is tone plus a 1px hairline.",
-      "A dark dock pinned to the bottom; nothing pinned to the top."
+      "Navigation is a dark dock at the bottom on touch and small screens, and a section ruler on the right edge on desktop; nothing pinned to the top."
     ],
     "rules": [
       {
